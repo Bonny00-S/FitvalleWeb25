@@ -1,0 +1,24 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+    ViewData["Title"] = "Inicio";
+    var fecha = DateTime.Now.ToString("dd/MM/yyyy");
+    var anio = DateTime.Now.Year;
+}
+
+<div class="bg-white rounded-xl shadow-md p-8 text-center text-black">
+    <h1 class="text-3xl font-bold mb-4">
+        👋 Bienvenido Admin <span class="text-[#a10d3a]">@User.Identity?.Name</span>
+    </h1>
+
+    <p class="text-xl font-semibold mb-2">
+        Plataforma <span class="text-[#a10d3a]">Fitvalle</span>
+    </p>
+
+    <p class="text-lg text-gray-700">
+        📅 Fecha actual: <span class="font-bold">@fecha</span>
+    </p>
+
+    <p class="text-lg text-gray-700">
+        © @anio - Fitvalle
+    </p>
+</div>

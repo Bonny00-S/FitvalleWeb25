@@ -1,0 +1,77 @@
+﻿@model Dictionary<string, Fitvalle_25.Models.User>
+@{
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+    ViewData["Title"] = "AdminUsers";
+}
+
+<div class="p-6 bg-white rounded-xl shadow-md animate__animated animate__fadeIn text-black">
+    <div class="flex justify-between items-center mb-6 text-black">
+        <h2 class="text-2xl font-bold text-gray-800">Usuarios</h2>
+        <a asp-action="Register"
+           class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition duration-300 animate__animated animate__bounceIn">
+            ➕ Registrar Usuario
+        </a>
+    </div>
+
+    <div class="overflow-x-auto text-black">
+        <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+            <thead class="bg-[#a10d3a] text-white">
+                <tr>
+                    <th class="px-4 py-2 text-left">Nombre</th>
+                    <th class="px-4 py-2 text-left">Email</th>
+                    <th class="px-4 py-2 text-left">Rol</th>
+                    <th class="px-4 py-2 text-left">Fecha Nacimiento</th>
+                    <th class="px-4 py-2 text-left">Estado</th>
+                    <th class="px-4 py-2 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200 text-black">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var user in Model)
+                    {
+                        <tr class="hover:bg-gray-100 transition duration-200 animate__animated animate__fadeInUp">
+                            <td class="px-4 py-2">@user.Value.Name</td>
+                            <td class="px-4 py-2">@user.Value.Email</td>
+                            <td class="px-4 py-2 capitalize">@user.Value.Role</td>
+                            <td class="px-4 py-2 capitalize">@user.Value.RegisterDate</td>
+                            <td class="px-4 py-2">
+                                @if (user.Value.State == 1)
+                                {
+                                    <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-200 rounded-full">Inactivo</span>
+                                }
+                            </td>
+                            <td class="px-4 py-2 text-center space-x-2">
+                                <a asp-action="Edit" asp-route-uid="@user.Key"
+                                   class="bg-blue-600 hover:bg-blue-700 text-Black px-3 py-1 rounded-md text-sm shadow transition duration-300 animate__animated animate__fadeInLeft">
+                                    ✏️ Editar
+                                </a>
+
+                                <form asp-action="DeleteUser" method="post" class="inline">
+                                    <input type="hidden" name="uid" value="@user.Key" />
+                                    <button type="submit"
+                                            onclick="return confirm('¿Eliminar este usuario?');"
+                                            class="bg-red-600 hover:bg-red-700 text-Black px-3 py-1 rounded-md text-sm shadow transition duration-300 animate__animated animate__fadeInRight">
+                                        🗑️ Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="px-4 py-4 text-center text-gray-500 animate__animated animate__fadeIn">
+                            No hay usuarios registrados.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+﻿@model (Fitvalle_25.Models.Request solicitud, Fitvalle_25.Models.User cliente)
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Request";
+
+    var descripcion = Model.solicitud.Description ?? "";
+
+    // Dividir usando las etiquetas conocidas
+    string tipo = "", experiencia = "", dias = "", velocidad = "";
+
+    if (descripcion.Contains("Tipo de ejercicio:"))
+    {
+        var partes = descripcion.Split("Experiencia:");
+        tipo = partes[0].Replace("Tipo de ejercicio:", "").Trim();
+
+        if (partes.Length > 1)
+        {
+            var partes2 = partes[1].Split("Días por semana:");
+            experiencia = partes2[0].Trim();
+
+            if (partes2.Length > 1)
+            {
+                var partes3 = partes2[1].Split("Velocidad de progreso:");
+                dias = partes3[0].Trim();
+
+                if (partes3.Length > 1)
+                {
+                    velocidad = partes3[1].Trim();
+                }
+            }
+        }
+    }
+}
+
+<div class="bg-white p-6 rounded-xl shadow-md text-black max-w-md mx-auto">
+    <h2 class="text-xl font-bold mb-4 text-[#a10d3a]">Solicitud de @Model.cliente.Name</h2>
+
+    <ul class="space-y-2">
+        <li><span class="font-semibold">📧 Email:</span> @Model.cliente.Email</li>
+        <li><span class="font-semibold">🏋️ Tipo de ejercicio:</span> @tipo</li>
+        <li><span class="font-semibold">🎯 Experiencia:</span> @experiencia</li>
+        <li><span class="font-semibold">📅 Días por semana:</span> @dias</li>
+        <li><span class="font-semibold">⚡ Velocidad de progreso:</span> @velocidad</li>
+        <li><span class="font-semibold">📌 Estado:</span> @Model.solicitud.State</li>
+    </ul>
+
+    <div class="mt-6 flex justify-center space-x-4">
+        <a asp-action="RequestCustomers" asp-controller="Coach"
+           class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition">
+            ⬅ Volver
+        </a>
+
+        <!-- Botón Asignar (sin funcionalidad por ahora) -->
+        <button type="button"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition">
+            ✔ Asignar
+        </button>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@model List<(Fitvalle_25.Models.Request solicitud, Fitvalle_25.Models.User cliente)>
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Request";
+}
+
+<div class="bg-white p-6 rounded-xl shadow-md text-black">
+    <h2 class="text-2xl font-bold mb-4">Solicitudes de Clientes</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="w-full border-collapse">
+            <thead class="bg-[#a10d3a] text-white">
+                <tr>
+                    <th class="px-4 py-2">Cliente</th>
+                    <th class="px-4 py-2">Email</th>
+                    <th class="px-4 py-2">Solicitud</th>
+                    <th class="px-4 py-2">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="border-b hover:bg-gray-100">
+                        <td class="px-4 py-2">@item.cliente.Name</td>
+                        <td class="px-4 py-2">@item.cliente.Email</td>
+                        <td class="px-4 py-2 text-center">
+                            <a asp-action="RequestDetail" asp-controller="Coach" asp-route-id="@item.solicitud.Id"
+                               class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm transition duration-300">
+                                🔍 Ver Solicitud
+                            </a>
+                        </td>
+                        <td class="px-4 py-2">@item.solicitud.State</td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-gray-600">No hay solicitudes registradas.</p>
+    }
+</div>

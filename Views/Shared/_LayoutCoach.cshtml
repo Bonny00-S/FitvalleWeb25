@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - WellTrack</title>
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white h-screen flex flex-col">
+
+    <!-- HEADER SUPERIOR -->
+    <header class="bg-[#5c0a1e] flex justify-between items-center px-6 py-3 shadow">
+        <div class="flex items-center gap-3 hover:scale-105 transition duration-300 cursor-pointer">
+            <img src="/images/LogoFITNESS.jpeg" alt="Logo" class="w-10 h-10">
+            <span class="text-lg font-bold">WELL TRACK</span>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <i class="fa fa-bell cursor-pointer hover:text-yellow-400 transition duration-300"></i>
+            <i class="fa fa-cog cursor-pointer hover:rotate-90 transition duration-500"></i>
+
+            <div class="flex items-center gap-3 hover:bg-[#7e092b] px-3 py-1 rounded-lg transition duration-300">
+                <span>@User.Identity?.Name</span>
+                <img src="/images/iconUser.png" alt="Usuario"
+                     class="w-10 h-10 rounded-full border-2 border-yellow-400 hover:scale-110 transition duration-300">
+
+                <!-- Botón Logout -->
+                <form asp-action="Logout" asp-controller="Auth" method="post" class="inline">
+                    <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-md shadow
+                                   transition transform hover:scale-105 duration-300">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="flex flex-1">
+
+        <!-- SIDEBAR -->
+        <aside class="w-60 bg-white text-black shadow-lg flex flex-col">
+            <nav class="flex-1">
+                <ul class="space-y-2 p-4">
+                    <li>
+                        <a asp-action="Dashboard" asp-controller="Coach"
+                           class="flex items-center justify-between px-2 py-2 rounded hover:bg-gray-200
+                                  transition duration-300 hover:translate-x-1">
+                            <span class="flex items-center gap-2">
+                                <i class="fa fa-home"></i> Inicio
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-action="RequestCustomers" asp-controller="Coach"
+                           class="flex items-center justify-between px-2 py-2 rounded hover:bg-gray-200
+                                  transition duration-300 hover:translate-x-1">
+                            <span class="flex items-center gap-2">
+                                <i class="fa fa-envelope-open-text"></i> Solicitudes
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- CONTENIDO DINÁMICO -->
+        <main class="flex-1 bg-[#a10d3a] p-6">
+            @RenderBody()
+        </main>
+    </div>
+
+</body>
+</html>
