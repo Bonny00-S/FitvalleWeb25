@@ -59,6 +59,35 @@ namespace Fitvalle_25.Controllers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
+                {
+                    ViewBag.Error = "La contraseña debe tener al menos 6 caracteres.";
+                    return View();
+                }
+
+                // 🔹 Validar que cumpla con mayúscula, minúscula, número y carácter especial
+                var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(password, passwordPattern))
+                {
+                    ViewBag.Error = "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.";
+                    return View();
+                }
+
+                if (name.Length < 3)
+                {
+                    ViewBag.Error = "El nombre debe tener al menos 3 caracteres.";
+                    return View();
+                }
+              
+          
+                // 🔹 Validar que no tenga números y no tenga más de un espacio seguido
+                var namePattern = @"^(?!.*\s{2,})(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(name, namePattern))
+                {
+                    ViewBag.Error = "El nombre solo puede contener letras y un solo espacio entre nombres.";
+                    return View();
+                }
+
                 // 1. Preparar objeto usuario con datos básicos
                 var s = new User
                 {
@@ -68,8 +97,6 @@ namespace Fitvalle_25.Controllers
                     Name = name,
                     Role = role
                 };
-
-                // 2. Registrar en Firebase Auth
                 var signupResponse = await _dbService.SignUpAsync(s);
 
                 if (signupResponse == null || string.IsNullOrEmpty(signupResponse.LocalId))
@@ -113,8 +140,20 @@ namespace Fitvalle_25.Controllers
                 return RedirectToAction("ManageUsers");
             }
             catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
+            {   
+                if (ex.Message.Contains("EMAIL_EXISTS"))
+                {
+                    ViewBag.Error = "El Correo que ingreso ya se existe en el sistema";
+                }
+                if (ex.Message.Contains("INVALID_EMAIL"))
+                {
+                    ViewBag.Error = "Correro invalido";
+                }
+                if (ex.Message.Contains("WEAK_PASSWORD"))
+                {
+                    ViewBag.Error ="Contraseña debil debe tener al menos 6 caracteres";
+                }
+
                 return View();
             }
         }
@@ -147,6 +186,32 @@ namespace Fitvalle_25.Controllers
             if (string.IsNullOrEmpty(token))
                 return RedirectToAction("Login", "Auth");
 
+            // 🔹 Recuperar el usuario original para no romper la vista en caso de error
+            var user = await _dbService.GetUserAsync($"user/{uid}", token);
+            if (user == null)
+            {
+                ViewBag.Error = "No se encontró el usuario.";
+                return RedirectToAction("ManageUsers");
+            }
+
+            // 🔹 Validación: longitud mínima
+            if (string.IsNullOrWhiteSpace(name) || name.Length < 3)
+            {
+                ViewBag.Error = "El nombre debe tener al menos 3 caracteres.";
+                ViewBag.Uid = uid;
+                return View(user);
+            }
+
+            // 🔹 Validación: solo letras y un espacio entre palabras
+            var namePattern = @"^(?!.*\s{2,})(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$";
+            if (!System.Text.RegularExpressions.Regex.IsMatch(name, namePattern))
+            {
+                ViewBag.Error = "El nombre solo puede contener letras y un solo espacio entre nombres.";
+                ViewBag.Uid = uid;
+                return View(user);
+            }
+
+            // 🔹 Datos a actualizar
             var updates = new
             {
                 name,
@@ -158,6 +223,7 @@ namespace Fitvalle_25.Controllers
 
             return RedirectToAction("ManageUsers");
         }
+
 
 
 

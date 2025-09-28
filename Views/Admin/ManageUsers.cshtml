@@ -20,7 +20,7 @@
                     <th class="px-4 py-2 text-left">Nombre</th>
                     <th class="px-4 py-2 text-left">Email</th>
                     <th class="px-4 py-2 text-left">Rol</th>
-                    <th class="px-4 py-2 text-left">Fecha Nacimiento</th>
+                    <th class="px-4 py-2 text-left">Fecha Registro</th>
                     <th class="px-4 py-2 text-left">Estado</th>
                     <th class="px-4 py-2 text-center">Acciones</th>
                 </tr>
@@ -34,7 +34,7 @@
                             <td class="px-4 py-2">@user.Value.Name</td>
                             <td class="px-4 py-2">@user.Value.Email</td>
                             <td class="px-4 py-2 capitalize">@user.Value.Role</td>
-                            <td class="px-4 py-2 capitalize">@user.Value.RegisterDate</td>
+                            <td class="px-4 py-2">@user.Value.RegisterDate</td>
                             <td class="px-4 py-2">
                                 @if (user.Value.State == 1)
                                 {
@@ -47,18 +47,16 @@
                             </td>
                             <td class="px-4 py-2 text-center space-x-2">
                                 <a asp-action="Edit" asp-route-uid="@user.Key"
-                                   class="bg-blue-600 hover:bg-blue-700 text-Black px-3 py-1 rounded-md text-sm shadow transition duration-300 animate__animated animate__fadeInLeft">
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300 animate__animated animate__fadeInLeft">
                                     ✏️ Editar
                                 </a>
 
-                                <form asp-action="DeleteUser" method="post" class="inline">
-                                    <input type="hidden" name="uid" value="@user.Key" />
-                                    <button type="submit"
-                                            onclick="return confirm('¿Eliminar este usuario?');"
-                                            class="bg-red-600 hover:bg-red-700 text-Black px-3 py-1 rounded-md text-sm shadow transition duration-300 animate__animated animate__fadeInRight">
-                                        🗑️ Eliminar
-                                    </button>
-                                </form>
+                                <!-- Botón para abrir modal -->
+                                <button type="button"
+                                        onclick="openDeleteModal('@user.Key')"
+                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300 animate__animated animate__fadeInRight">
+                                    🗑️ Eliminar
+                                </button>
                             </td>
                         </tr>
                     }
@@ -75,3 +73,39 @@
         </table>
     </div>
 </div>
+
+<!-- Modal de confirmación -->
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl shadow-lg p-6 w-96 animate__animated animate__fadeIn">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">¿Eliminar usuario?</h3>
+        <p class="text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
+
+        <form id="deleteForm" method="post" asp-action="DeleteUser">
+            <input type="hidden" name="uid" id="deleteUid" />
+
+            <div class="flex justify-end space-x-3">
+                <button type="button"
+                        onclick="closeDeleteModal()"
+                        class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg shadow">
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow">
+                    Confirmar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal(uid) {
+        document.getElementById('deleteUid').value = uid;
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+</script>
