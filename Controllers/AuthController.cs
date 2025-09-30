@@ -45,6 +45,11 @@ namespace Fitvalle_25.Controllers
                     return View();
                 }
 
+                if (user.State== 0)
+                {
+                    ViewBag.Error = "Esta ceunta esta deshabilitada";
+                    return View();
+                }
                 // Guardamos el rol en sesión
                 HttpContext.Session.SetString("UserRole", user.Role ?? "none");
 
