@@ -59,10 +59,16 @@ namespace Fitvalle_25.Controllers
         {
             try
             {
+                // 🔹 Preservar los valores ANTES de cualquier validación
+                ViewBag.PreservedEmail = email;
+                ViewBag.PreservedName = name;
+                ViewBag.PreservedRole = role;
+                ViewBag.PreservedPassword = password;
+
                 if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
                 {
                     ViewBag.Error = "La contraseña debe tener al menos 6 caracteres.";
-                    return View();
+                    return View("Register"); // Especificar la vista
                 }
 
                 // 🔹 Validar que cumpla con mayúscula, minúscula, número y carácter especial
@@ -70,22 +76,21 @@ namespace Fitvalle_25.Controllers
                 if (!System.Text.RegularExpressions.Regex.IsMatch(password, passwordPattern))
                 {
                     ViewBag.Error = "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.";
-                    return View();
+                    return View("Register");
                 }
 
                 if (name.Length < 3)
                 {
                     ViewBag.Error = "El nombre debe tener al menos 3 caracteres.";
-                    return View();
+                    return View("Register");
                 }
-              
-          
+
                 // 🔹 Validar que no tenga números y no tenga más de un espacio seguido
                 var namePattern = @"^(?!.*\s{2,})(?!.*\d)[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$";
                 if (!System.Text.RegularExpressions.Regex.IsMatch(name, namePattern))
                 {
                     ViewBag.Error = "El nombre solo puede contener letras y un solo espacio entre nombres.";
-                    return View();
+                    return View("Register");
                 }
 
                 // 1. Preparar objeto usuario con datos básicos
@@ -102,7 +107,7 @@ namespace Fitvalle_25.Controllers
                 if (signupResponse == null || string.IsNullOrEmpty(signupResponse.LocalId))
                 {
                     ViewBag.Error = "Error al registrar usuario en Firebase.";
-                    return View();
+                    return View("Register");
                 }
 
                 // 3. Hashear el password para guardar en tu DB
@@ -133,28 +138,42 @@ namespace Fitvalle_25.Controllers
                 // 5. Enviar correo de verificación
                 bool emailSent = await _authService.SendEmailVerificationAsync(signupResponse.IdToken);
 
-                ViewBag.Message = emailSent
+                // 🔹 LIMPIAR los valores preservados al éxito
+                ViewBag.PreservedEmail = "";
+                ViewBag.PreservedName = "";
+                ViewBag.PreservedRole = "";
+
+                TempData["Message"] = emailSent
                     ? "Usuario registrado. Se envió un correo de verificación."
                     : "Usuario registrado, pero no se pudo enviar el correo.";
 
                 return RedirectToAction("ManageUsers");
             }
             catch (Exception ex)
-            {   
+            {
+                // 🔹 Preservar valores también en caso de excepción
+                ViewBag.PreservedEmail = email;
+                ViewBag.PreservedName = name;
+                ViewBag.PreservedRole = role;
+
                 if (ex.Message.Contains("EMAIL_EXISTS"))
                 {
                     ViewBag.Error = "El Correo que ingreso ya se existe en el sistema";
                 }
-                if (ex.Message.Contains("INVALID_EMAIL"))
+                else if (ex.Message.Contains("INVALID_EMAIL"))
                 {
-                    ViewBag.Error = "Correro invalido";
+                    ViewBag.Error = "Correo invalido";
                 }
-                if (ex.Message.Contains("WEAK_PASSWORD"))
+                else if (ex.Message.Contains("WEAK_PASSWORD"))
                 {
-                    ViewBag.Error ="Contraseña debil debe tener al menos 6 caracteres";
+                    ViewBag.Error = "Contraseña débil debe tener al menos 6 caracteres";
+                }
+                else
+                {
+                    ViewBag.Error = "Error al registrar usuario: " + ex.Message;
                 }
 
-                return View();
+                return View("Register");
             }
         }
 

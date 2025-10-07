@@ -13,6 +13,7 @@
             <label class="block text-gray-700 font-semibold mb-1">Correo</label>
             <div class="relative">
                 <input type="email" name="email" required
+                       value="@ViewBag.PreservedEmail"
                        class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" />
                 <i class="fa fa-envelope absolute left-3 top-3 text-gray-400"></i>
             </div>
@@ -23,7 +24,7 @@
             <label class="block text-gray-700 font-semibold mb-1">Contraseña</label>
             <div class="relative">
                 <input type="password" name="password" required
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" />
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" value="@ViewBag.PreservedPassword" />
                 <i class="fa fa-lock absolute left-3 top-3 text-gray-400"></i>
             </div>
         </div>
@@ -32,7 +33,8 @@
         <div>
             <label class="block text-gray-700 font-semibold mb-1">Nombre</label>
             <div class="relative">
-                <input type="text" color="Black" name="name" required
+                <input type="text" name="name" required
+                       value="@ViewBag.PreservedName"
                        class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" />
                 <i class="fa fa-user absolute left-3 top-3 text-gray-400"></i>
             </div>
@@ -43,8 +45,8 @@
             <label class="block text-gray-700 font-semibold mb-1">Rol</label>
             <select name="role"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none">
-                <option value="admin">Admin</option>
-                <option value="coach">Coach</option>
+                <option value="admin" selected='@(ViewBag.PreservedRole == "admin")'>Admin</option>
+                <option value="coach" selected='@(ViewBag.PreservedRole == "coach")'>Coach</option>
             </select>
         </div>
 
@@ -58,9 +60,9 @@
     </form>
 
     <!-- Mensajes -->
-    @if (ViewBag.Message != null)
+    @if (TempData["Message"] != null)
     {
-        <p class="mt-4 text-center text-green-600 font-semibold">@ViewBag.Message</p>
+        <p class="mt-4 text-center text-green-600 font-semibold">@TempData["Message"]</p>
     }
     else if (ViewBag.Error != null)
     {

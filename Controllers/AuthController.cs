@@ -47,7 +47,7 @@ namespace Fitvalle_25.Controllers
 
                 if (user.State== 0)
                 {
-                    ViewBag.Error = "Esta ceunta esta deshabilitada";
+                    ViewBag.Error = "Esta cuenta esta deshabilitada";
                     return View();
                 }
                 // Guardamos el rol en sesión
