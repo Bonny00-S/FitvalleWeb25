@@ -7,8 +7,9 @@
 <html lang="es">
 <head>
     <meta charset="utf-8" />
-    <title>Login - Well Track</title>
-
+    <title>Login -FITVALLE</title>
+    <!-- Favicon para mayoría de navegadores -->
+    <link rel="icon" type="image/jpeg" href="/images/LogoFITNESS.jpeg">
     <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -32,7 +33,6 @@
                 <h2 class="text-2xl font-semibold">FITVALLE</h2>
             </div>
 
-
             <!-- Formulario -->
             <form asp-action="Login" method="post" class="w-full max-w-sm">
                 <div class="mb-5 relative">
@@ -45,10 +45,21 @@
                            class="w-full bg-transparent border-b-2 border-white text-white placeholder-gray-200 focus:outline-none focus:border-yellow-400 py-2 pr-10">
                     <i class="fa fa-lock absolute right-2 top-3 text-white"></i>
                 </div>
+
                 <button type="submit"
-                        class="w-full bg-white text-black font-bold py-2 rounded-full hover:bg-gray-200 transition duration-300">
-                  INICIAR SESION
+                        class="w-full bg-white text-black font-bold py-2 rounded-full hover:bg-gray-200 transition duration-300 mb-3">
+                    INICIAR SESION
                 </button>
+
+                <!-- Enlaces adicionales -->
+                <div class="flex justify-between text-sm mt-2">
+                    <a asp-controller="Auth" asp-action="ResetPassword" class="text-yellow-300 hover:underline">
+                        Olvidé mi contraseña
+                    </a>
+                    <a asp-controller="Auth" asp-action="Landing" class="text-yellow-300 hover:underline">
+                        Volver a Landing
+                    </a>
+                </div>
             </form>
 
             @if (ViewBag.Error != null)

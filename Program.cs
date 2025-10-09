@@ -38,7 +38,7 @@ namespace Fitvalle_25
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Auth}/{action=Login}/{id?}");
+                pattern: "{controller=Auth}/{action=Landing}/{id?}");
 
             app.Run();
         }

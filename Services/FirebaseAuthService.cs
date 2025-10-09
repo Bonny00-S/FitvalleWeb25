@@ -80,6 +80,39 @@ namespace Fitvalle_25.Services
         }
 
 
+        public async Task<bool> SendResetPasswordAsync(string email)
+        {
+            var requestBody = new
+            {
+                requestType = "PASSWORD_RESET",
+                email = email
+            };
+
+            var content = new StringContent(
+                JsonSerializer.Serialize(requestBody),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await _httpClient.PostAsync(
+                $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={_apiKey}",
+                content
+            );
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorResponse = JsonSerializer.Deserialize<FirebaseErrorResponse>(json);
+                var errorMessage = errorResponse?.Error?.Message ?? "Error desconocido";
+                throw new Exception(errorMessage);
+            }
+
+            return true;
+        }
+
+
+
     }
 
 }

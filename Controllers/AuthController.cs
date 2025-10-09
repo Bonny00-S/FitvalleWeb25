@@ -117,12 +117,53 @@ namespace Fitvalle_25.Controllers
 		}
 
 
+        public IActionResult Landing()
+        {
+       
+            return View();  
+        }
+
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                ViewBag.Error = "Please enter your email address.";
+                return View();
+            }
+
+            try
+            {
+                bool sent = await _authService.SendResetPasswordAsync(email);
+
+                if (sent)
+                    ViewBag.Message = "We’ve sent you an email with instructions to reset your password.";
+                else
+                    ViewBag.Error = "Could not send the password reset email. Try again later.";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+            }
+
+            return View();
+        }
 
 
 
 
 
-	}
+
+
+
+
+
+    }
 
 
 }
