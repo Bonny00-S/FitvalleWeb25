@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Fitvalle_25.Controllers;
 using Microsoft.Extensions.Configuration;
 using Fitvalle_25.Models;
+using System.Security.Cryptography;
+
 namespace Fitvalle_25.Services
 {
     public class FirebaseAuthService
@@ -195,7 +197,49 @@ namespace Fitvalle_25.Services
         }
 
 
+    public async Task<bool> ChangePasswordAsync(string idToken, string newPassword)
+    {
+        if (string.IsNullOrWhiteSpace(idToken))
+            throw new ArgumentException("Token inválido o sesión expirada.");
 
+        if (string.IsNullOrWhiteSpace(newPassword))
+            throw new ArgumentException("La nueva contraseña no puede estar vacía.");
+
+        // 1️⃣ Actualiza la contraseña en Firebase Authentication
+        var requestBody = new
+        {
+            idToken = idToken,
+            password = newPassword,
+            returnSecureToken = true
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(requestBody),
+            Encoding.UTF8,
+            "application/json"
+        );
+
+        var response = await _httpClient.PostAsync(
+            $"https://identitytoolkit.googleapis.com/v1/accounts:update?key={_apiKey}",
+            content
+        );
+
+        var json = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorResponse = JsonSerializer.Deserialize<FirebaseErrorResponse>(json);
+            var errorMessage = errorResponse?.Error?.Message ?? "Error al cambiar la contraseña.";
+            throw new Exception(errorMessage);
+        }
+
+
+        return true;
     }
+
+
+
+
+}
 
 }

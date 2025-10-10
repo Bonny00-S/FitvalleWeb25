@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Fitvalle_25.Controllers
 {
@@ -226,7 +227,75 @@ namespace Fitvalle_25.Controllers
 
 
 
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            if (HttpContext.Session.GetString("UserRole") == "admin")
+            {
+                ViewBag.Rol = "~/Views/Shared/_LayoutDashboard.cshtml";
+            }
+            else
+            {
+                ViewBag.Rol = "~/Views/Shared/_LayoutCoach.cshtml";
+            }
+            
+            return View();
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string newPassword, string confirmPassword)
+        {
+            if (HttpContext.Session.GetString("UserRole") == "admin")
+            {
+                ViewBag.Rol = "~/Views/Shared/_LayoutDashboard.cshtml";
+            }
+            else
+            {
+                ViewBag.Rol = "~/Views/Shared/_LayoutCoach.cshtml";
+            }
+            // ✅ Recupera el token de sesión
+            var idToken = HttpContext.Session.GetString("FirebaseToken");
+
+            if (string.IsNullOrEmpty(idToken))
+            {
+                ModelState.AddModelError("", "Sesión expirada. Inicia sesión nuevamente.");
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(newPassword) || string.IsNullOrWhiteSpace(confirmPassword))
+            {
+                ModelState.AddModelError("", "Debe ingresar y confirmar su nueva contraseña.");
+                return View();
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("", "Las contraseñas no coinciden.");
+                return View();
+            }
+
+            // ✅ Validación de complejidad
+            var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$");
+            if (!regex.IsMatch(newPassword))
+            {
+                ModelState.AddModelError("", "La contraseña debe tener al menos 6 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.");
+                return View();
+            }
+
+            try
+            {
+                await _authService.ChangePasswordAsync(idToken, newPassword);
+                ViewBag.Success = "Tu contraseña ha sido cambiada correctamente.";
+                ViewBag.RolDashboard= HttpContext.Session.GetString("UserRole");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View();
+            }
+        }
 
 
 

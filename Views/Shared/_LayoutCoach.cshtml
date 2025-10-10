@@ -13,20 +13,44 @@
 </head>
 <body class="bg-gray-900 text-white h-screen flex flex-col">
 
-    <!-- HEADER SUPERIOR -->
-    <header class="bg-[#5c0a1e] flex justify-between items-center px-6 py-3 shadow">
+    <header class="bg-[#000000] flex justify-between items-center px-6 py-3 shadow text-white">
+        <!-- LOGO -->
         <div class="flex items-center gap-3 hover:scale-105 transition duration-300 cursor-pointer">
             <img src="/images/LogoFITNESS.jpeg" alt="Logo" class="w-10 h-10 rounded-full">
             <span class="text-lg font-bold">FITVALLE</span>
         </div>
-     
 
-
-
-        <div class="flex items-center gap-6">
+        <!-- Íconos -->
+        <div class="flex items-center gap-6 relative">
+            <!-- Notificaciones -->
             <i class="fa fa-bell cursor-pointer hover:text-yellow-400 transition duration-300"></i>
-            <i class="fa fa-cog cursor-pointer hover:rotate-90 transition duration-500"></i>
 
+            <!-- Configuración con menú -->
+            <div class="relative">
+                <i id="configIcon" class="fa fa-cog cursor-pointer hover:text-yellow-400 transition duration-500"></i>
+
+                <!-- Menú desplegable -->
+                <div id="configMenu"
+                     class="hidden absolute right-0 mt-2 w-44 bg-white text-black rounded-md shadow-lg z-50">
+                    <ul class="py-2">
+                        <li>
+                            <a href=""
+                               class="block px-4 py-2 hover:bg-gray-100 transition duration-200">
+                                Ver perfil
+                            </a>
+                        </li>
+                        <li>
+                            asp-action="Dashboard" asp-controller="Coach
+                            <a asp-action="ChangePassword" asp-controller="Auth" 
+                               class="block px-4 py-2 hover:bg-gray-100 transition duration-200">
+                                Cambiar contraseña
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Usuario -->
             <div class="flex items-center gap-3 hover:bg-[#7e092b] px-3 py-1 rounded-lg transition duration-300">
                 <span>@User.Identity?.Name</span>
                 <img src="/images/iconUser.png" alt="Usuario"
@@ -36,13 +60,29 @@
                 <form asp-action="Logout" asp-controller="Auth" method="post" class="inline">
                     <button type="submit"
                             class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-md shadow
-                                   transition transform hover:scale-105 duration-300">
-                        Cerrar Sesion
+                       transition transform hover:scale-105 duration-300">
+                        Cerrar sesión
                     </button>
                 </form>
             </div>
         </div>
     </header>
+
+    <script>
+        const configIcon = document.getElementById("configIcon");
+        const configMenu = document.getElementById("configMenu");
+
+        configIcon.addEventListener("click", () => {
+            configMenu.classList.toggle("hidden");
+        });
+
+        // Cierra el menú si se hace clic fuera
+        document.addEventListener("click", (e) => {
+            if (!configMenu.contains(e.target) && !configIcon.contains(e.target)) {
+                configMenu.classList.add("hidden");
+            }
+        });
+    </script>
 
     <!-- CONTENEDOR PRINCIPAL -->
     <div class="flex flex-1">
@@ -78,6 +118,6 @@
             @RenderBody()
         </main>
     </div>
-
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
