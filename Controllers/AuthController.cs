@@ -215,12 +215,12 @@ namespace Fitvalle_25.Controllers
             {
                 await _authService.ConfirmResetPasswordAsync(oobCode, newPassword);
                 ViewBag.Success = "Tu contraseña ha sido restablecida correctamente.";
-                return View();
+                return View("ResetPasswordConfirm");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                return View();
+                return View("ResetPasswordConfirm");
             }
         }
 
