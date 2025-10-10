@@ -130,13 +130,12 @@ namespace Fitvalle_25.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> ResetPassword(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                ViewBag.Error = "Ingrese su correo por favor.";
+                ViewBag.Error = "Por favor, ingresa tu correo electrónico.";
                 return View();
             }
 
@@ -145,17 +144,32 @@ namespace Fitvalle_25.Controllers
                 bool sent = await _authService.SendResetPasswordAsync(email);
 
                 if (sent)
-                    ViewBag.Message = "Se ha enviado un correo de restablecimiento ";
+                {
+                    ViewBag.Success = "Se ha enviado un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada.";
+                }
                 else
-                    ViewBag.Error = "Could not send the password reset email. Try again later.";
+                {
+                    ViewBag.Error = "El correo ingresado no está registrado en el sistema.";
+                }
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
+                // 🔍 Traducimos los mensajes más comunes de Firebase
+                string mensaje = ex.Message switch
+                {
+                    "EMAIL_NOT_FOUND" => "El correo ingresado no está registrado en el sistema.",
+                    "INVALID_EMAIL" => "El formato del correo no es válido.",
+                    "TOO_MANY_ATTEMPTS_TRY_LATER" => "Has superado el número de intentos. Intenta más tarde.",
+                    "INVALID_REQUEST" => "La solicitud no es válida.",
+                    _ => "Ocurrió un error al enviar el correo de restablecimiento. Intenta nuevamente más tarde."
+                };
+
+                ViewBag.Error = mensaje;
             }
 
             return View();
         }
+
 
         [HttpGet]
         public async Task<IActionResult> ResetPasswordConfirm(string oobCode)

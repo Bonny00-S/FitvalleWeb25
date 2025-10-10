@@ -104,15 +104,25 @@ namespace Fitvalle_25.Services
 
             var json = await response.Content.ReadAsStringAsync();
 
-            if (!response.IsSuccessStatusCode)
+            // Si la respuesta es exitosa
+            if (response.IsSuccessStatusCode)
+                return true;
+
+            // Si hay error, procesamos el JSON devuelto
+            var errorResponse = JsonSerializer.Deserialize<FirebaseErrorResponse>(json);
+
+            var errorMessage = errorResponse?.Error?.Message ?? "ERROR_DESCONOCIDO";
+
+            if (errorMessage == "EMAIL_NOT_FOUND")
             {
-                var errorResponse = JsonSerializer.Deserialize<FirebaseErrorResponse>(json);
-                var errorMessage = errorResponse?.Error?.Message ?? "Error desconocido";
-                throw new Exception(errorMessage);
+                // ❌ El correo no existe en Firebase
+                return false;
             }
 
-            return true;
+            // ⚠️ Otro error distinto, lanzamos excepción
+            throw new Exception(errorMessage);
         }
+
 
         /// <summary>
         /// Verifica si el código oobCode del enlace de restablecimiento es válido.
