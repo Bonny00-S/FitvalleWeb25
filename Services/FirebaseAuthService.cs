@@ -85,7 +85,8 @@ namespace Fitvalle_25.Services
             var requestBody = new
             {
                 requestType = "PASSWORD_RESET",
-                email = email
+                email = email,
+                continueUrl = "https://fitvalle-web.onrender.com/auth/confirmreset"
             };
 
             var content = new StringContent(
@@ -105,6 +106,88 @@ namespace Fitvalle_25.Services
             {
                 var errorResponse = JsonSerializer.Deserialize<FirebaseErrorResponse>(json);
                 var errorMessage = errorResponse?.Error?.Message ?? "Error desconocido";
+                throw new Exception(errorMessage);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Verifica si el código oobCode del enlace de restablecimiento es válido.
+        /// </summary>
+        public async Task<bool> VerifyResetCodeAsync(string oobCode)
+        {
+            if (string.IsNullOrWhiteSpace(oobCode))
+                throw new ArgumentException("El código de verificación es inválido.");
+
+            var requestBody = new { oobCode = oobCode };
+
+            var content = new StringContent(
+                JsonSerializer.Serialize(requestBody),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await _httpClient.PostAsync(
+                $"https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key={_apiKey}",
+                content
+            );
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorResponse = JsonSerializer.Deserialize<FirebaseErrorResponse>(json);
+                var errorMessage = errorResponse?.Error?.Message ?? "Código inválido o expirado.";
+                throw new Exception(errorMessage);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Confirma el cambio de contraseña con el código recibido en el correo.
+        /// </summary>
+        public async Task<bool> ConfirmResetPasswordAsync(string oobCode, string newPassword)
+        {
+            if (string.IsNullOrWhiteSpace(oobCode))
+                throw new ArgumentException("El código de restablecimiento es inválido.");
+
+            if (string.IsNullOrWhiteSpace(newPassword))
+                throw new ArgumentException("La nueva contraseña no puede estar vacía.");
+
+            var requestBody = new
+            {
+                oobCode = oobCode,
+                newPassword = newPassword
+            };
+
+            var content = new StringContent(
+                JsonSerializer.Serialize(requestBody),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await _httpClient.PostAsync(
+                $"https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key={_apiKey}",
+                content
+            );
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorResponse = JsonSerializer.Deserialize<FirebaseErrorResponse>(json);
+                var errorMessage = errorResponse?.Error?.Message ?? "Error desconocido al restablecer la contraseña.";
+
+                errorMessage = errorMessage switch
+                {
+                    "INVALID_OOB_CODE" => "El enlace de restablecimiento no es válido o ya ha sido usado.",
+                    "EXPIRED_OOB_CODE" => "El enlace de restablecimiento ha expirado. Solicita uno nuevo.",
+                    "WEAK_PASSWORD : Password should be at least 6 characters" => "La contraseña es demasiado débil (mínimo 6 caracteres).",
+                    _ => errorMessage
+                };
+
                 throw new Exception(errorMessage);
             }
 

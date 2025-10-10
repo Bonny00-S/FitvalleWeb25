@@ -4,6 +4,8 @@ using Fitvalle_25.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net.Http;
+using System.Text;
 
 namespace Fitvalle_25.Controllers
 {
@@ -133,7 +135,7 @@ namespace Fitvalle_25.Controllers
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                ViewBag.Error = "Please enter your email address.";
+                ViewBag.Error = "Ingrese su correo por favor.";
                 return View();
             }
 
@@ -142,7 +144,7 @@ namespace Fitvalle_25.Controllers
                 bool sent = await _authService.SendResetPasswordAsync(email);
 
                 if (sent)
-                    ViewBag.Message = "We’ve sent you an email with instructions to reset your password.";
+                    ViewBag.Message = "Se ha enviado un correo de restablecimiento ";
                 else
                     ViewBag.Error = "Could not send the password reset email. Try again later.";
             }
@@ -153,6 +155,75 @@ namespace Fitvalle_25.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPasswordConfirm(string oobCode)
+        {
+            if (string.IsNullOrEmpty(oobCode))
+            {
+                ViewBag.Error = "Enlace inválido.";
+                return View("ResetPasswordError");
+            }
+
+            try
+            {
+                // ✅ Verificamos el oobCode con Firebase antes de mostrar la vista
+                await _authService.VerifyResetCodeAsync(oobCode);
+                ViewBag.OobCode = oobCode;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View("ResetPasswordError");
+            }
+        }
+
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPasswordConfirm(string oobCode, string newPassword, string confirmPassword)
+        {
+            // Validaciones del lado del servidor
+            if (string.IsNullOrWhiteSpace(oobCode))
+            {
+                ModelState.AddModelError("", "Código inválido.");
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(newPassword) || string.IsNullOrWhiteSpace(confirmPassword))
+            {
+                ModelState.AddModelError("", "Debes ingresar ambas contraseñas.");
+                return View();
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("", "Las contraseñas no coinciden.");
+                return View();
+            }
+
+            // Validación de complejidad (mínimo 6, mayús, minús, número, especial)
+            var regex = new System.Text.RegularExpressions.Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$");
+            if (!regex.IsMatch(newPassword))
+            {
+                ModelState.AddModelError("", "La contraseña debe tener al menos 6 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.");
+                return View();
+            }
+
+            try
+            {
+                await _authService.ConfirmResetPasswordAsync(oobCode, newPassword);
+                ViewBag.Success = "Tu contraseña ha sido restablecida correctamente.";
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View();
+            }
+        }
+
 
 
 
