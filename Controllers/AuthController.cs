@@ -230,6 +230,7 @@ namespace Fitvalle_25.Controllers
         [HttpGet]
         public IActionResult ChangePassword()
         {
+            ViewBag.RolDashboard = HttpContext.Session.GetString("UserRole");
             if (HttpContext.Session.GetString("UserRole") == "admin")
             {
                 ViewBag.Rol = "~/Views/Shared/_LayoutDashboard.cshtml";
