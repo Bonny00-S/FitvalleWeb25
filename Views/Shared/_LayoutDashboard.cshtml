@@ -49,23 +49,18 @@
                 </div>
             </div>
 
-            <!-- Usuario -->
-            <div class="flex items-center gap-3 bg-neutral-900 hover:bg-[#7e092b] px-4 py-2 rounded-xl transition duration-300 border border-[#a10d3a]/40 shadow-md">
-                <div class="flex items-center gap-3">
-                    <!-- Nombre de usuario -->
-                    <span class="text-white font-medium">@User.Identity?.Name</span>
+            <div class="flex items-center gap-4 bg-neutral-900 hover:bg-[#7e092b] px-4 py-2 rounded-xl transition duration-300 shadow-lg border border-[#a10d3a]/40">
+                <!-- Nombre de usuario -->
+                <span class="text-white font-semibold">@User.Identity?.Name</span>
 
-                    <!-- Ícono de usuario con fondo circular claro -->
-                    <div class="relative w-10 h-10 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 p-[2px]">
-                        <div class="bg-black w-full h-full rounded-full flex items-center justify-center">
-                            <img src="/images/iconUser.png" alt="Usuario"
-                                 class="w-8 h-8 rounded-full object-cover hover:scale-110 transition duration-300">
-                        </div>
-                    </div>
+                <!-- Ícono de usuario con fondo guindo -->
+                <div class="relative w-10 h-10 rounded-full bg-[#a10d3a] flex items-center justify-center shadow-md transition transform hover:scale-110 duration-300">
+                    <img src="/images/iconUser.png" alt="Usuario"
+                         class="w-8 h-8 rounded-full object-cover">
                 </div>
 
                 <!-- Botón Logout -->
-                <form asp-action="Logout" asp-controller="Auth" method="post" class="inline ml-2">
+                <form asp-action="Logout" asp-controller="Auth" method="post" class="inline ml-auto">
                     <button type="submit"
                             class="bg-[#a10d3a] hover:bg-[#8b0b32] text-white px-4 py-2 rounded-md font-semibold shadow-md
                        transition transform hover:scale-105 duration-300">
@@ -73,6 +68,8 @@
                     </button>
                 </form>
             </div>
+
+
 
         </div>
     </header>
