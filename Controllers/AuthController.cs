@@ -61,14 +61,14 @@ namespace Fitvalle_25.Controllers
                 {
                     return RedirectToAction("Dashboard", "admin");
                 }
-                else if (user.Role == "coach")
+                else if(user.Role == "coach")
                 {
                     return RedirectToAction("Dashboard", "coach");
                 }
                 else
                 {
-                    // Rol desconocido → página genérica
-                    return RedirectToAction("Perfil", "Auth");
+                    ViewBag.Error = "No estas autorizado";
+                    return RedirectToAction("Login", "Auth");
                 }
             }
             catch (Exception ex)
