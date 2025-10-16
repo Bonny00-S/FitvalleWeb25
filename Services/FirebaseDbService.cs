@@ -266,6 +266,20 @@ namespace Fitvalle_25.Services
                 PropertyNameCaseInsensitive = true
             });
         }
+        public async Task<Customer?> GetCustomerAsync(string path, string idToken)
+        {
+            var url = $"{_databaseUrl}{path}.json?auth={idToken}";
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode) return null;
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<Customer>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+
 
 
     }

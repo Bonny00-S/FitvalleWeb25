@@ -1,0 +1,60 @@
+﻿@model List<(Fitvalle_25.Models.User user, Fitvalle_25.Models.Customer customer)>
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Mis Alumnos";
+}
+
+<div class="p-6 bg-white rounded-xl shadow-md text-black animate__animated animate__fadeIn">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Mis Alumnos</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="mb-4 bg-green-100 text-green-800 px-4 py-2 rounded-lg">
+            @TempData["Message"]
+        </div>
+    }
+
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+            <thead class="bg-[#a10d3a] text-white">
+                <tr>
+                    <th class="px-4 py-2 text-left">Nombre</th>
+                    <th class="px-4 py-2 text-left">Correo</th>
+                    <th class="px-4 py-2 text-left">Altura (cm)</th>
+                    <th class="px-4 py-2 text-left">Peso actual (kg)</th>
+                    <th class="px-4 py-2 text-left">Meta (kg)</th>
+                    <th class="px-4 py-2 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var s in Model)
+                    {
+                        <tr class="hover:bg-gray-100 transition duration-200">
+                            <td class="px-4 py-2 font-semibold">@s.user.Name</td>
+                            <td class="px-4 py-2">@s.user.Email</td>
+                            <td class="px-4 py-2">@s.customer.Height</td>
+                            <td class="px-4 py-2">@s.customer.Weight</td>
+                            <td class="px-4 py-2">@s.customer.GoalWeight</td>
+                            <td class="px-4 py-2 text-center">
+                                <a asp-action="AssignRoutine" asp-route-id="@s.user.Id"
+                                   class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300">
+                                    🏋️ Asignar rutina
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="px-4 py-4 text-center text-gray-500">
+                            Aún no tienes alumnos asignados.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
