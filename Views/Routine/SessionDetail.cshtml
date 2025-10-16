@@ -1,0 +1,116 @@
+﻿@using Fitvalle_25.Models.Exercise
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Detalles de la sesión";
+
+    var exercises = ViewBag.Exercises as List<SessionExercise>;
+    var allExercises = ViewBag.AllExercises as List<Exercise>;
+}
+
+<div class="p-6 bg-white rounded-xl shadow-md text-black animate__animated animate__fadeIn">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">
+        🏋️ Ejercicios de la sesión
+    </h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="mb-4 bg-green-100 text-green-800 px-4 py-2 rounded-lg">
+            @TempData["Message"]
+        </div>
+    }
+
+    <div class="mb-4">
+        <a asp-action="Edit" asp-route-id="@Model.RoutineId"
+           class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+            ⬅ Volver a la rutina
+        </a>
+    </div>
+
+    @if (exercises != null && exercises.Any())
+    {
+        <form asp-action="UpdateSessionExercises" method="post">
+            <input type="hidden" name="sessionId" value="@Model.Id" />
+
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+                <thead class="bg-[#a10d3a] text-white">
+                    <tr>
+                        <th class="px-4 py-2">Ejercicio</th>
+                        <th class="px-4 py-2">Video</th>
+                        <th class="px-4 py-2">Series</th>
+                        <th class="px-4 py-2">Reps</th>
+                        <th class="px-4 py-2">Peso (kg)</th>
+                        <th class="px-4 py-2">Velocidad</th>
+                        <th class="px-4 py-2">Duración (min)</th>
+                        <th class="px-4 py-2 text-center">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @for (int i = 0; i < exercises.Count; i++)
+                    {
+                        var se = exercises[i];
+                        var exData = allExercises?.FirstOrDefault(e => e.Id == se.ExerciseId);
+
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-2 font-semibold">@exData?.Name</td>
+                            <td class="px-4 py-2">
+                                @if (!string.IsNullOrEmpty(exData?.ImageUrl))
+                                {
+                                    <video autoplay loop muted playsinline class="w-24 h-24 rounded-lg object-cover shadow">
+                                        <source src="@exData.ImageUrl" type="video/mp4">
+                                    </video>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-400 text-sm">Sin video</span>
+                                }
+                            </td>
+
+                            <td class="px-2 py-1 text-center">
+                                <input name="exercises[@i].Sets" value="@se.Sets" type="number" min="0"
+                                       class="border border-gray-300 rounded-lg w-16 text-center" />
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input name="exercises[@i].Reps" value="@se.Reps" type="number" min="0"
+                                       class="border border-gray-300 rounded-lg w-16 text-center" />
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input name="exercises[@i].Weight" value="@se.Weight" step="0.5" type="number" min="0"
+                                       class="border border-gray-300 rounded-lg w-20 text-center" />
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input name="exercises[@i].Speed" value="@se.Speed" step="0.1" type="number" min="0"
+                                       class="border border-gray-300 rounded-lg w-20 text-center" />
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input name="exercises[@i].Duration" value="@se.Duration" step="0.1" type="number" min="0"
+                                       class="border border-gray-300 rounded-lg w-20 text-center" />
+                            </td>
+
+                            <td class="px-4 py-2 text-center">
+                                <form asp-action="RemoveExercise" method="post" class="inline">
+                                    <input type="hidden" name="sessionId" value="@Model.Id" />
+                                    <input type="hidden" name="exerciseId" value="@se.ExerciseId" />
+                                    <button type="submit" class="text-red-600 hover:text-red-700">
+                                        🗑 Quitar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="mt-6 text-center">
+                <button type="submit"
+                        class="bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded-lg font-semibold">
+                    💾 Guardar cambios
+                </button>
+            </div>
+        </form>
+    }
+    else
+    {
+        <p class="text-gray-600">Aún no hay ejercicios asignados en esta sesión.</p>
+    }
+</div>

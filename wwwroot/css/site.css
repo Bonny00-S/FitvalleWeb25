@@ -20,3 +20,11 @@ html {
 body {
   margin-bottom: 60px;
 }
+select {
+    color: #111827 !important; /* gris oscuro */
+    background-color: #ffffff !important;
+}
+
+    select option {
+        color: #111827 !important;
+    }

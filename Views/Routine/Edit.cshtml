@@ -1,0 +1,221 @@
+﻿@model Fitvalle_25.Models.Exercise.Routine
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Asignar rutina";
+
+    var sessions = ViewBag.Sessions as List<Fitvalle_25.Models.Exercise.Session>;
+    var sessionExercises = ViewBag.SessionExercises as Dictionary<string, List<Fitvalle_25.Models.Exercise.Viewmodels.SessionExerciseViewModel>>;
+}
+
+<style>
+    select, input[type="text"], input[type="number"] {
+        color: #111827 !important;
+        background-color: #fff !important;
+    }
+
+        select option {
+            color: #111827 !important;
+        }
+</style>
+
+<div class="p-6 bg-white rounded-xl shadow-md text-black">
+    <h2 class="text-2xl font-bold mb-4">Asignar rutina al alumno</h2>
+
+    <form asp-action="AddSession" method="post" class="mb-4">
+        <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
+        <button type="submit" class="bg-[#a10d3a] text-white px-4 py-2 rounded">➕ Agregar sesión</button>
+        <p class="text-gray-500 text-sm mt-1">Máximo 6 sesiones por rutina.</p>
+    </form>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        @if (sessions != null && sessions.Any())
+        {
+            foreach (var s in sessions)
+            {
+                var list = sessionExercises.ContainsKey(s.Id!) ? sessionExercises[s.Id!] : new List<Fitvalle_25.Models.Exercise.Viewmodels.SessionExerciseViewModel>();
+
+                <div class="p-4 bg-gray-50 border rounded-xl">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-lg">Sesión</h3>
+                        <form asp-action="DeleteSession" method="post">
+                            <input type="hidden" name="routineId" value="@s.RoutineId" />
+                            <input type="hidden" name="sessionId" value="@s.Id" />
+                            <button type="submit" class="text-red-600 hover:text-red-700">🗑 Eliminar</button>
+                        </form>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-gray-500 text-sm">Ejercicios: (@list.Count / 10)</p>
+                        <button type="button" onclick="openExerciseModal('@s.Id')" class="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                            ➕ Agregar ejercicio
+                        </button>
+                    </div>
+
+                    @if (list.Any())
+                    {
+                        <form onsubmit="updateExercises(event, '@s.Id')">
+                            <table class="w-full text-sm border">
+                                <thead class="bg-[#a10d3a] text-white">
+                                    <tr>
+                                        <th>Ejercicio</th>
+                                        <th>Series</th>
+                                        <th>Reps</th>
+                                        <th>Peso</th>
+                                        <th>Velocidad</th>
+                                        <th>Duración</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var e in list)
+                                    {
+                                        <tr class="border-b">
+                                            <td class="px-2 py-1">@e.Exercise.Name</td>
+                                            <td><input type="number" name="sets" value="@e.Data.Sets" class="w-16 border rounded text-center" /></td>
+                                            <td><input type="number" name="reps" value="@e.Data.Reps" class="w-16 border rounded text-center" /></td>
+                                            <td><input type="number" step="0.1" name="weight" value="@e.Data.Weight" class="w-16 border rounded text-center" /></td>
+                                            <td><input type="number" step="0.1" name="speed" value="@e.Data.Speed" class="w-16 border rounded text-center" /></td>
+                                            <td><input type="number" step="0.1" name="duration" value="@e.Data.Duration" class="w-16 border rounded text-center" /></td>
+                                            <td>
+                                                <button type="button" onclick="removeExercise('@s.Id', '@e.Exercise.Id')" class="text-red-600 hover:text-red-700">✖</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="text-right mt-2">
+                                <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded">💾 Guardar cambios</button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="text-gray-500 text-sm">Aún no hay ejercicios.</p>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-gray-500">Aún no has agregado sesiones.</p>
+        }
+    </div>
+
+    <div class="mt-8 text-center">
+        <form asp-action="AssignRoutine" method="post">
+            <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
+            <button type="submit" class="bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded-lg font-semibold">
+                ✅ Asignar rutina
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<div id="exerciseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-3/4 max-h-[80vh] overflow-y-auto">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Seleccionar ejercicios</h3>
+
+        <div class="flex flex-wrap gap-4 mb-4">
+            <input id="searchInput" type="text" placeholder="Buscar ejercicio..." class="border border-gray-300 rounded-lg px-3 py-2 flex-1 focus:ring-2 focus:ring-[#a10d3a]" />
+            <select id="muscleFilter" class="border border-gray-300 rounded-lg px-3 py-2"><option value="">Filtrar por músculo</option></select>
+            <select id="typeFilter" class="border border-gray-300 rounded-lg px-3 py-2"><option value="">Filtrar por tipo</option></select>
+        </div>
+
+        <div id="exerciseList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <p class="col-span-full text-gray-500 text-center">Cargando ejercicios...</p>
+        </div>
+
+        <div class="mt-6 text-right">
+            <button type="button" onclick="closeExerciseModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let allExercises = [];
+    let selectedSessionId = null;
+
+    async function openExerciseModal(sessionId) {
+        selectedSessionId = sessionId;
+        document.getElementById('exerciseModal').classList.remove('hidden');
+        const res = await fetch('/Routine/GetExercises');
+        allExercises = await res.json();
+        loadFilters();
+        renderExercises(allExercises);
+    }
+
+    function closeExerciseModal() {
+        document.getElementById('exerciseModal').classList.add('hidden');
+    }
+
+    function loadFilters() {
+        const muscles = [...new Set(allExercises.map(e => e.muscle).filter(Boolean))];
+        const types = [...new Set(allExercises.map(e => e.type).filter(Boolean))];
+        const m = document.getElementById('muscleFilter'), t = document.getElementById('typeFilter');
+        m.innerHTML = '<option value="">Filtrar por músculo</option>' + muscles.map(x => `<option>${x}</option>`).join('');
+        t.innerHTML = '<option value="">Filtrar por tipo</option>' + types.map(x => `<option>${x}</option>`).join('');
+        m.onchange = t.onchange = document.getElementById('searchInput').oninput = applyFilters;
+    }
+
+    function applyFilters() {
+        const s = document.getElementById('searchInput').value.toLowerCase(),
+            m = document.getElementById('muscleFilter').value,
+            t = document.getElementById('typeFilter').value;
+        renderExercises(allExercises.filter(e =>
+            (!s || e.name.toLowerCase().includes(s)) &&
+            (!m || e.muscle === m) &&
+            (!t || e.type === t)
+        ));
+    }
+
+    function renderExercises(list) {
+        const c = document.getElementById('exerciseList');
+        c.innerHTML = list.length
+            ? list.map(e => `
+                <div class='p-3 border rounded-lg bg-gray-50 flex flex-col'>
+                    <h4 class='font-bold text-gray-800 mb-2'>${e.name}</h4>
+                    ${e.imageUrl ? `<video autoplay loop muted playsinline class='w-full h-32 rounded-lg mb-2 object-cover'><source src='${e.imageUrl}' type='video/mp4'></video>` : `<div class='h-32 bg-gray-200 rounded mb-2 flex items-center justify-center'>Sin video</div>`}
+                    <p class='text-sm text-gray-500 mb-2'>${e.muscle || ''} ${e.muscle && e.type ? '|' : ''} ${e.type || ''}</p>
+                    <button onclick="addExerciseToSession('${e.id}')" class='mt-auto bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded-md'>➕ Agregar</button>
+                </div>`).join('')
+            : `<p class='col-span-full text-gray-500 text-center'>No hay ejercicios que coincidan.</p>`;
+    }
+
+    async function addExerciseToSession(exerciseId) {
+        const fd = new FormData();
+        fd.append('routineId', '@ViewBag.RoutineId');
+        fd.append('sessionId', selectedSessionId);
+        fd.append('exerciseId', exerciseId);
+        await fetch('/Routine/AddExercise', { method: 'POST', body: fd });
+        closeExerciseModal();
+        location.reload();
+    }
+
+    async function updateExercises(e, sid) {
+        e.preventDefault();
+        const rows = e.target.querySelectorAll('tbody tr');
+        for (const row of rows) {
+            const [sets, reps, weight, speed, duration] = [...row.querySelectorAll('input')].map(i => i.value);
+            const exId = row.querySelector('button').getAttribute('onclick').match(/'(.*?)'/)[1];
+            const fd = new FormData();
+            fd.append('sessionId', sid);
+            fd.append('exerciseId', exId);
+            fd.append('sets', sets);
+            fd.append('reps', reps);
+            fd.append('weight', weight);
+            fd.append('speed', speed);
+            fd.append('duration', duration);
+            await fetch('/Routine/UpdateExerciseValues', { method: 'POST', body: fd });
+        }
+    }
+
+    async function removeExercise(sid, exid) {
+        const fd = new FormData();
+        fd.append('sessionId', sid);
+        fd.append('exerciseId', exid);
+        await fetch('/Routine/RemoveExercise', { method: 'POST', body: fd });
+        location.reload();
+    }
+</script>

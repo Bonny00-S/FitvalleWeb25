@@ -38,7 +38,7 @@
                             <td class="px-4 py-2">@s.customer.Weight</td>
                             <td class="px-4 py-2">@s.customer.GoalWeight</td>
                             <td class="px-4 py-2 text-center">
-                                <a asp-action="AssignRoutine" asp-route-id="@s.user.Id"
+                                <a asp-controller="Routine" asp-action="Create" asp-route-customerId="@s.user.Id"
                                    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300">
                                     🏋️ Asignar rutina
                                 </a>

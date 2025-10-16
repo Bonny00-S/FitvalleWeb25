@@ -279,6 +279,32 @@ namespace Fitvalle_25.Services
                 PropertyNameCaseInsensitive = true
             });
         }
+        // 🔹 Método genérico para obtener un solo objeto desde Firebase
+        public async Task<T?> GetDataAsync<T>(string path, string idToken)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("El path no puede estar vacío.", nameof(path));
+
+            if (string.IsNullOrEmpty(idToken))
+                throw new ArgumentException("El idToken no puede estar vacío.", nameof(idToken));
+
+            var url = $"{_databaseUrl}{path}.json?auth={idToken}";
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error al obtener datos de Firebase ({path}): {response.StatusCode} → {error}");
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+
 
 
 

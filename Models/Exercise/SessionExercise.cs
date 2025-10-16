@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Fitvalle_25.Models.Workout
+namespace Fitvalle_25.Models.Exercise
 {
     public class SessionExercise
     {
