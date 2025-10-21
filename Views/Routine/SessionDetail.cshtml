@@ -28,7 +28,7 @@
 
     @if (exercises != null && exercises.Any())
     {
-        <form asp-action="UpdateSessionExercises" method="post">
+        <form onsubmit="updateExercises(event, '@Model.Id')">
             <input type="hidden" name="sessionId" value="@Model.Id" />
 
             <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">

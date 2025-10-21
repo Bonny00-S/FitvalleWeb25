@@ -11,11 +11,11 @@ namespace Fitvalle_25.Models.Exercise
         public string? Id { get; set; }
 
         [JsonPropertyName("name")]
-        [Required]
+        [Required(ErrorMessage ="El nombre del ejercicio es obligatorio")]
         public string? Name { get; set; }
 
         [JsonPropertyName("description")]
-        [Required]
+        [Required(ErrorMessage ="La descripcion es obligatoria")]
         public string? Description { get; set; }
 
         [JsonPropertyName("registerDate")]
@@ -23,15 +23,15 @@ namespace Fitvalle_25.Models.Exercise
         public DateTime RegisterDate { get; set; }
 
         [JsonPropertyName("typeID")]
-        [Required]
+        [Required(ErrorMessage ="El tipo de ejercicio es obligatorio")]
         public string? TypeID { get; set; }
 
         [JsonPropertyName("muscleID")]
-        [Required]
+        [Required(ErrorMessage ="El musculo objetivo es obligatorio")]
         public string? MuscleID { get; set; }
 
         [JsonPropertyName("imageUrl")]
-        [Required]
+        [Required(ErrorMessage ="La imagen del ejercicio es obligatoria")]
         public string? ImageUrl { get; set; }
 
         [JsonIgnore]

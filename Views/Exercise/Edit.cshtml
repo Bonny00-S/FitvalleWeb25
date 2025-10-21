@@ -13,6 +13,7 @@
             <span class="block sm:inline">@ViewBag.Error</span>
         </div>
     }
+    <div asp-validation-summary="All" class="text-red-600 font-semibold mb-3"></div>
     <form asp-action="Edit" method="post" class="space-y-5">
         <input type="hidden" asp-for="Id" />
 
@@ -20,6 +21,7 @@
         <div>
             <label class="block text-gray-700 font-semibold mb-1">Nombre</label>
             <input asp-for="Name" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" />
+
         </div>
 
         <!-- Descripción -->
@@ -27,6 +29,7 @@
             <label class="block text-gray-700 font-semibold mb-1">Descripción</label>
             <textarea asp-for="Description" required rows="3"
                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none"></textarea>
+
         </div>
         <!-- Imagen -->
         <div>
@@ -34,6 +37,7 @@
             <input asp-for="ImageUrl" type="url" placeholder="https://ejemplo.com/imagen.gif"
                    value="@Model.ImageUrl"
                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" />
+
             <p class="text-sm text-gray-500 mt-1">Puedes actualizar el enlace de la imagen o dejar el actual.</p>
         </div>
         @if (!string.IsNullOrEmpty(Model?.ImageUrl))
@@ -56,6 +60,8 @@
                     </option>
                 }
             </select>
+         
+
         </div>
 
         <!-- Tipo -->
@@ -70,6 +76,8 @@
                     </option>
                 }
             </select>
+           
+
         </div>
 
         <!-- Botones -->

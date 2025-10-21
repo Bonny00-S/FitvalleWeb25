@@ -16,7 +16,7 @@ namespace Fitvalle_25.Controllers
             _dbService = dbService;
         }
 
-        // Crear rutina y redirigir a Edit
+        // ✅ Crear rutina
         public async Task<IActionResult> Create(string customerId)
         {
             var token = HttpContext.Session.GetString("FirebaseToken");
@@ -36,7 +36,7 @@ namespace Fitvalle_25.Controllers
             return RedirectToAction("Edit", new { id = routine.Id });
         }
 
-        // Editar rutina (mostrar sesiones y ejercicios dentro)
+        // ✅ Editar rutina
         public async Task<IActionResult> Edit(string id)
         {
             var token = HttpContext.Session.GetString("FirebaseToken");
@@ -47,9 +47,8 @@ namespace Fitvalle_25.Controllers
             var sessionsDict = await _dbService.GetAllAsync<Session>($"routine/{id}/sessions", token);
             var sessions = sessionsDict?.Values.ToList() ?? new List<Session>();
 
-            // Obtener ejercicios de cada sesión
-            var sessionExercises = new Dictionary<string, List<SessionExerciseViewModel>>();
             var allExercises = await _dbService.GetAllAsync<Exercise>("exercise", token);
+            var sessionExercises = new Dictionary<string, List<SessionExerciseViewModel>>();
 
             foreach (var session in sessions)
             {
@@ -60,30 +59,30 @@ namespace Fitvalle_25.Controllers
                     continue;
                 }
 
-                var joined = exDict.Values
+                sessionExercises[session.Id] = exDict.Values
                     .Select(se =>
                     {
-                        var exercise = allExercises.Values.FirstOrDefault(e => e.Id == se.ExerciseId);
-                        if (exercise == null) return null;
-                        return new SessionExerciseViewModel
-                        {
-                            Exercise = exercise,
-                            Data = se
-                        };
+                        var ex = allExercises.Values.FirstOrDefault(e => e.Id == se.ExerciseId);
+                        if (ex == null) return null;
+                        return new SessionExerciseViewModel { Exercise = ex, Data = se };
                     })
-                    .Where(x => x != null)
-                    .ToList()!;
-
-                sessionExercises[session.Id] = joined;
+                    .Where(x => x != null).ToList()!;
             }
 
+            var muscles = await _dbService.GetAllAsync<TargetMuscle>("targetMuscles", token);
+            var types = await _dbService.GetAllAsync<ExerciseType>("exerciseTypes", token);
+
+            ViewBag.Muscles = muscles?.Values.ToList() ?? new List<TargetMuscle>();
+            ViewBag.Types = types?.Values.ToList() ?? new List<ExerciseType>();
             ViewBag.RoutineId = id;
             ViewBag.Sessions = sessions;
             ViewBag.SessionExercises = sessionExercises;
+            ViewBag.IsAssignedRoutine = false;
+
             return View(routine);
         }
 
-        // Agregar nueva sesión
+        // ✅ Agregar sesión
         [HttpPost]
         public async Task<IActionResult> AddSession(string routineId)
         {
@@ -91,19 +90,18 @@ namespace Fitvalle_25.Controllers
             if (string.IsNullOrEmpty(token))
                 return RedirectToAction("Login", "Auth");
 
-            var sessionId = Guid.NewGuid().ToString();
             var session = new Session
             {
-                Id = sessionId,
+                Id = Guid.NewGuid().ToString(),
                 RoutineId = routineId,
                 RegisterDate = DateTime.UtcNow
             };
 
-            await _dbService.PatchDataAsync($"routine/{routineId}/sessions/{sessionId}", session, token);
+            await _dbService.PatchDataAsync($"routine/{routineId}/sessions/{session.Id}", session, token);
             return RedirectToAction("Edit", new { id = routineId });
         }
 
-        // Eliminar sesión (y ejercicios de ella)
+        // ✅ Eliminar sesión
         [HttpPost]
         public async Task<IActionResult> DeleteSession(string routineId, string sessionId)
         {
@@ -116,7 +114,7 @@ namespace Fitvalle_25.Controllers
             return RedirectToAction("Edit", new { id = routineId });
         }
 
-        // Agregar ejercicio a sesión
+        // ✅ Agregar ejercicio
         [HttpPost]
         public async Task<IActionResult> AddExercise(string routineId, string sessionId, string exerciseId)
         {
@@ -136,30 +134,37 @@ namespace Fitvalle_25.Controllers
             return Ok();
         }
 
-        // Actualizar valores (sets, reps, weight, etc.)
+        // ✅ Actualizar valores
         [HttpPost]
-        public async Task<IActionResult> UpdateExerciseValues(string sessionId, string exerciseId, int? sets, int? reps, double? weight, double? speed, double? duration)
+        public async Task<IActionResult> UpdateExerciseValues(
+            string sessionId, string exerciseId,
+            string sets, string reps, string weight, string speed, string duration)
         {
             var token = HttpContext.Session.GetString("FirebaseToken");
             if (string.IsNullOrEmpty(token))
                 return Unauthorized();
 
-            var update = new SessionExercise
-            {
-                SessionId = sessionId,
-                ExerciseId = exerciseId,
-                Sets = sets,
-                Reps = reps,
-                Weight = weight,
-                Speed = speed,
-                Duration = duration
-            };
+            Console.WriteLine($"📩 UpdateExerciseValues → session: {sessionId}, ex: {exerciseId}");
 
-            await _dbService.PatchDataAsync($"sessionExercises/{sessionId}/{exerciseId}", update, token);
+            var existing = await _dbService.GetDataAsync<SessionExercise>($"sessionExercises/{sessionId}/{exerciseId}", token);
+            if (existing == null)
+            {
+                Console.WriteLine($"⚠️ Ejercicio {exerciseId} no encontrado");
+                return NotFound();
+            }
+
+            if (!string.IsNullOrWhiteSpace(sets) && int.TryParse(sets, out var s)) existing.Sets = s;
+            if (!string.IsNullOrWhiteSpace(reps) && int.TryParse(reps, out var r)) existing.Reps = r;
+            if (!string.IsNullOrWhiteSpace(weight) && double.TryParse(weight, out var w)) existing.Weight = w;
+            if (!string.IsNullOrWhiteSpace(speed) && double.TryParse(speed, out var sp)) existing.Speed = sp;
+            if (!string.IsNullOrWhiteSpace(duration) && double.TryParse(duration, out var d)) existing.Duration = d;
+
+            await _dbService.PatchDataAsync($"sessionExercises/{sessionId}/{exerciseId}", existing, token);
+            Console.WriteLine($"✅ Actualizado {exerciseId} correctamente");
             return Ok();
         }
 
-        // Eliminar ejercicio
+        // ✅ Eliminar ejercicio
         [HttpPost]
         public async Task<IActionResult> RemoveExercise(string sessionId, string exerciseId)
         {
@@ -170,6 +175,62 @@ namespace Fitvalle_25.Controllers
             await _dbService.DeleteDataAsync($"sessionExercises/{sessionId}/{exerciseId}", token);
             return Ok();
         }
+
+        // ✅ Editar rutina asignada
+        public async Task<IActionResult> EditAssignedRoutine(string customerId)
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            if (string.IsNullOrEmpty(token))
+                return RedirectToAction("Login", "Auth");
+
+            var assignedDict = await _dbService.GetAllAsync<Routine>($"assignedRoutines/{customerId}", token);
+            if (assignedDict == null || assignedDict.Count == 0)
+            {
+                TempData["Error"] = "El alumno no tiene rutina asignada.";
+                return RedirectToAction("MyStudents", "Coach");
+            }
+
+            var routine = assignedDict.Values.First();
+            var routineId = assignedDict.Keys.First();
+
+            var sessionsDict = await _dbService.GetAllAsync<Session>($"assignedRoutines/{customerId}/{routineId}/sessions", token);
+            var sessions = sessionsDict?.Values.ToList() ?? new List<Session>();
+            var allExercises = await _dbService.GetAllAsync<Exercise>("exercise", token);
+            var sessionExercises = new Dictionary<string, List<SessionExerciseViewModel>>();
+
+            foreach (var session in sessions)
+            {
+                var exDict = await _dbService.GetAllAsync<SessionExercise>($"sessionExercises/{session.Id}", token);
+                if (exDict == null)
+                {
+                    sessionExercises[session.Id] = new List<SessionExerciseViewModel>();
+                    continue;
+                }
+
+                sessionExercises[session.Id] = exDict.Values
+                    .Select(se =>
+                    {
+                        var e = allExercises.Values.FirstOrDefault(x => x.Id == se.ExerciseId);
+                        return e == null ? null : new SessionExerciseViewModel { Exercise = e, Data = se };
+                    })
+                    .Where(x => x != null).ToList()!;
+            }
+
+            var muscles = await _dbService.GetAllAsync<TargetMuscle>("targetMuscles", token);
+            var types = await _dbService.GetAllAsync<ExerciseType>("exerciseTypes", token);
+
+            ViewBag.Muscles = muscles?.Values.ToList() ?? new List<TargetMuscle>();
+            ViewBag.Types = types?.Values.ToList() ?? new List<ExerciseType>();
+            ViewBag.RoutineId = routineId;
+            ViewBag.CustomerId = customerId;
+            ViewBag.Sessions = sessions;
+            ViewBag.SessionExercises = sessionExercises;
+            ViewBag.IsAssignedRoutine = true;
+
+            return View("Edit", routine);
+        }
+        // ✅ Asignar rutina al alumno (como estaba antes)
+        // ✅ Asignar rutina al alumno (con validación)
         [HttpPost]
         public async Task<IActionResult> AssignRoutine(string routineId)
         {
@@ -177,7 +238,6 @@ namespace Fitvalle_25.Controllers
             if (string.IsNullOrEmpty(token))
                 return RedirectToAction("Login", "Auth");
 
-            // 1) Obtener la rutina
             var routine = await _dbService.GetDataAsync<Routine>($"routine/{routineId}", token);
             if (routine == null)
             {
@@ -185,34 +245,41 @@ namespace Fitvalle_25.Controllers
                 return RedirectToAction("Edit", new { id = routineId });
             }
 
-            // 2) Obtener las sesiones de la rutina
             var sessionsDict = await _dbService.GetAllAsync<Session>($"routine/{routineId}/sessions", token);
-            if (sessionsDict == null || sessionsDict.Count == 0)
+            if (sessionsDict == null || sessionsDict.Count < 2)
             {
-                TempData["Error"] = "La rutina no tiene sesiones.";
+                TempData["Error"] = "⚠️ La rutina debe tener al menos 2 sesiones antes de asignarla.";
                 return RedirectToAction("Edit", new { id = routineId });
             }
 
-            // 3) Construir el payload con sesiones y sus ejercicios
-            var sessionsMap = new Dictionary<string, object>();
-
-            foreach (var sessionKvp in sessionsDict)
+            // 🔹 Validar ejercicios dentro de cada sesión
+            foreach (var session in sessionsDict.Values)
             {
-                var sessionId = sessionKvp.Key;
-                var session = sessionKvp.Value;
+                var exercisesDict = await _dbService.GetAllAsync<SessionExercise>($"sessionExercises/{session.Id}", token);
+                int count = exercisesDict?.Count ?? 0;
 
-                var exercisesDict = await _dbService.GetAllAsync<SessionExercise>($"sessionExercises/{sessionId}", token);
-                var exercisesList = exercisesDict?.Values.ToList() ?? new List<SessionExercise>(); // 👈 convertir a List
-
-                sessionsMap[sessionId] = new
+                if (count < 4)
                 {
-                    id = session.Id,
-                    registerDate = session.RegisterDate,
+                    TempData["Error"] = $"⚠️ La sesión creada el {session.RegisterDate:dd/MM/yyyy} debe tener al menos 4 ejercicios.";
+                    return RedirectToAction("Edit", new { id = routineId });
+                }
+            }
+
+            // 🔹 Si todo está bien, armar el payload
+            var sessionsMap = new Dictionary<string, object>();
+            foreach (var s in sessionsDict)
+            {
+                var exercisesDict = await _dbService.GetAllAsync<SessionExercise>($"sessionExercises/{s.Key}", token);
+                var exercisesList = exercisesDict?.Values.ToList() ?? new List<SessionExercise>();
+
+                sessionsMap[s.Key] = new
+                {
+                    id = s.Value.Id,
+                    registerDate = s.Value.RegisterDate,
                     exercises = exercisesList
                 };
             }
 
-            // 4) Payload final a guardar en assignedRoutines/{customerId}/{routineId}
             var routinePayload = new
             {
                 id = routine.Id,
@@ -222,22 +289,60 @@ namespace Fitvalle_25.Controllers
                 sessions = sessionsMap
             };
 
-            await _dbService.PatchDataAsync(
-                $"assignedRoutines/{routine.CustomerId}/{routine.Id}",
-                routinePayload,
-                token
-            );
-
-            // 5) (Opcional) marcar rutina como asignada
+            await _dbService.PatchDataAsync($"assignedRoutines/{routine.CustomerId}/{routine.Id}", routinePayload, token);
             await _dbService.PatchDataAsync($"routine/{routine.Id}", new { state = "assigned" }, token);
 
-            TempData["Message"] = "Rutina asignada correctamente ✅";
+            TempData["Message"] = "✅ Rutina asignada correctamente.";
             return RedirectToAction("MyStudents", "Coach");
         }
 
 
 
-        // Cargar ejercicios para el modal (filtros)
+        // ✅ Guardar cambios finales
+        [HttpPost]
+        public async Task<IActionResult> UpdateAssignedRoutine(string customerId, string routineId)
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            if (string.IsNullOrEmpty(token))
+                return RedirectToAction("Login", "Auth");
+
+            var sessionsDict = await _dbService.GetAllAsync<Session>($"assignedRoutines/{customerId}/{routineId}/sessions", token);
+            if (sessionsDict == null || sessionsDict.Count < 2)
+            {
+                TempData["Error"] = "⚠️ La rutina debe tener al menos 2 sesiones antes de guardar.";
+                return RedirectToAction("EditAssignedRoutine", new { customerId });
+            }
+
+            // 🔹 Validar ejercicios por sesión
+            foreach (var session in sessionsDict.Values)
+            {
+                var exercisesDict = await _dbService.GetAllAsync<SessionExercise>($"sessionExercises/{session.Id}", token);
+                int count = exercisesDict?.Count ?? 0;
+
+                if (count < 4)
+                {
+                    TempData["Error"] = $"⚠️ La sesión ({session.Id}) tiene solo {count} ejercicios. Debe tener al menos 4.";
+                    return RedirectToAction("EditAssignedRoutine", new { customerId });
+                }
+            }
+
+            // 🔹 Actualizar los ejercicios dentro de la rutina asignada
+            foreach (var s in sessionsDict)
+            {
+                var exDict = await _dbService.GetAllAsync<SessionExercise>($"sessionExercises/{s.Key}", token);
+                if (exDict == null) continue;
+
+                await _dbService.PatchDataAsync(
+                    $"assignedRoutines/{customerId}/{routineId}/sessions/{s.Key}/exercises",
+                    exDict, token);
+            }
+
+            TempData["Message"] = "✅ Cambios guardados correctamente.";
+            return RedirectToAction("MyStudents", "Coach");
+        }
+
+
+        // ✅ Catálogo
         [HttpGet]
         public async Task<IActionResult> GetExercises()
         {

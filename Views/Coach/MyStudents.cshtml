@@ -1,4 +1,4 @@
-﻿@model List<(Fitvalle_25.Models.User user, Fitvalle_25.Models.Customer customer)>
+﻿@model List<(Fitvalle_25.Models.User user, Fitvalle_25.Models.Customer customer, bool hasRoutine)>
 @{
     Layout = "~/Views/Shared/_LayoutCoach.cshtml";
     ViewData["Title"] = "Mis Alumnos";
@@ -21,7 +21,7 @@
                     <th class="px-4 py-2 text-left">Nombre</th>
                     <th class="px-4 py-2 text-left">Correo</th>
                     <th class="px-4 py-2 text-left">Altura (cm)</th>
-                    <th class="px-4 py-2 text-left">Peso actual (kg)</th>
+                    <th class="px-4 py-2 text-left">Peso (kg)</th>
                     <th class="px-4 py-2 text-left">Meta (kg)</th>
                     <th class="px-4 py-2 text-center">Acciones</th>
                 </tr>
@@ -37,11 +37,36 @@
                             <td class="px-4 py-2">@s.customer.Height</td>
                             <td class="px-4 py-2">@s.customer.Weight</td>
                             <td class="px-4 py-2">@s.customer.GoalWeight</td>
-                            <td class="px-4 py-2 text-center">
-                                <a asp-controller="Routine" asp-action="Create" asp-route-customerId="@s.user.Id"
-                                   class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300">
-                                    🏋️ Asignar rutina
+                            <td class="px-4 py-2 text-center space-x-2 whitespace-nowrap">
+                                @if (!s.hasRoutine)
+                                {
+                                    @* <a asp-action="Create" asp-controller="Routine" asp-route-customerId="@s.user.Id" *@
+                                    <a asp-action="Create" asp-controller="Routine" asp-route-customerId="@s.customer.Id"
+                                       class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300">
+                                        🏋️ Asignar rutina
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="EditAssignedRoutine" asp-controller="Routine" asp-route-customerId="@s.customer.Id"
+                                       class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300">
+                                        ✏️ Editar rutina
+                                    </a>
+                                }
+
+
+                                <form asp-action="RemoveStudent" method="post" class="inline">
+                                    <input type="hidden" name="customerId" value="@s.customer.Id" />
+                                    <button type="submit"
+                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300">
+                                        ❌ Dejar de asesorar
+                                    </button>
+                                </form>
+                                <a asp-action="StudentProgress" asp-controller="Coach" asp-route-customerId="@s.customer.Id"
+                                   class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300">
+                                    📈 Ver progreso
                                 </a>
+
                             </td>
                         </tr>
                     }

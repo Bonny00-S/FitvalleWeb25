@@ -20,13 +20,27 @@
 
 <div class="p-6 bg-white rounded-xl shadow-md text-black">
     <h2 class="text-2xl font-bold mb-4">Asignar rutina al alumno</h2>
+    @if (TempData["Error"] != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+            <strong>Error:</strong> @TempData["Error"]
+        </div>
+    }
+    @if (TempData["Message"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+            @TempData["Message"]
+        </div>
+    }
 
+    <!-- Botón para agregar sesión -->
     <form asp-action="AddSession" method="post" class="mb-4">
         <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
         <button type="submit" class="bg-[#a10d3a] text-white px-4 py-2 rounded">➕ Agregar sesión</button>
         <p class="text-gray-500 text-sm mt-1">Máximo 6 sesiones por rutina.</p>
     </form>
 
+    <!-- Mostrar sesiones -->
     <div class="grid md:grid-cols-2 gap-6">
         @if (sessions != null && sessions.Any())
         {
@@ -51,6 +65,7 @@
                         </button>
                     </div>
 
+                    <!-- Lista de ejercicios -->
                     @if (list.Any())
                     {
                         <form onsubmit="updateExercises(event, '@s.Id')">
@@ -69,7 +84,7 @@
                                 <tbody>
                                     @foreach (var e in list)
                                     {
-                                        <tr class="border-b">
+                                        <tr class="border-b" data-exercise-id="@e.Exercise.Id">
                                             <td class="px-2 py-1">@e.Exercise.Name</td>
                                             <td><input type="number" name="sets" value="@e.Data.Sets" class="w-16 border rounded text-center" /></td>
                                             <td><input type="number" name="reps" value="@e.Data.Reps" class="w-16 border rounded text-center" /></td>
@@ -78,6 +93,7 @@
                                             <td><input type="number" step="0.1" name="duration" value="@e.Data.Duration" class="w-16 border rounded text-center" /></td>
                                             <td>
                                                 <button type="button" onclick="removeExercise('@s.Id', '@e.Exercise.Id')" class="text-red-600 hover:text-red-700">✖</button>
+
                                             </td>
                                         </tr>
                                     }
@@ -101,49 +117,84 @@
         }
     </div>
 
+    <!-- ✅ BOTÓN FINAL -->
     <div class="mt-8 text-center">
-        <form asp-action="AssignRoutine" method="post">
-            <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
-            <button type="submit" class="bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded-lg font-semibold">
-                ✅ Asignar rutina
-            </button>
-        </form>
+        @if (ViewBag.IsAssignedRoutine == true)
+        {
+            <form asp-action="UpdateAssignedRoutine" asp-controller="Routine" method="post">
+                <input type="hidden" name="customerId" value="@ViewBag.CustomerId" />
+                <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
+                <button type="submit"
+                        class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-lg font-semibold">
+                    💾 Guardar cambios
+                </button>
+            </form>
+        }
+        else
+        {
+            <form asp-action="AssignRoutine" asp-controller="Routine" method="post">
+                <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
+                <button type="submit"
+                        class="bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded-lg font-semibold">
+                    ✅ Asignar rutina
+                </button>
+            </form>
+        }
     </div>
-
 </div>
 
-<!-- MODAL -->
+<!-- 🔹 MODAL DE EJERCICIOS -->
+<!-- 🔹 MODAL DE EJERCICIOS -->
 <div id="exerciseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
     <div class="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-3/4 max-h-[80vh] overflow-y-auto">
         <h3 class="text-xl font-bold mb-4 text-gray-800">Seleccionar ejercicios</h3>
 
         <div class="flex flex-wrap gap-4 mb-4">
-            <input id="searchInput" type="text" placeholder="Buscar ejercicio..." class="border border-gray-300 rounded-lg px-3 py-2 flex-1 focus:ring-2 focus:ring-[#a10d3a]" />
-            <select id="muscleFilter" class="border border-gray-300 rounded-lg px-3 py-2"><option value="">Filtrar por músculo</option></select>
-            <select id="typeFilter" class="border border-gray-300 rounded-lg px-3 py-2"><option value="">Filtrar por tipo</option></select>
+            <input id="searchInput" type="text" placeholder="Buscar ejercicio..."
+                   class="border border-gray-300 rounded-lg px-3 py-2 flex-1 focus:ring-2 focus:ring-[#a10d3a]" />
+            <select id="muscleFilter" class="border border-gray-300 rounded-lg px-3 py-2">
+                <option value="">Filtrar por músculo</option>
+            </select>
+            <select id="typeFilter" class="border border-gray-300 rounded-lg px-3 py-2">
+                <option value="">Filtrar por tipo</option>
+            </select>
         </div>
 
         <div id="exerciseList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <p class="col-span-full text-gray-500 text-center">Cargando ejercicios...</p>
         </div>
 
+        <!-- 🔸 Controles de paginación -->
+        <div id="paginationControls" class="flex justify-center gap-3 mt-4"></div>
+
         <div class="mt-6 text-right">
-            <button type="button" onclick="closeExerciseModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">Cerrar</button>
+            <button type="button" onclick="closeExerciseModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                Cerrar
+            </button>
         </div>
     </div>
 </div>
 
+
 <script>
-    let allExercises = [];
+        let allExercises = [];
+    let filteredExercises = [];
     let selectedSessionId = null;
+    let currentPage = 1;
+    const itemsPerPage = 9;
 
     async function openExerciseModal(sessionId) {
         selectedSessionId = sessionId;
         document.getElementById('exerciseModal').classList.remove('hidden');
-        const res = await fetch('/Routine/GetExercises');
-        allExercises = await res.json();
-        loadFilters();
-        renderExercises(allExercises);
+
+        if (allExercises.length === 0) {
+            const res = await fetch('/Routine/GetExercises');
+            allExercises = await res.json();
+            loadFilters();
+        }
+
+        filteredExercises = [...allExercises];
+        renderExercisesPage();
     }
 
     function closeExerciseModal() {
@@ -153,7 +204,8 @@
     function loadFilters() {
         const muscles = [...new Set(allExercises.map(e => e.muscle).filter(Boolean))];
         const types = [...new Set(allExercises.map(e => e.type).filter(Boolean))];
-        const m = document.getElementById('muscleFilter'), t = document.getElementById('typeFilter');
+        const m = document.getElementById('muscleFilter'),
+              t = document.getElementById('typeFilter');
         m.innerHTML = '<option value="">Filtrar por músculo</option>' + muscles.map(x => `<option>${x}</option>`).join('');
         t.innerHTML = '<option value="">Filtrar por tipo</option>' + types.map(x => `<option>${x}</option>`).join('');
         m.onchange = t.onchange = document.getElementById('searchInput').oninput = applyFilters;
@@ -161,13 +213,25 @@
 
     function applyFilters() {
         const s = document.getElementById('searchInput').value.toLowerCase(),
-            m = document.getElementById('muscleFilter').value,
-            t = document.getElementById('typeFilter').value;
-        renderExercises(allExercises.filter(e =>
+              m = document.getElementById('muscleFilter').value,
+              t = document.getElementById('typeFilter').value;
+
+        filteredExercises = allExercises.filter(e =>
             (!s || e.name.toLowerCase().includes(s)) &&
             (!m || e.muscle === m) &&
             (!t || e.type === t)
-        ));
+        );
+
+        currentPage = 1;
+        renderExercisesPage();
+    }
+
+    function renderExercisesPage() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = filteredExercises.slice(start, end);
+        renderExercises(pageItems);
+        renderPagination();
     }
 
     function renderExercises(list) {
@@ -183,6 +247,27 @@
             : `<p class='col-span-full text-gray-500 text-center'>No hay ejercicios que coincidan.</p>`;
     }
 
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredExercises.length / itemsPerPage);
+        const container = document.getElementById('paginationControls');
+        if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
+        }
+
+        let buttons = '';
+        for (let i = 1; i <= totalPages; i++) {
+            buttons += `<button class="px-3 py-1 rounded ${i === currentPage ? 'bg-[#a10d3a] text-white' : 'bg-gray-200 hover:bg-gray-300'}"
+                            onclick="changePage(${i})">${i}</button>`;
+        }
+        container.innerHTML = buttons;
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        renderExercisesPage();
+    }
+
     async function addExerciseToSession(exerciseId) {
         const fd = new FormData();
         fd.append('routineId', '@ViewBag.RoutineId');
@@ -193,12 +278,23 @@
         location.reload();
     }
 
-    async function updateExercises(e, sid) {
+
+    async function addExerciseToSession(exerciseId) {
+        const fd = new FormData();
+        fd.append('routineId', '@ViewBag.RoutineId');
+        fd.append('sessionId', selectedSessionId);
+        fd.append('exerciseId', exerciseId);
+        await fetch('/Routine/AddExercise', { method: 'POST', body: fd });
+        closeExerciseModal();
+        location.reload();
+    }
+
+        async function updateExercises(e, sid) {
         e.preventDefault();
         const rows = e.target.querySelectorAll('tbody tr');
         for (const row of rows) {
             const [sets, reps, weight, speed, duration] = [...row.querySelectorAll('input')].map(i => i.value);
-            const exId = row.querySelector('button').getAttribute('onclick').match(/'(.*?)'/)[1];
+            const exId = row.dataset.exerciseId;
             const fd = new FormData();
             fd.append('sessionId', sid);
             fd.append('exerciseId', exId);
@@ -207,9 +303,11 @@
             fd.append('weight', weight);
             fd.append('speed', speed);
             fd.append('duration', duration);
-            await fetch('/Routine/UpdateExerciseValues', { method: 'POST', body: fd });
+            const res = await fetch('/Routine/UpdateExerciseValues', { method: 'POST', body: fd });
+            console.log(`UpdateExerciseValues (${exId}) → ${res.status}`);
         }
     }
+
 
     async function removeExercise(sid, exid) {
         const fd = new FormData();
