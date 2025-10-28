@@ -1,60 +1,69 @@
 ﻿@model Dictionary<string, Fitvalle_25.Models.User>
 @{
     Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
-    ViewData["Title"] = "AdminUsers";
+    ViewData["Title"] = "Registrar Usuario";
 }
 
-<div class="bg-white rounded-xl shadow-md p-8 max-w-lg mx-auto text-black">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Registrar Usuario</h2>
+<div class="card-fitvalle max-w-lg mx-auto p-10 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-[var(--color-text-primary)] animate__animated animate__fadeIn">
 
-    <form asp-action="Register" method="post" class="space-y-5">
+    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins]">
+        🧾 Registrar nuevo usuario
+    </h2>
+
+    <form asp-action="Register" method="post" class="space-y-6">
         <!-- Email -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Correo</label>
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Correo electrónico</label>
             <div class="relative">
-                <input type="email" name="email" required
-                       value="@ViewBag.PreservedEmail"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" />
-                <i class="fa fa-envelope absolute left-3 top-3 text-gray-400"></i>
+                <i class="fa-solid fa-envelope absolute left-3 top-3 text-gray-400"></i>
+                <input type="email" name="email" required value="@ViewBag.PreservedEmail"
+                       class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
             </div>
         </div>
 
-        <!-- Password -->
+        <!-- Contraseña -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Contraseña</label>
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Contraseña</label>
             <div class="relative">
-                <input type="password" name="password" required
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" value="@ViewBag.PreservedPassword" />
-                <i class="fa fa-lock absolute left-3 top-3 text-gray-400"></i>
+                <i class="fa-solid fa-lock absolute left-3 top-3 text-gray-400"></i>
+                <input type="password" name="password" required value="@ViewBag.PreservedPassword"
+                       class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
             </div>
         </div>
 
         <!-- Nombre -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Nombre</label>
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Nombre completo</label>
             <div class="relative">
-                <input type="text" name="name" required
-                       value="@ViewBag.PreservedName"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none" />
-                <i class="fa fa-user absolute left-3 top-3 text-gray-400"></i>
+                <i class="fa-solid fa-user absolute left-3 top-3 text-gray-400"></i>
+                <input type="text" name="name" required value="@ViewBag.PreservedName"
+                       class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
             </div>
         </div>
 
         <!-- Rol -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Rol</label>
-            <select name="role"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a] focus:outline-none">
-                <option value="admin" selected='@(ViewBag.PreservedRole == "admin")'>Admin</option>
-                <option value="coach" selected='@(ViewBag.PreservedRole == "coach")'>Coach</option>
-            </select>
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Rol</label>
+            <div class="relative">
+                <i class="fa-solid fa-id-badge absolute left-3 top-3 text-gray-400"></i>
+                <select name="role"
+                        class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none transition">
+                    <option value="admin" selected='@(ViewBag.PreservedRole == "admin")'>Administrador</option>
+                    <option value="coach" selected='@(ViewBag.PreservedRole == "coach")'>Coach</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Botón -->
-        <div class="text-center">
+        <!-- Botones -->
+        <div class="flex justify-between items-center pt-4">
+            <a asp-action="ManageUsers" asp-controller="Admin"
+               class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Volver
+            </a>
+
             <button type="submit"
-                    class="bg-[#a10d3a] text-white font-bold px-6 py-2 rounded-full hover:bg-[#870a2f] transition duration-300">
-                Registrar
+                    class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-user-plus"></i> Registrar
             </button>
         </div>
     </form>
@@ -62,10 +71,14 @@
     <!-- Mensajes -->
     @if (TempData["Message"] != null)
     {
-        <p class="mt-4 text-center text-green-600 font-semibold">@TempData["Message"]</p>
+        <div class="mt-6 bg-emerald-900/30 border border-emerald-600 text-emerald-300 px-4 py-2 rounded-lg text-center font-semibold">
+            @TempData["Message"]
+        </div>
     }
     else if (ViewBag.Error != null)
     {
-        <p class="mt-4 text-center text-red-600 font-semibold">@ViewBag.Error</p>
+        <div class="mt-6 bg-red-900/40 border border-red-700 text-red-300 px-4 py-2 rounded-lg text-center font-semibold">
+            @ViewBag.Error
+        </div>
     }
 </div>

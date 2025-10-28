@@ -1,61 +1,72 @@
 ﻿@model Dictionary<string, Fitvalle_25.Models.User>
 @{
     Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
-    ViewData["Title"] = "AdminUsers";
+    ViewData["Title"] = "Usuarios";
 }
 
-<div class="p-6 bg-white rounded-xl shadow-md animate__animated animate__fadeIn text-black">
-    <div class="flex justify-between items-center mb-6 text-black">
-        <h2 class="text-2xl font-bold text-gray-800">Usuarios</h2>
+<div class="card-fitvalle p-8 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-[var(--color-text-primary)] animate__animated animate__fadeIn">
+
+    <!-- Encabezado -->
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-[var(--color-primary)] font-[Poppins]">
+            👥 Usuarios del sistema
+        </h2>
+
         <a asp-action="Register"
-           class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition duration-300 animate__animated animate__bounceIn">
-            ➕ Registrar Usuario
+           class="bg-[var(--color-success)] hover:bg-emerald-600 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition duration-300 flex items-center gap-2">
+            <i class="fa-solid fa-user-plus"></i> Registrar Usuario
         </a>
     </div>
 
-    <div class="overflow-x-auto text-black">
-        <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
-            <thead class="bg-[#a10d3a] text-white">
+    <!-- Tabla -->
+    <div class="overflow-x-auto rounded-xl border border-[var(--color-primary)]/20 shadow-lg">
+        <table class="w-full text-sm text-left font-[Poppins]">
+            <thead class="bg-[var(--color-primary)] text-white uppercase tracking-wide text-xs">
                 <tr>
-                    <th class="px-4 py-2 text-left">Nombre</th>
-                    <th class="px-4 py-2 text-left">Email</th>
-                    <th class="px-4 py-2 text-left">Rol</th>
-                    <th class="px-4 py-2 text-left">Fecha Registro</th>
-                    <th class="px-4 py-2 text-left">Estado</th>
-                    <th class="px-4 py-2 text-center">Acciones</th>
+                    <th class="px-4 py-3">Nombre</th>
+                    <th class="px-4 py-3">Email</th>
+                    <th class="px-4 py-3">Rol</th>
+                    <th class="px-4 py-3">Registro</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3 text-center">Acciones</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200 text-black">
+
+            <tbody class="divide-y divide-[var(--color-primary)]/20 bg-[var(--color-background)] text-[var(--color-text-secondary)]">
                 @if (Model != null && Model.Any())
                 {
                     foreach (var user in Model)
                     {
-                        <tr class="hover:bg-gray-100 transition duration-200 animate__animated animate__fadeInUp">
-                            <td class="px-4 py-2">@user.Value.Name</td>
-                            <td class="px-4 py-2">@user.Value.Email</td>
-                            <td class="px-4 py-2 capitalize">@user.Value.Role</td>
-                            <td class="px-4 py-2">@user.Value.RegisterDate</td>
-                            <td class="px-4 py-2">
+                        <tr class="hover:bg-[var(--color-primary-hover)]/10 transition duration-300">
+                            <td class="px-4 py-3 font-medium text-[var(--color-text-primary)]">@user.Value.Name</td>
+                            <td class="px-4 py-3">@user.Value.Email</td>
+                            <td class="px-4 py-3 capitalize">@user.Value.Role</td>
+                            <td class="px-4 py-3">@user.Value.RegisterDate</td>
+                            <td class="px-4 py-3">
                                 @if (user.Value.State == 1)
                                 {
-                                    <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">Activo</span>
+                                    <span class="px-2 py-1 text-xs font-semibold text-emerald-300 bg-emerald-900/30 rounded-full border border-emerald-600/30">
+                                        Activo
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-200 rounded-full">Inactivo</span>
+                                    <span class="px-2 py-1 text-xs font-semibold text-red-300 bg-red-900/30 rounded-full border border-red-600/30">
+                                        Inactivo
+                                    </span>
                                 }
                             </td>
-                            <td class="px-4 py-2 text-center space-x-2">
+
+                            <td class="px-4 py-3 text-center space-x-2">
                                 <a asp-action="Edit" asp-route-uid="@user.Key"
-                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300 animate__animated animate__fadeInLeft">
-                                    ✏️ Editar
+                                   class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-xs font-semibold shadow transition duration-300">
+                                    <i class="fa-solid fa-pen-to-square"></i> Editar
                                 </a>
 
-                                <!-- Botón para abrir modal -->
                                 <button type="button"
                                         onclick="openDeleteModal('@user.Key')"
-                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm shadow transition duration-300 animate__animated animate__fadeInRight">
-                                    🗑️ Eliminar
+                                        class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-xs font-semibold shadow transition duration-300">
+                                    <i class="fa-solid fa-trash"></i> Eliminar
                                 </button>
                             </td>
                         </tr>
@@ -64,7 +75,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="6" class="px-4 py-4 text-center text-gray-500 animate__animated animate__fadeIn">
+                        <td colspan="6" class="text-center py-6 text-[var(--color-text-secondary)] italic">
                             No hay usuarios registrados.
                         </td>
                     </tr>
@@ -74,11 +85,15 @@
     </div>
 </div>
 
-<!-- Modal de confirmación -->
-<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white rounded-xl shadow-lg p-6 w-96 animate__animated animate__fadeIn">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">¿Eliminar usuario?</h3>
-        <p class="text-gray-600 mb-6">Esta acción no se puede deshacer.</p>
+<!-- 🔸 MODAL DE CONFIRMACIÓN -->
+<div id="deleteModal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
+    <div class="bg-[var(--color-surface)] rounded-xl shadow-2xl border border-[var(--color-primary)]/30 p-8 w-[24rem] animate__animated animate__fadeIn">
+        <h3 class="text-xl font-bold text-[var(--color-primary)] mb-3">
+            ⚠️ Confirmar eliminación
+        </h3>
+        <p class="text-[var(--color-text-secondary)] mb-6 text-sm">
+            ¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.
+        </p>
 
         <form id="deleteForm" method="post" asp-action="DeleteUser">
             <input type="hidden" name="uid" id="deleteUid" />
@@ -86,13 +101,13 @@
             <div class="flex justify-end space-x-3">
                 <button type="button"
                         onclick="closeDeleteModal()"
-                        class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg shadow">
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md font-semibold transition">
                     Cancelar
                 </button>
 
                 <button type="submit"
-                        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow">
-                    Confirmar
+                        class="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-md font-semibold shadow">
+                    Eliminar
                 </button>
             </div>
         </form>

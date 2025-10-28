@@ -3,135 +3,78 @@
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - FITVALLE</title>
-    <!-- Favicon para mayoría de navegadores -->
+
+    <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="/images/LogoFITNESS.jpeg">
-    <!-- TailwindCSS -->
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-900 text-white h-screen flex flex-col">
 
-    <header class="bg-[#000000] flex justify-between items-center px-6 py-3 shadow text-white">
-        <!-- LOGO -->
-        <div class="flex items-center gap-3 hover:scale-105 transition duration-300 cursor-pointer">
-            <img src="/images/LogoFITNESS.jpeg" alt="Logo" class="w-10 h-10 rounded-full">
-            <span class="text-lg font-bold">FITVALLE-ADMIN</span>
+    <!-- Tema Fitvalle -->
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+
+<body class="bg-[var(--color-background)] text-[var(--color-text-primary)] min-h-screen flex flex-col font-[Poppins]">
+
+    <!-- HEADER -->
+    <header class="header-fitvalle flex justify-between items-center px-6 py-4 shadow-lg">
+        <div class="flex items-center gap-3">
+            <img src="/images/LogoFITNESS.jpeg" alt="Logo" class="w-10 h-10 rounded-full border-2 border-[var(--color-primary)]">
+            <span class="text-xl font-[Poppins] font-bold tracking-wide">FITVALLE ADMIN</span>
         </div>
 
-        <!-- Íconos -->
-        <div class="flex items-center gap-6 relative">
-            <!-- Notificaciones -->
-            <i class="fa fa-bell cursor-pointer hover:text-yellow-400 transition duration-300"></i>
+        <div class="flex items-center gap-6">
+            <i class="fa-solid fa-bell text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i>
 
-            <!-- Configuración con menú -->
-            <div class="relative">
-                <i id="configIcon" class="fa fa-cog cursor-pointer hover:text-yellow-400 transition duration-500"></i>
-
-                <!-- Menú desplegable -->
-                <div id="configMenu"
-                     class="hidden absolute right-0 mt-2 w-44 bg-white text-black rounded-md shadow-lg z-50">
-                    <ul class="py-2">
-                        <li>
-                            <a href=""
-                               class="block px-4 py-2 hover:bg-gray-100 transition duration-200">
-                                Ver perfil
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-action="ChangePassword" asp-controller="Auth"
-                               class="block px-4 py-2 hover:bg-gray-100 transition duration-200">
-                                Cambiar contraseña
-                            </a>
-                        </li>
+            <div class="relative group">
+                <i class="fa-solid fa-gear text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i>
+                <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-[var(--color-surface)] text-white rounded-lg shadow-lg z-50 border border-[var(--color-primary)]/40">
+                    <ul class="py-2 text-sm">
+                        <li><a href="#" class="block px-4 py-2 hover:bg-[var(--color-primary)] transition">Ver perfil</a></li>
+                        <li><a asp-action="ChangePassword" asp-controller="Auth" class="block px-4 py-2 hover:bg-[var(--color-primary)] transition">Cambiar contraseña</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 bg-neutral-900 hover:bg-[#7e092b] px-4 py-2 rounded-xl transition duration-300 shadow-lg border border-[#a10d3a]/40">
-                <!-- Nombre de usuario -->
-                <span class="text-white font-semibold">@User.Identity?.Name</span>
-
-                <!-- Ícono de usuario con fondo guindo -->
-                <div class="relative w-10 h-10 rounded-full bg-[#a10d3a] flex items-center justify-center shadow-md transition transform hover:scale-110 duration-300">
-                    <img src="/images/iconUser.png" alt="Usuario"
-                         class="w-8 h-8 rounded-full object-cover">
+            <div class="flex items-center gap-3 bg-[var(--color-surface)] px-4 py-2 rounded-xl border border-[var(--color-primary)]/40 shadow-md">
+                <span class="font-semibold">@User.Identity?.Name</span>
+                <div class="w-10 h-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center overflow-hidden">
+                    <img src="/images/iconUser.png" alt="Usuario" class="w-8 h-8 object-cover">
                 </div>
-
-                <!-- Botón Logout -->
-                <form asp-action="Logout" asp-controller="Auth" method="post" class="inline ml-auto">
-                    <button type="submit"
-                            class="bg-[#a10d3a] hover:bg-[#8b0b32] text-white px-4 py-2 rounded-md font-semibold shadow-md
-                       transition transform hover:scale-105 duration-300">
-                        Cerrar sesión
-                    </button>
+                <form asp-action="Logout" asp-controller="Auth" method="post">
+                    <button type="submit" class="btn-primary">Cerrar sesión</button>
                 </form>
             </div>
-
-
-
         </div>
     </header>
-    <script>
-        const configIcon = document.getElementById("configIcon");
-        const configMenu = document.getElementById("configMenu");
 
-        configIcon.addEventListener("click", () => {
-            configMenu.classList.toggle("hidden");
-        });
-
-        // Cierra el menú si se hace clic fuera
-        document.addEventListener("click", (e) => {
-            if (!configMenu.contains(e.target) && !configIcon.contains(e.target)) {
-                configMenu.classList.add("hidden");
-            }
-        });
-    </script>
-
-    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- CONTENIDO PRINCIPAL -->
     <div class="flex flex-1">
 
         <!-- SIDEBAR -->
-        <aside class="w-60 bg-white text-black shadow-lg flex flex-col">
-            <nav class="flex-1">
-                <ul class="space-y-2 p-4">
-                    <li>
-                        <a asp-action="Dashboard" asp-controller="Admin"
-                           class="flex items-center justify-between px-2 py-2 rounded hover:bg-gray-200
-                                  transition duration-300 hover:translate-x-1">
-                            <span class="flex items-center gap-2">
-                                <i class="fa fa-home"></i> Inicio
-                            </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-action="ManageUsers" asp-controller="Admin"
-                           class="flex items-center justify-between px-2 py-2 rounded hover:bg-gray-200
-                                  transition duration-300 hover:translate-x-1">
-                            <span class="flex items-center gap-2">
-                                <i class="fa fa-users"></i> Administrar Usuarios
-                            </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-action="Index" asp-controller="Exercise"
-                           class="flex items-center justify-between px-2 py-2 rounded hover:bg-gray-200
-                                  transition duration-300 hover:translate-x-1">
-                            <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-dumbbell"></i> Administrar Ejercicios
-                            </span>
-                        </a>
-                    </li>
-                </ul>
+        <aside class="sidebar-fitvalle w-64 p-4 shadow-xl border-r border-[var(--color-primary)]/20">
+            <nav class="space-y-2">
+                <a asp-action="Dashboard" asp-controller="Admin" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[var(--color-primary)]/20 transition">
+                    <i class="fa-solid fa-house text-[var(--color-primary)]"></i> <span>Inicio</span>
+                </a>
+                <a asp-action="ManageUsers" asp-controller="Admin" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[var(--color-primary)]/20 transition">
+                    <i class="fa-solid fa-users-gear text-[var(--color-primary)]"></i> <span>Administrar Usuarios</span>
+                </a>
+                <a asp-action="Index" asp-controller="Exercise" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[var(--color-primary)]/20 transition">
+                    <i class="fa-solid fa-dumbbell text-[var(--color-primary)]"></i> <span>Administrar Ejercicios</span>
+                </a>
             </nav>
         </aside>
 
-        <!-- CONTENIDO DINÁMICO -->
-        <main class="flex-1 bg-[#a10d3a] p-6">
+        <!-- MAIN -->
+        <main class="flex-1 p-8 bg-[var(--color-background)]">
             @RenderBody()
         </main>
     </div>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

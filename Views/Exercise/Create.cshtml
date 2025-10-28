@@ -4,81 +4,99 @@
     ViewData["Title"] = "Nuevo Ejercicio";
 }
 
-<div class="bg-white rounded-xl shadow-md p-8 max-w-lg mx-auto text-black">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Registrar Ejercicio</h2>
+<div class="card-fitvalle max-w-xl mx-auto p-10 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-[var(--color-text-primary)] animate__animated animate__fadeIn">
+
+    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins]">
+        🏋️ Registrar nuevo ejercicio
+    </h2>
+
     @if (ViewBag.Error != null)
     {
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-            <strong class="font-bold">Error:</strong>
-            <span class="block sm:inline">@ViewBag.Error</span>
+        <div class="bg-red-900/40 border border-red-700 text-red-300 px-4 py-2 rounded-lg mb-4 text-center">
+            <strong>Error:</strong> @ViewBag.Error
         </div>
     }
-    <div asp-validation-summary="All" class="text-red-600 font-semibold mb-3"></div>
 
-    <form asp-action="Create" method="post" class="space-y-5">
-        <!-- Nombre -->
+    <div asp-validation-summary="All" class="text-red-400 font-semibold mb-3"></div>
+
+    <form asp-action="Create" method="post" class="space-y-6">
+
+        <!-- 🏷️ Nombre -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Nombre</label>
-            <input asp-for="Name" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a]" />
-            
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Nombre</label>
+            <div class="relative">
+                <i class="fa-solid fa-dumbbell absolute left-3 top-3 text-gray-400"></i>
+                <input asp-for="Name" required
+                       class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
+            </div>
         </div>
 
+        <!-- 📝 Descripción -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Descripción</label>
-            <textarea asp-for="Description" rows="3"
-                      class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a]"></textarea>
-        
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Descripción</label>
+            <textarea asp-for="Description" required rows="3"
+                      class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"></textarea>
         </div>
 
+        <!-- 🖼️ Imagen o Video -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Imagen o GIF (URL)</label>
-            <input asp-for="ImageUrl" type="url" placeholder="https://ejemplo.com/imagen.gif"
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a]" />
-           
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Video o GIF (URL)</label>
+            <div class="relative">
+                <i class="fa-solid fa-link absolute left-3 top-3 text-gray-400"></i>
+                <input asp-for="ImageUrl" type="url" placeholder="https://ejemplo.com/video.mp4"
+                       class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
+            </div>
+            <p class="text-xs text-gray-400 mt-1">Puedes ingresar un enlace a un video o GIF demostrativo.</p>
         </div>
 
+        <!-- 💪 Músculo objetivo -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Músculo objetivo</label>
-            <select asp-for="MuscleID"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a]">
-                <option value="">Seleccione un músculo</option>
-                @foreach (var m in ViewBag.Muscles as List<Fitvalle_25.Models.Exercise.TargetMuscle>)
-                {
-                    <option value="@m.Id">@m.Name</option>
-                }
-            </select>
-         
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Músculo objetivo</label>
+            <div class="relative">
+                <i class="fa-solid fa-person-running absolute left-3 top-3 text-gray-400"></i>
+                <select asp-for="MuscleID" required
+                        class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none transition">
+                    <option value="">Seleccione un músculo</option>
+                    @foreach (var m in ViewBag.Muscles as List<Fitvalle_25.Models.Exercise.TargetMuscle>)
+                    {
+                        <option value="@m.Id">@m.Name</option>
+                    }
+                </select>
+            </div>
         </div>
 
+        <!-- ⚙️ Tipo de ejercicio -->
         <div>
-            <label class="block text-gray-700 font-semibold mb-1">Tipo de ejercicio</label>
-            <select asp-for="TypeID"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#a10d3a]">
-                <option value="">Seleccione un tipo</option>
-                @foreach (var t in ViewBag.Types as List<Fitvalle_25.Models.Exercise.ExerciseType>)
-                {
-                    <option value="@t.Id">@t.Name</option>
-                }
-            </select>
-            
+            <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Tipo de ejercicio</label>
+            <div class="relative">
+                <i class="fa-solid fa-layer-group absolute left-3 top-3 text-gray-400"></i>
+                <select asp-for="TypeID" required
+                        class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none transition">
+                    <option value="">Seleccione un tipo</option>
+                    @foreach (var t in ViewBag.Types as List<Fitvalle_25.Models.Exercise.ExerciseType>)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                </select>
+            </div>
         </div>
 
-
-        <!-- Botones -->
-        <div class="flex justify-between items-center mt-6">
+        <!-- 🔘 Botones -->
+        <div class="flex justify-between items-center pt-4">
             <a asp-action="Index"
-               class="bg-gray-500 hover:bg-gray-600 text-white font-bold px-6 py-2 rounded-full transition duration-300">
-                ⬅ Volver
+               class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Volver
             </a>
+
             <button type="submit"
-                    class="bg-[#a10d3a] hover:bg-[#870a2f] text-white font-bold px-6 py-2 rounded-full transition duration-300">
-                💾 Guardar
+                    class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar
             </button>
         </div>
 
         @if (ViewBag.Error != null)
         {
-            <div class="bg-red-100 text-red-700 px-4 py-2 rounded-lg mb-4 mt-4">
+            <div class="mt-4 bg-red-900/40 border border-red-700 text-red-300 px-4 py-2 rounded-lg text-center font-semibold">
                 @ViewBag.Error
             </div>
         }

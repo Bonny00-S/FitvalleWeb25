@@ -5,20 +5,21 @@
     var anio = DateTime.Now.Year;
 }
 
-<div class="bg-white rounded-xl shadow-md p-8 text-center text-black">
-    <h1 class="text-3xl font-bold mb-4">
-        👋 Bienvenido Admin <span class="text-[#a10d3a]">@User.Identity?.Name</span>
+<div class="card-fitvalle max-w-3xl mx-auto p-10 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-center animate__animated animate__fadeIn">
+    <h1 class="text-4xl font-bold mb-4 text-[var(--color-text-primary)] font-[Poppins]">
+        👋 Bienvenido, <span class="text-[var(--color-primary)]">@User.Identity?.Name</span>
     </h1>
 
-    <p class="text-xl font-semibold mb-2">
-        Plataforma <span class="text-[#a10d3a]">Fitvalle</span>
+    <p class="text-xl font-semibold mb-3 text-[var(--color-text-secondary)]">
+        Plataforma <span class="text-[var(--color-primary)]">Fitvalle</span>
     </p>
 
-    <p class="text-lg text-gray-700">
-        📅 Fecha actual: <span class="font-bold">@fecha</span>
-    </p>
-
-    <p class="text-lg text-gray-700">
-        © @anio - Fitvalle
-    </p>
+    <div class="mt-6 bg-[var(--color-background)]/60 border border-[var(--color-primary)]/30 rounded-lg py-4 px-6 shadow-inner inline-block">
+        <p class="text-lg text-[var(--color-text-secondary)] mb-1">
+            📅 Fecha actual: <span class="text-[var(--color-text-primary)] font-semibold">@fecha</span>
+        </p>
+        <p class="text-lg text-[var(--color-text-secondary)]">
+            © @anio - <span class="text-[var(--color-primary)] font-semibold">Fitvalle</span>
+        </p>
+    </div>
 </div>

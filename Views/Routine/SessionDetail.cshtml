@@ -7,32 +7,32 @@
     var allExercises = ViewBag.AllExercises as List<Exercise>;
 }
 
-<div class="p-6 bg-white rounded-xl shadow-md text-black animate__animated animate__fadeIn">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">
+<div class="card-fitvalle p-8 animate__animated animate__fadeIn max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins]">
         🏋️ Ejercicios de la sesión
     </h2>
 
     @if (TempData["Message"] != null)
     {
-        <div class="mb-4 bg-green-100 text-green-800 px-4 py-2 rounded-lg">
+        <div class="mb-4 bg-emerald-900/30 border border-emerald-600 text-emerald-300 px-4 py-3 rounded text-center">
             @TempData["Message"]
         </div>
     }
 
-    <div class="mb-4">
+    <div class="mb-6 text-center">
         <a asp-action="Edit" asp-route-id="@Model.RoutineId"
-           class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+           class="bg-[var(--color-primary-hover)] hover:bg-[var(--color-primary)] text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow">
             ⬅ Volver a la rutina
         </a>
     </div>
 
     @if (exercises != null && exercises.Any())
     {
-        <form onsubmit="updateExercises(event, '@Model.Id')">
+        <form onsubmit="updateExercises(event, '@Model.Id')" class="overflow-x-auto">
             <input type="hidden" name="sessionId" value="@Model.Id" />
 
-            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
-                <thead class="bg-[#a10d3a] text-white">
+            <table class="w-full border border-[var(--color-primary)]/30 rounded-xl overflow-hidden shadow-md text-sm">
+                <thead class="bg-[var(--color-primary)] text-white">
                     <tr>
                         <th class="px-4 py-2">Ejercicio</th>
                         <th class="px-4 py-2">Video</th>
@@ -45,53 +45,55 @@
                     </tr>
                 </thead>
 
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="divide-y divide-[var(--color-primary)]/25 bg-[var(--color-surface)]">
                     @for (int i = 0; i < exercises.Count; i++)
                     {
                         var se = exercises[i];
                         var exData = allExercises?.FirstOrDefault(e => e.Id == se.ExerciseId);
 
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-4 py-2 font-semibold">@exData?.Name</td>
-                            <td class="px-4 py-2">
+                        <tr class="hover:bg-[var(--color-primary-hover)]/30 transition">
+                            <td class="px-3 py-2 font-semibold text-[var(--color-text-primary)]">@exData?.Name</td>
+
+                            <td class="px-3 py-2">
                                 @if (!string.IsNullOrEmpty(exData?.ImageUrl))
                                 {
-                                    <video autoplay loop muted playsinline class="w-24 h-24 rounded-lg object-cover shadow">
+                                    <video autoplay loop muted playsinline class="w-28 h-28 rounded-lg object-cover shadow border border-[var(--color-primary)]/30">
                                         <source src="@exData.ImageUrl" type="video/mp4">
                                     </video>
                                 }
                                 else
                                 {
-                                    <span class="text-gray-400 text-sm">Sin video</span>
+                                    <span class="text-[var(--color-text-secondary)] text-sm italic">Sin video</span>
                                 }
                             </td>
 
                             <td class="px-2 py-1 text-center">
                                 <input name="exercises[@i].Sets" value="@se.Sets" type="number" min="0"
-                                       class="border border-gray-300 rounded-lg w-16 text-center" />
+                                       class="w-16 bg-[var(--color-background)] border border-[var(--color-primary)]/40 text-center text-[var(--color-text-primary)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none" />
                             </td>
                             <td class="px-2 py-1 text-center">
                                 <input name="exercises[@i].Reps" value="@se.Reps" type="number" min="0"
-                                       class="border border-gray-300 rounded-lg w-16 text-center" />
+                                       class="w-16 bg-[var(--color-background)] border border-[var(--color-primary)]/40 text-center text-[var(--color-text-primary)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none" />
                             </td>
                             <td class="px-2 py-1 text-center">
                                 <input name="exercises[@i].Weight" value="@se.Weight" step="0.5" type="number" min="0"
-                                       class="border border-gray-300 rounded-lg w-20 text-center" />
+                                       class="w-20 bg-[var(--color-background)] border border-[var(--color-primary)]/40 text-center text-[var(--color-text-primary)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none" />
                             </td>
                             <td class="px-2 py-1 text-center">
                                 <input name="exercises[@i].Speed" value="@se.Speed" step="0.1" type="number" min="0"
-                                       class="border border-gray-300 rounded-lg w-20 text-center" />
+                                       class="w-20 bg-[var(--color-background)] border border-[var(--color-primary)]/40 text-center text-[var(--color-text-primary)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none" />
                             </td>
                             <td class="px-2 py-1 text-center">
                                 <input name="exercises[@i].Duration" value="@se.Duration" step="0.1" type="number" min="0"
-                                       class="border border-gray-300 rounded-lg w-20 text-center" />
+                                       class="w-20 bg-[var(--color-background)] border border-[var(--color-primary)]/40 text-center text-[var(--color-text-primary)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none" />
                             </td>
 
-                            <td class="px-4 py-2 text-center">
+                            <td class="px-3 py-2 text-center">
                                 <form asp-action="RemoveExercise" method="post" class="inline">
                                     <input type="hidden" name="sessionId" value="@Model.Id" />
                                     <input type="hidden" name="exerciseId" value="@se.ExerciseId" />
-                                    <button type="submit" class="text-red-600 hover:text-red-700">
+                                    <button type="submit"
+                                            class="text-red-400 hover:text-red-300 font-semibold transition">
                                         🗑 Quitar
                                     </button>
                                 </form>
@@ -101,9 +103,9 @@
                 </tbody>
             </table>
 
-            <div class="mt-6 text-center">
+            <div class="mt-8 text-center">
                 <button type="submit"
-                        class="bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded-lg font-semibold">
+                        class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-[Poppins] shadow transition duration-300">
                     💾 Guardar cambios
                 </button>
             </div>
@@ -111,6 +113,6 @@
     }
     else
     {
-        <p class="text-gray-600">Aún no hay ejercicios asignados en esta sesión.</p>
+        <p class="text-[var(--color-text-secondary)] text-center">Aún no hay ejercicios asignados en esta sesión.</p>
     }
 </div>

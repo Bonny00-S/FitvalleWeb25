@@ -10,42 +10,56 @@
     var edad = Model.edad;
 }
 
-<div class="bg-white p-8 rounded-xl shadow-md text-black max-w-2xl mx-auto animate__animated animate__fadeIn">
-    <h2 class="text-2xl font-bold mb-6 text-[#a10d3a] text-center">
-        Solicitud de @u.Name
+<div class="card-fitvalle max-w-3xl mx-auto p-8 animate__animated animate__fadeIn">
+    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins]">
+        📝 Solicitud de @u.Name
     </h2>
 
     <!-- 🧍 Datos del cliente -->
-    <div class="grid grid-cols-2 gap-4 text-gray-800">
+    <div class="grid grid-cols-2 gap-6 text-[var(--color-text-secondary)]">
         <div>
-            <p><span class="font-semibold">📧 Email:</span> @u.Email</p>
-            <p><span class="font-semibold">🎂 Edad:</span> @edad años</p>
-            <p><span class="font-semibold">📏 Altura:</span> @c.Height cm</p>
-            <p><span class="font-semibold">⚖️ Peso actual:</span> @c.Weight kg</p>
+            <p><span class="font-semibold text-[var(--color-text-primary)]">📧 Email:</span> @u.Email</p>
+            <p><span class="font-semibold text-[var(--color-text-primary)]">🎂 Edad:</span> @edad años</p>
+            <p><span class="font-semibold text-[var(--color-text-primary)]">📏 Altura:</span> @c.Height cm</p>
+            <p><span class="font-semibold text-[var(--color-text-primary)]">⚖️ Peso actual:</span> @c.Weight kg</p>
         </div>
+
         <div>
-            <p><span class="font-semibold">🥇 Meta de peso:</span> @c.GoalWeight kg</p>
-            <p><span class="font-semibold">🗓️ Registro:</span> @c.RegisterDate</p>
+            <p><span class="font-semibold text-[var(--color-text-primary)]">🥇 Meta de peso:</span> @c.GoalWeight kg</p>
+            <p><span class="font-semibold text-[var(--color-text-primary)]">🗓️ Registro:</span> @c.RegisterDate</p>
             <p>
-                <span class="font-semibold">📌 Estado:</span>
-                <span class="@(s.State == "accepted" ? "text-green-700 font-semibold" : "text-yellow-700 font-semibold")">
-                    @s.State
-                </span>
+                <span class="font-semibold text-[var(--color-text-primary)]">📌 Estado:</span>
+                @if (s.State == "accepted")
+                {
+                    <span class="text-[var(--color-success)] font-semibold">@s.State</span>
+                }
+                else if (s.State == "pending")
+                {
+                    <span class="text-[var(--color-warning)] font-semibold">@s.State</span>
+                }
+                else
+                {
+                    <span class="text-[var(--color-text-secondary)]">@s.State</span>
+                }
             </p>
         </div>
     </div>
 
-    <hr class="my-6 border-gray-300">
+    <hr class="my-6 border-[var(--color-primary)]/40">
 
     <!-- 🧾 Descripción -->
-    <h3 class="text-lg font-semibold text-[#a10d3a] mb-2">Preferencias de entrenamiento</h3>
-    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-gray-700 whitespace-pre-line">
+    <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-2 font-[Poppins]">
+        Preferencias de entrenamiento
+    </h3>
+
+    <div class="bg-[var(--color-surface)] border border-[var(--color-primary)]/30 rounded-lg p-4 text-[var(--color-text-secondary)] whitespace-pre-line shadow-sm">
         @s.Description
     </div>
 
-    <div class="mt-6 flex justify-center space-x-4">
+    <!-- 🔘 Botones -->
+    <div class="mt-8 flex justify-center space-x-4">
         <a asp-action="RequestCustomers" asp-controller="Coach"
-           class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition">
+           class="bg-[var(--color-primary-hover)] hover:bg-[var(--color-primary)] text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow">
             ⬅ Volver
         </a>
 
@@ -55,14 +69,14 @@
                 <input type="hidden" name="requestId" value="@s.Id" />
                 <input type="hidden" name="customerId" value="@s.CustomerId" />
                 <button type="submit"
-                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition">
+                        class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow">
                     ✔ Aceptar Alumno
                 </button>
             </form>
         }
         else
         {
-            <span class="text-green-700 font-semibold flex items-center gap-2">
+            <span class="text-[var(--color-success)] font-semibold flex items-center gap-2">
                 ✅ Alumno asignado
             </span>
         }

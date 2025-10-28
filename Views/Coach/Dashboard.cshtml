@@ -5,20 +5,21 @@
     var anio = DateTime.Now.Year;
 }
 
-<div class="bg-white rounded-xl shadow-md p-8 text-center text-black">
-    <h1 class="text-3xl font-bold mb-4">
-        👋 Bienvenido Coach <span class="text-[#a10d3a]"></span>
+<div class="card-fitvalle text-center animate__animated animate__fadeIn">
+    <h1 class="text-3xl font-bold mb-3 text-[var(--color-text-primary)]">
+        👋 Bienvenido <span class="text-[var(--color-primary)]">Coach</span>
     </h1>
 
-    <p class="text-xl font-semibold mb-2">
-        Plataforma <span class="text-[#a10d3a]">Fitvalle</span>
+    <p class="text-xl font-semibold mb-4 text-[var(--color-text-secondary)]">
+        Plataforma <span class="text-[var(--color-primary)] font-[Poppins]">Fitvalle</span>
     </p>
 
-    <p class="text-lg text-gray-700">
-        📅 Fecha actual: <span class="font-bold">@fecha</span>
-    </p>
-
-    <p class="text-lg text-gray-700">
-        © @anio - Fitvalle
-    </p>
+    <div class="bg-[var(--color-background)] border border-[var(--color-primary)]/20 rounded-lg p-4 inline-block">
+        <p class="text-lg mb-1">
+            📅 Fecha actual: <span class="font-bold text-[var(--color-text-primary)]">@fecha</span>
+        </p>
+        <p class="text-sm text-[var(--color-text-secondary)] mt-1">
+            © @anio - Fitvalle
+        </p>
+    </div>
 </div>

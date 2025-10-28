@@ -224,16 +224,26 @@ namespace Fitvalle_25.Controllers
             // 🔹 Datos para el gráfico (peso actual vs meta)
             double currentWeight = 0;
             double goalWeight = 0;
+            double progressPercent;
 
             if (double.TryParse(customer.Weight, out var parsedWeight))
                 currentWeight = parsedWeight;
 
             if (double.TryParse(customer.GoalWeight, out var parsedGoal))
                 goalWeight = parsedGoal;
-
-            double progressPercent = (goalWeight > 0 && currentWeight > 0)
-                ? Math.Round((goalWeight / currentWeight) * 100, 2)
+            if (goalWeight > currentWeight)
+            {
+                 progressPercent = (goalWeight > 0 && currentWeight > 0)
+                ? Math.Round((currentWeight / goalWeight) * 100, 2)
                 : 0;
+            }
+            else
+            {
+                    progressPercent = (goalWeight > 0 && currentWeight > 0)
+                    ? Math.Round((goalWeight / currentWeight) * 100, 2)
+                    : 0;
+            }
+               
 
             
 
