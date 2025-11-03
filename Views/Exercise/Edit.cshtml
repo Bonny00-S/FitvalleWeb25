@@ -6,8 +6,8 @@
 
 <div class="card-fitvalle max-w-xl mx-auto p-10 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-[var(--color-text-primary)] animate__animated animate__fadeIn">
 
-    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins]">
-        🏋️ Editar Ejercicio
+    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins] flex items-center gap-2">
+        <i data-lucide="dumbbell" class="text-[var(--color-primary)] w-6 h-6"></i> Editar Ejercicio
     </h2>
 
     @if (ViewBag.Error != null)
@@ -22,28 +22,31 @@
     <form asp-action="Edit" method="post" class="space-y-6">
         <input type="hidden" asp-for="Id" />
 
-        <!-- 🏷️ Nombre -->
+        <!-- Nombre -->
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Nombre</label>
             <div class="relative">
-                <i class="fa-solid fa-dumbbell absolute left-3 top-3 text-gray-400"></i>
+                <i data-lucide="dumbbell" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
                 <input asp-for="Name" required
                        class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
             </div>
         </div>
 
-        <!-- 📝 Descripción -->
+        <!-- Descripción -->
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Descripción</label>
-            <textarea asp-for="Description" required rows="3"
-                      class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"></textarea>
+            <div class="relative">
+                <i data-lucide="file-text" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
+                <textarea asp-for="Description" required rows="3"
+                          class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition"></textarea>
+            </div>
         </div>
 
-        <!-- 🖼️ Imagen o Video -->
+        <!-- Video o GIF -->
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Video o GIF (URL)</label>
             <div class="relative">
-                <i class="fa-solid fa-link absolute left-3 top-3 text-gray-400"></i>
+                <i data-lucide="link-2" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
                 <input asp-for="ImageUrl" type="url" placeholder="https://ejemplo.com/video.mp4"
                        value="@Model.ImageUrl"
                        class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
@@ -59,11 +62,11 @@
             }
         </div>
 
-        <!-- 💪 Músculo objetivo -->
+        <!-- Músculo objetivo -->
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Músculo objetivo</label>
             <div class="relative">
-                <i class="fa-solid fa-person-running absolute left-3 top-3 text-gray-400"></i>
+                <i data-lucide="activity" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
                 <select asp-for="MuscleID" required
                         class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none transition">
                     @foreach (var m in ViewBag.Muscles as List<Fitvalle_25.Models.Exercise.TargetMuscle>)
@@ -76,11 +79,11 @@
             </div>
         </div>
 
-        <!-- ⚙️ Tipo de ejercicio -->
+        <!-- Tipo de ejercicio -->
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Tipo de ejercicio</label>
             <div class="relative">
-                <i class="fa-solid fa-layer-group absolute left-3 top-3 text-gray-400"></i>
+                <i data-lucide="layers" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
                 <select asp-for="TypeID" required
                         class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none transition">
                     @foreach (var t in ViewBag.Types as List<Fitvalle_25.Models.Exercise.ExerciseType>)
@@ -93,16 +96,16 @@
             </div>
         </div>
 
-        <!-- 🔘 Botones -->
+        <!-- Botones -->
         <div class="flex justify-between items-center pt-4">
             <a asp-action="Index"
                class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Volver
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Volver
             </a>
 
             <button type="submit"
                     class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+                <i data-lucide="save" class="w-5 h-5"></i> Guardar cambios
             </button>
         </div>
 
@@ -114,3 +117,7 @@
         }
     </form>
 </div>
+
+<script>
+    lucide.replace(); // Inicializa íconos Lucide
+</script>

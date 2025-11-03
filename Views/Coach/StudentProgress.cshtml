@@ -7,30 +7,47 @@
 }
 
 <div class="card-fitvalle p-8 animate__animated animate__fadeIn max-w-5xl mx-auto">
-    <h2 class="text-3xl font-bold mb-3 text-center text-[var(--color-primary)] font-[Poppins]">
-        📈 Progreso de @user?.Name
+
+    <!-- 📈 Encabezado principal -->
+    <h2 class="text-3xl font-bold mb-3 text-center text-[var(--color-primary)] font-[Poppins] flex items-center justify-center gap-2">
+        <i data-lucide="activity" class="icon active"></i>
+        Progreso de @user?.Name
     </h2>
-    <p class="text-[var(--color-text-secondary)] text-center mb-8">
-        Peso actual: <b class="text-[var(--color-success)]">@ViewBag.CurrentWeight kg</b> |
-        Meta: <b class="text-emerald-400">@ViewBag.GoalWeight kg</b>
+
+    <p class="text-[var(--color-text-secondary)] text-center mb-8 flex items-center justify-center gap-3">
+        <span class="flex items-center gap-1">
+            <i data-lucide="weight" class="icon-sm text-[var(--color-success)]"></i>
+            Peso actual: <b class="text-[var(--color-success)]">@ViewBag.CurrentWeight kg</b>
+        </span>
+        <span class="text-[var(--color-primary)]">|</span>
+        <span class="flex items-center gap-1">
+            <i data-lucide="target" class="icon-sm text-emerald-400"></i>
+            Meta: <b class="text-emerald-400">@ViewBag.GoalWeight kg</b>
+        </span>
     </p>
 
-    <!-- 📊 Gráfico de progreso peso/meta -->
+    <!-- 📊 Gráfico -->
     <div class="mb-10 bg-[var(--color-surface)] p-6 rounded-lg shadow border border-[var(--color-primary)]/20">
+        <h3 class="text-xl font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="icon"></i>
+            Progreso de peso
+        </h3>
         <canvas id="weightChart" height="130"></canvas>
     </div>
 
-    <!-- 📈 Porcentaje general -->
-    <div class="mb-6 bg-[var(--color-background)] border border-[var(--color-primary)]/30 p-4 rounded-lg shadow-sm text-center">
-        <p class="font-semibold text-[var(--color-text-primary)] text-lg">
+    <!-- 🎯 Porcentaje general -->
+    <div class="mb-6 bg-[var(--color-background)] border border-[var(--color-primary)]/30 p-4 rounded-lg shadow-sm text-center flex flex-col items-center">
+        <p class="font-semibold text-[var(--color-text-primary)] text-lg flex items-center gap-2">
+            <i data-lucide="trending-up" class="icon"></i>
             Progreso hacia la meta:
             <span class="text-[var(--color-primary)] ml-1">@ViewBag.ProgressPercent%</span>
         </p>
     </div>
 
     <!-- 🏋️ Sesiones -->
-    <h3 class="text-2xl font-semibold text-[var(--color-primary)] font-[Poppins] mt-10 mb-5 text-center">
-        💪 Rutina actual
+    <h3 class="text-2xl font-semibold text-[var(--color-primary)] font-[Poppins] mt-10 mb-5 text-center flex items-center justify-center gap-2">
+        <i data-lucide="dumbbell" class="icon"></i>
+        Rutina actual
     </h3>
 
     @if (sessions != null && sessions.Any())
@@ -42,35 +59,86 @@
             : new List<(Fitvalle_25.Models.Exercise.Exercise, Fitvalle_25.Models.Exercise.SessionExercise)>();
 
             <div class="mb-8 border border-[var(--color-primary)]/30 rounded-xl p-5 bg-[var(--color-surface)] shadow-sm">
-                <h4 class="font-semibold text-xl text-[var(--color-text-primary)] mb-4">
-                    🧩 Sesión
+                <h4 class="font-semibold text-xl text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                    <i data-lucide="layers" class="icon"></i>
+                    Sesión
                 </h4>
 
                 @if (list.Any())
                 {
-                    <table class="w-full border-collapse text-sm rounded-lg overflow-hidden">
+                         @* <table class="w-full border-collapse text-sm rounded-lg overflow-hidden shadow-sm">
+                            <thead class="bg-[var(--color-primary)] text-white font-[Poppins]">
+                                <tr>
+                                    <th class="px-4 py-2 text-left"><i data-lucide="dumbbell" class="icon-sm mr-1"></i>Ejercicio</th>
+                                    <th class="px-4 py-2 text-center"><i data-lucide="hash" class="icon-sm mr-1"></i>Series</th>
+                                    <th class="px-4 py-2 text-center"><i data-lucide="repeat" class="icon-sm mr-1"></i>Reps</th>
+                                    <th class="px-4 py-2 text-center"><i data-lucide="weight" class="icon-sm mr-1"></i>Peso (kg)</th>
+                                    <th class="px-4 py-2 text-center"><i data-lucide="timer" class="icon-sm mr-1"></i>Duración</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[var(--color-primary)]/20">
+                                @foreach (var e in list)
+                                {
+                                    <tr class="table-row">
+                                        <td class="px-4 py-2">@e.Item1.Name</td>
+                                        <td class="px-4 py-2 text-center">@e.Item2.Sets</td>
+                                        <td class="px-4 py-2 text-center">@e.Item2.Reps</td>
+                                        <td class="px-4 py-2 text-center">@e.Item2.Weight</td>
+                                        <td class="px-4 py-2 text-center">@e.Item2.Duration</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table> *@
+                    <table class="w-full border-collapse text-sm rounded-lg overflow-hidden shadow-sm">
                         <thead class="bg-[var(--color-primary)] text-white font-[Poppins]">
                             <tr>
-                                <th class="px-3 py-2 text-left">Ejercicio</th>
-                                <th class="px-3 py-2 text-center">Series</th>
-                                <th class="px-3 py-2 text-center">Reps</th>
-                                <th class="px-3 py-2 text-center">Peso (kg)</th>
-                                <th class="px-3 py-2 text-center">Duración (m)</th>
+                                <th class="px-4 py-2 text-left font-semibold">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="dumbbell" class="w-4 h-4"></i>
+                                        Ejercicio
+                                    </div>
+                                </th>
+                                <th class="px-4 py-2 text-center font-semibold">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <i data-lucide="hash" class="w-4 h-4"></i>
+                                        Series
+                                    </div>
+                                </th>
+                                <th class="px-4 py-2 text-center font-semibold">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <i data-lucide="repeat" class="w-4 h-4"></i>
+                                        Reps
+                                    </div>
+                                </th>
+                                <th class="px-4 py-2 text-center font-semibold">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <i data-lucide="weight" class="w-4 h-4"></i>
+                                        Peso (kg)
+                                    </div>
+                                </th>
+                                <th class="px-4 py-2 text-center font-semibold">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <i data-lucide="timer" class="w-4 h-4"></i>
+                                        Duración
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[var(--color-primary)]/20">
                             @foreach (var e in list)
                             {
-                                <tr class="hover:bg-[var(--color-primary-hover)]/30 transition">
-                                    <td class="px-3 py-2 text-[var(--color-text-primary)]">@e.Item1.Name</td>
-                                    <td class="px-3 py-2 text-center text-[var(--color-text-secondary)]">@e.Item2.Sets</td>
-                                    <td class="px-3 py-2 text-center text-[var(--color-text-secondary)]">@e.Item2.Reps</td>
-                                    <td class="px-3 py-2 text-center text-[var(--color-text-secondary)]">@e.Item2.Weight</td>
-                                    <td class="px-3 py-2 text-center text-[var(--color-text-secondary)]">@e.Item2.Duration</td>
+                                <tr class="hover:bg-[var(--color-primary)]/10 transition">
+                                    <td class="px-4 py-2">@e.Item1.Name</td>
+                                    <td class="px-4 py-2 text-center">@e.Item2.Sets</td>
+                                    <td class="px-4 py-2 text-center">@e.Item2.Reps</td>
+                                    <td class="px-4 py-2 text-center">@e.Item2.Weight</td>
+                                    <td class="px-4 py-2 text-center">@e.Item2.Duration</td>
                                 </tr>
                             }
                         </tbody>
                     </table>
+
+
                 }
                 else
                 {
@@ -88,14 +156,15 @@
         </p>
     }
 
+    <!-- 🔙 Botón volver -->
     <div class="mt-10 text-center">
         <a asp-action="MyStudents"
-           class="bg-[var(--color-primary-hover)] hover:bg-[var(--color-primary)] text-white px-6 py-2 rounded-md font-[Poppins] shadow transition duration-300">
-            ⬅ Volver
+           class="bg-[var(--color-primary-hover)] hover:bg-[var(--color-primary)] text-white px-6 py-2 rounded-md font-[Poppins] shadow transition duration-300 inline-flex items-center gap-2">
+            <i data-lucide="arrow-left" class="icon"></i>
+            Volver
         </a>
     </div>
 </div>
-
 
 <!-- 📊 Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -115,13 +184,27 @@
             responsive: true,
             plugins: {
                 legend: { display: false },
-                title: { display: true, text: 'Progreso de peso' }
+                title: {
+                    display: false
+                }
             },
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: { color: '#999' },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                x: {
+                    ticks: { color: '#999' },
+                    grid: { display: false }
                 }
             }
         }
     });
 </script>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

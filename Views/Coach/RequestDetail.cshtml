@@ -11,31 +11,51 @@
 }
 
 <div class="card-fitvalle max-w-3xl mx-auto p-8 animate__animated animate__fadeIn">
-    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins]">
-        📝 Solicitud de @u.Name
+    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins] flex items-center justify-center gap-2">
+        <i data-lucide="file-text" class="icon active"></i>
+        Solicitud de @u.Name
     </h2>
 
     <!-- 🧍 Datos del cliente -->
-    <div class="grid grid-cols-2 gap-6 text-[var(--color-text-secondary)]">
-        <div>
-            <p><span class="font-semibold text-[var(--color-text-primary)]">📧 Email:</span> @u.Email</p>
-            <p><span class="font-semibold text-[var(--color-text-primary)]">🎂 Edad:</span> @edad años</p>
-            <p><span class="font-semibold text-[var(--color-text-primary)]">📏 Altura:</span> @c.Height cm</p>
-            <p><span class="font-semibold text-[var(--color-text-primary)]">⚖️ Peso actual:</span> @c.Weight kg</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-[var(--color-text-secondary)]">
+        <div class="space-y-2">
+            <p class="flex items-center gap-2">
+                <i data-lucide="mail" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Email:</span> @u.Email
+            </p>
+            <p class="flex items-center gap-2">
+                <i data-lucide="cake" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Edad:</span> @edad años
+            </p>
+            <p class="flex items-center gap-2">
+                <i data-lucide="ruler" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Altura:</span> @c.Height cm
+            </p>
+            <p class="flex items-center gap-2">
+                <i data-lucide="weight" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Peso actual:</span> @c.Weight kg
+            </p>
         </div>
 
-        <div>
-            <p><span class="font-semibold text-[var(--color-text-primary)]">🥇 Meta de peso:</span> @c.GoalWeight kg</p>
-            <p><span class="font-semibold text-[var(--color-text-primary)]">🗓️ Registro:</span> @c.RegisterDate</p>
-            <p>
-                <span class="font-semibold text-[var(--color-text-primary)]">📌 Estado:</span>
+        <div class="space-y-2">
+            <p class="flex items-center gap-2">
+                <i data-lucide="trophy" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Meta de peso:</span> @c.GoalWeight kg
+            </p>
+            <p class="flex items-center gap-2">
+                <i data-lucide="calendar" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Registro:</span> @c.RegisterDate
+            </p>
+            <p class="flex items-center gap-2">
+                <i data-lucide="activity" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Estado:</span>
                 @if (s.State == "accepted")
                 {
-                    <span class="text-[var(--color-success)] font-semibold">@s.State</span>
+                    <span class="text-[var(--color-success)] font-semibold">Aceptada</span>
                 }
                 else if (s.State == "pending")
                 {
-                    <span class="text-[var(--color-warning)] font-semibold">@s.State</span>
+                    <span class="text-[var(--color-warning)] font-semibold">Pendiente</span>
                 }
                 else
                 {
@@ -48,7 +68,8 @@
     <hr class="my-6 border-[var(--color-primary)]/40">
 
     <!-- 🧾 Descripción -->
-    <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-2 font-[Poppins]">
+    <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-2 font-[Poppins] flex items-center gap-2">
+        <i data-lucide="clipboard-list" class="icon"></i>
         Preferencias de entrenamiento
     </h3>
 
@@ -59,8 +80,9 @@
     <!-- 🔘 Botones -->
     <div class="mt-8 flex justify-center space-x-4">
         <a asp-action="RequestCustomers" asp-controller="Coach"
-           class="bg-[var(--color-primary-hover)] hover:bg-[var(--color-primary)] text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow">
-            ⬅ Volver
+           class="bg-[var(--color-primary-hover)] hover:bg-[var(--color-primary)] text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow inline-flex items-center gap-2">
+            <i data-lucide="arrow-left" class="icon"></i>
+            Volver
         </a>
 
         @if (s.State != "accepted")
@@ -69,16 +91,24 @@
                 <input type="hidden" name="requestId" value="@s.Id" />
                 <input type="hidden" name="customerId" value="@s.CustomerId" />
                 <button type="submit"
-                        class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow">
-                    ✔ Aceptar Alumno
+                        class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow inline-flex items-center gap-2">
+                    <i data-lucide="check" class="icon"></i>
+                    Aceptar Alumno
                 </button>
             </form>
         }
         else
         {
             <span class="text-[var(--color-success)] font-semibold flex items-center gap-2">
-                ✅ Alumno asignado
+                <i data-lucide="check-circle" class="icon"></i>
+                Alumno asignado
             </span>
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

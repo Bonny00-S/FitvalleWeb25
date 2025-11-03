@@ -13,6 +13,7 @@
 
     <!-- Tipografía y tema -->
     <link href="~/css/site.css" rel="stylesheet" />
+
 </head>
 <body class="bg-[var(--color-background)] text-[var(--color-text-primary)] min-h-screen flex flex-col">
 
@@ -24,7 +25,7 @@
         </div>
 
         <div class="flex items-center gap-6">
-            <i class="fa-solid fa-bell text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i>
+           @*  <i class="fa-solid fa-bell text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i> *@
 
             <div class="relative group">
                 <i class="fa-solid fa-gear text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i>
@@ -74,4 +75,12 @@
 
     @RenderSection("Scripts", required: false)
 </body>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+    });
+</script>
+
+
 </html>

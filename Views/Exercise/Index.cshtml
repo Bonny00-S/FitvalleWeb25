@@ -10,19 +10,21 @@
 
 <div class="card-fitvalle p-8 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-[var(--color-text-primary)] animate__animated animate__fadeIn">
 
-    <!-- 🔹 Encabezado -->
+    <!-- Encabezado -->
     <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold text-[var(--color-primary)] font-[Poppins]">🏋️ Ejercicios registrados</h2>
+        <h2 class="text-3xl font-bold text-[var(--color-primary)] font-[Poppins] flex items-center gap-2">
+            <i data-lucide="dumbbell" class="text-[var(--color-primary)]"></i> Ejercicios registrados
+        </h2>
         <a asp-action="Create"
            class="bg-[var(--color-success)] hover:bg-emerald-600 text-white font-semibold px-5 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Nuevo
+            <i data-lucide="plus-circle"></i> Nuevo
         </a>
     </div>
 
-    <!-- 🔍 Buscador -->
+    <!-- Buscador -->
     <form method="get" asp-action="Index" class="mb-8 flex flex-wrap items-center gap-3">
         <div class="relative flex-1 min-w-[250px]">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+            <i data-lucide="search" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
             <input type="text" name="searchString" value="@search"
                    placeholder="Buscar por nombre, músculo o tipo..."
                    class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
@@ -33,7 +35,7 @@
         </button>
     </form>
 
-    <!-- 🧩 Tabla -->
+    <!-- Tabla -->
     <div class="overflow-x-auto rounded-xl border border-[var(--color-primary)]/30 shadow-lg">
         <table class="w-full text-sm text-left font-[Poppins]">
             <thead class="bg-[var(--color-primary)] text-white uppercase tracking-wide text-xs">
@@ -73,12 +75,12 @@
                             <td class="px-4 py-3 text-center space-x-2">
                                 <a asp-action="Edit" asp-route-id="@ex.Value.Id"
                                    class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-xs font-semibold shadow transition duration-300">
-                                    <i class="fa-solid fa-pen-to-square"></i> Editar
+                                    <i data-lucide="edit-2"></i> Editar
                                 </a>
                                 <button type="button"
                                         onclick="openDeleteModal('@ex.Value.Id')"
                                         class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-xs font-semibold shadow transition duration-300">
-                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                    <i data-lucide="trash-2"></i> Eliminar
                                 </button>
                             </td>
                         </tr>
@@ -96,23 +98,25 @@
         </table>
     </div>
 
-    <!-- 📄 PAGINACIÓN -->
+    <!-- Paginación -->
     @if (totalPages > 1)
     {
         <div class="flex justify-center items-center mt-8 gap-2">
             @if (currentPage > 1)
             {
                 <a asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchString="@search"
-                   class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow transition">⬅</a>
+                   class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow transition">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </a>
             }
 
             @for (int i = 1; i <= totalPages; i++)
             {
                 <a asp-action="Index" asp-route-page="@i" asp-route-searchString="@search"
                    class="px-3 py-1 rounded-md font-semibold shadow transition
-                                  @(i == currentPage
-                                               ? "bg-[var(--color-primary)] text-white"
-                                               : "bg-[var(--color-background)] border border-[var(--color-primary)]/30 text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-hover)]/30")">
+                                          @(i == currentPage
+                                                                  ? "bg-[var(--color-primary)] text-white"
+                                                                  : "bg-[var(--color-background)] border border-[var(--color-primary)]/30 text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-hover)]/30")">
             @i
         </a>
                 }
@@ -120,16 +124,20 @@
             @if (currentPage < totalPages)
             {
                 <a asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchString="@search"
-                   class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow transition">➡</a>
+                   class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md shadow transition">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </a>
             }
         </div>
     }
 </div>
 
-<!-- 🔺 Modal de confirmación -->
+<!-- Modal de confirmación -->
 <div id="deleteModal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
     <div class="bg-[var(--color-surface)] rounded-xl shadow-2xl border border-[var(--color-primary)]/30 p-8 w-[24rem] animate__animated animate__fadeIn">
-        <h3 class="text-xl font-bold text-[var(--color-primary)] mb-3">⚠️ Confirmar eliminación</h3>
+        <h3 class="text-xl font-bold text-[var(--color-primary)] mb-3 flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="text-[var(--color-primary)]"></i> Confirmar eliminación
+        </h3>
         <p class="text-[var(--color-text-secondary)] mb-6 text-sm">
             ¿Estás seguro de que deseas eliminar este ejercicio? Esta acción no se puede deshacer.
         </p>
@@ -158,4 +166,6 @@
     function closeDeleteModal() {
         document.getElementById('deleteModal').classList.add('hidden');
     }
+
+    lucide.replace(); // Inicializa íconos Lucide
 </script>

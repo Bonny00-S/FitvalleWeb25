@@ -6,20 +6,26 @@
 }
 
 <div class="card-fitvalle text-center animate__animated animate__fadeIn">
-    <h1 class="text-3xl font-bold mb-3 text-[var(--color-text-primary)]">
-        👋 Bienvenido <span class="text-[var(--color-primary)]">Coach</span>
+    <h1 class="text-3xl font-bold mb-3 text-[var(--color-text-primary)] flex items-center justify-center gap-2">
+        <i data-lucide="user" class="icon active"></i>         @*  👋 *@
+        Bienvenido <span class="text-[var(--color-primary)]">Coach</span>
     </h1>
 
-    <p class="text-xl font-semibold mb-4 text-[var(--color-text-secondary)]">
+
+    <p class="text-xl font-semibold mb-4 text-[var(--color-text-secondary)] flex items-center justify-center gap-2">
+        <i data-lucide="activity" class="icon"></i>
         Plataforma <span class="text-[var(--color-primary)] font-[Poppins]">Fitvalle</span>
     </p>
 
     <div class="bg-[var(--color-background)] border border-[var(--color-primary)]/20 rounded-lg p-4 inline-block">
-        <p class="text-lg mb-1">
-            📅 Fecha actual: <span class="font-bold text-[var(--color-text-primary)]">@fecha</span>
+        <p class="text-lg mb-1 flex items-center justify-center gap-2">
+            <i data-lucide="calendar" class="icon"></i>
+            Fecha actual: <span class="font-bold text-[var(--color-text-primary)]">@fecha</span>
         </p>
-        <p class="text-sm text-[var(--color-text-secondary)] mt-1">
+        <p class="text-sm text-[var(--color-text-secondary)] mt-1 flex items-center justify-center gap-2">
+            <i data-lucide="copyright" class="icon"></i>
             © @anio - Fitvalle
         </p>
     </div>
 </div>
+

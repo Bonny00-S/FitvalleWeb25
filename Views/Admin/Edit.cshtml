@@ -6,8 +6,8 @@
 
 <div class="card-fitvalle max-w-lg mx-auto p-10 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-[var(--color-text-primary)] animate__animated animate__fadeIn">
 
-    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins]">
-        ✏️ Editar Usuario
+    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins] flex items-center justify-center gap-2">
+        <i data-lucide="edit-2" class="text-[var(--color-primary)]"></i> Editar Usuario
     </h2>
 
     <form asp-action="Edit" method="post" class="space-y-6">
@@ -17,7 +17,7 @@
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Correo electrónico</label>
             <div class="relative">
-                <i class="fa-solid fa-envelope absolute left-3 top-3 text-gray-400"></i>
+                <i data-lucide="mail" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
                 <input type="email" value="@Model.Email" disabled
                        class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-gray-400 cursor-not-allowed" />
             </div>
@@ -27,7 +27,7 @@
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Nombre completo</label>
             <div class="relative">
-                <i class="fa-solid fa-user absolute left-3 top-3 text-gray-400"></i>
+                <i data-lucide="user" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
                 <input type="text" name="name" value="@Model.Name" required
                        class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
             </div>
@@ -37,7 +37,8 @@
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Rol</label>
             <div class="relative">
-                <i class="fa-solid fa-id-badge absolute left-3 top-3 text-gray-400"></i>
+                <!-- Cambié id por shield -->
+                <i data-lucide="shield" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
                 <select name="role"
                         class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none transition">
                     <option value="admin" selected="@(Model.Role == "admin")">Administrador</option>
@@ -50,7 +51,7 @@
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Estado</label>
             <div class="relative">
-                <i class="fa-solid fa-toggle-on absolute left-3 top-3 text-gray-400"></i>
+                <i data-lucide="toggle-right" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
                 <select name="state"
                         class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none transition">
                     <option value="1" selected="@(Model.State == 1)">Activo</option>
@@ -63,12 +64,12 @@
         <div class="flex justify-between items-center pt-4">
             <a asp-action="ManageUsers" asp-controller="Admin"
                class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Volver
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver
             </a>
 
             <button type="submit"
                     class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+                <i data-lucide="save" class="w-4 h-4"></i> Guardar cambios
             </button>
         </div>
 
@@ -81,3 +82,7 @@
         }
     </form>
 </div>
+
+<script>
+    lucide.replace(); // Inicializa íconos Lucide
+</script>

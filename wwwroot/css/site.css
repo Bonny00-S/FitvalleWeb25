@@ -97,3 +97,36 @@ select {
     select option {
         color: #111827 !important;
     }
+.icon {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+    stroke: var(--color-text-secondary);
+    transition: stroke 0.2s ease;
+}
+
+    .icon:hover {
+        stroke: var(--color-primary-hover);
+    }
+
+
+    .icon.active {
+        stroke: var(--color-primary);
+    }
+ /*th i {
+        position: relative;
+        top: 1.5px;*/ /* corrige el alineado vertical */
+        /*width: 16px;
+        height: 16px;
+    }*/
+
+    /* ?? Fila interactiva */
+    /*.table-row {
+        transition: all 0.25s ease;
+        cursor: default;
+    }
+
+    .table-row:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        transform: scale(1.01);
+    }*/

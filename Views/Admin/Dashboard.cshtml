@@ -6,20 +6,27 @@
 }
 
 <div class="card-fitvalle max-w-3xl mx-auto p-10 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-center animate__animated animate__fadeIn">
-    <h1 class="text-4xl font-bold mb-4 text-[var(--color-text-primary)] font-[Poppins]">
-        👋 Bienvenido, Admin<span class="text-[var(--color-primary)]">@User.Identity?.Name</span>
+    <h1 class="text-4xl font-bold mb-4 text-[var(--color-text-primary)] font-[Poppins] flex items-center justify-center gap-2">
+        <i data-lucide="smile" class="text-[var(--color-primary)]"></i> Bienvenido, Admin
+        <span class="text-[var(--color-primary)]">@User.Identity?.Name</span>
     </h1>
 
-    <p class="text-xl font-semibold mb-3 text-[var(--color-text-secondary)]">
+    <p class="text-xl font-semibold mb-6 text-[var(--color-text-secondary)]">
         Plataforma <span class="text-[var(--color-primary)]">Fitvalle</span>
     </p>
 
-    <div class="mt-6 bg-[var(--color-background)]/60 border border-[var(--color-primary)]/30 rounded-lg py-4 px-6 shadow-inner inline-block">
-        <p class="text-lg text-[var(--color-text-secondary)] mb-1">
-            📅 Fecha actual: <span class="text-[var(--color-text-primary)] font-semibold">@fecha</span>
+    <div class="mt-6 bg-[var(--color-background)]/60 border border-[var(--color-primary)]/30 rounded-lg py-4 px-6 shadow-inner inline-block text-left">
+        <p class="text-lg text-[var(--color-text-secondary)] mb-2 flex items-center gap-2">
+            <i data-lucide="calendar" class="text-[var(--color-primary)]"></i>
+            Fecha actual: <span class="text-[var(--color-text-primary)] font-semibold">@fecha</span>
         </p>
-        <p class="text-lg text-[var(--color-text-secondary)]">
-            © @anio - <span class="text-[var(--color-primary)] font-semibold">Fitvalle</span>
+        <p class="text-lg text-[var(--color-text-secondary)] flex items-center gap-2">
+            <i data-lucide="copyright" class="text-[var(--color-primary)]"></i>
+            @anio - <span class="text-[var(--color-primary)] font-semibold">Fitvalle</span>
         </p>
     </div>
 </div>
+
+<script>
+    lucide.replace(); // Inicializa íconos Lucide
+</script>

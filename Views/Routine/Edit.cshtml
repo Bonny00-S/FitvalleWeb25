@@ -8,8 +8,9 @@
 }
 
 <div class="card-fitvalle p-8 animate__animated animate__fadeIn">
-    <h2 class="text-3xl font-bold mb-6 text-[var(--color-primary)] font-[Poppins] text-center">
-        🏋️ Asignar rutina al alumno
+    <h2 class="text-3xl font-bold mb-6 text-[var(--color-primary)] font-[Poppins] text-center flex items-center justify-center gap-2">
+        <i data-lucide="dumbbell" class="text-[var(--color-primary)]"></i>
+        Asignar rutina al alumno
     </h2>
 
     @if (TempData["Error"] != null)
@@ -24,16 +25,16 @@
             @TempData["Message"]
         </div>
     }
-
     <!-- Botón para agregar sesión -->
-    <form asp-action="AddSession" method="post" class="mb-6 text-center">
+    <form asp-action="AddSession" method="post" class="mb-2 flex justify-center">
         <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
         <button type="submit"
-                class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-6 py-2 rounded-lg font-[Poppins] shadow transition duration-300">
-            ➕ Agregar sesión
+                class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-6 py-2 rounded-lg font-[Poppins] shadow transition duration-300 flex items-center justify-center gap-2">
+            <i data-lucide="plus-circle" class="text-white"></i> Agregar sesión
         </button>
-        <p class="text-[var(--color-text-secondary)] text-sm mt-2">Máximo 6 sesiones por rutina.</p>
     </form>
+    <p class="text-[var(--color-text-secondary)] text-sm text-center mb-6">Máximo 6 sesiones por rutina.</p>
+
 
     <!-- Mostrar sesiones -->
     <div class="grid md:grid-cols-2 gap-6">
@@ -47,13 +48,15 @@
 
                 <div class="p-5 bg-[var(--color-surface)] border border-[var(--color-primary)]/40 rounded-xl shadow-md">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-lg text-[var(--color-text-primary)]">💪 Sesión</h3>
+                        <h3 class="font-semibold text-lg text-[var(--color-text-primary)] flex items-center gap-2">
+                            <i data-lucide="users" class="text-[var(--color-primary)]"></i> Sesión
+                        </h3>
                         <form asp-action="DeleteSession" method="post">
                             <input type="hidden" name="routineId" value="@s.RoutineId" />
                             <input type="hidden" name="sessionId" value="@s.Id" />
                             <button type="submit"
-                                    class="text-red-400 hover:text-red-300 font-semibold transition">
-                                🗑 Eliminar
+                                    class="text-red-400 hover:text-red-300 font-semibold transition flex items-center gap-1">
+                                <i data-lucide="trash-2"></i> Eliminar
                             </button>
                         </form>
                     </div>
@@ -62,8 +65,8 @@
                         <p class="text-[var(--color-text-secondary)] text-sm">Ejercicios: (@list.Count / 10)</p>
                         <button type="button"
                                 onclick="openExerciseModal('@s.Id')"
-                                class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-4 py-1.5 rounded-md text-sm shadow">
-                            ➕ Agregar ejercicio
+                                class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-4 py-1.5 rounded-md text-sm shadow flex items-center gap-1">
+                            <i data-lucide="plus-circle" class="text-white"></i> Agregar ejercicio
                         </button>
                     </div>
 
@@ -94,8 +97,8 @@
                                             <td><input type="number" step="0.1" name="speed" value="@e.Data.Speed" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
                                             <td><input type="number" step="0.1" name="duration" value="@e.Data.Duration" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
                                             <td>
-                                                <button type="button" onclick="removeExercise('@s.Id', '@e.Exercise.Id')" class="text-red-400 hover:text-red-300">
-                                                    ✖
+                                                <button type="button" onclick="removeExercise('@s.Id', '@e.Exercise.Id')" class="text-red-400 hover:text-red-300 flex items-center">
+                                                    <i data-lucide="x"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -103,8 +106,8 @@
                                 </tbody>
                             </table>
                             <div class="text-right mt-3">
-                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md shadow">
-                                    💾 Guardar cambios
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md shadow flex items-center gap-1">
+                                    <i data-lucide="save"></i> Guardar cambios
                                 </button>
                             </div>
                         </form>
@@ -123,25 +126,25 @@
     </div>
 
     <!-- ✅ BOTÓN FINAL -->
-    <div class="mt-10 text-center">
+    <div class="mt-10 flex justify-center">
         @if (ViewBag.IsAssignedRoutine == true)
         {
-            <form asp-action="UpdateAssignedRoutine" asp-controller="Routine" method="post">
+            <form asp-action="UpdateAssignedRoutine" asp-controller="Routine" method="post" class="flex justify-center">
                 <input type="hidden" name="customerId" value="@ViewBag.CustomerId" />
                 <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
                 <button type="submit"
-                        class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-lg font-[Poppins] shadow transition duration-300">
-                    💾 Guardar cambios
+                        class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-lg font-[Poppins] shadow transition duration-300 flex items-center justify-center gap-1">
+                    <i data-lucide="save"></i> Guardar cambios
                 </button>
             </form>
         }
         else
         {
-            <form asp-action="AssignRoutine" asp-controller="Routine" method="post">
+            <form asp-action="AssignRoutine" asp-controller="Routine" method="post" class="flex justify-center">
                 <input type="hidden" name="routineId" value="@ViewBag.RoutineId" />
                 <button type="submit"
-                        class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-[Poppins] shadow transition duration-300">
-                    ✅ Asignar rutina
+                        class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-[Poppins] shadow transition duration-300 flex items-center justify-center gap-1">
+                    <i data-lucide="check-circle"></i> Asignar rutina
                 </button>
             </form>
         }
@@ -151,8 +154,8 @@
 <!-- 🔹 MODAL DE EJERCICIOS -->
 <div id="exerciseModal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden">
     <div class="bg-[var(--color-surface)] rounded-xl shadow-lg p-6 w-11/12 md:w-3/4 max-h-[80vh] overflow-y-auto border border-[var(--color-primary)]/40">
-        <h3 class="text-2xl font-bold mb-4 text-[var(--color-primary)] font-[Poppins] text-center">
-            🏋️ Seleccionar ejercicios
+        <h3 class="text-2xl font-bold mb-4 text-[var(--color-primary)] font-[Poppins] text-center flex items-center justify-center gap-2">
+            <i data-lucide="dumbbell" class="text-[var(--color-primary)]"></i> Seleccionar ejercicios
         </h3>
 
         <div class="flex flex-wrap gap-4 mb-4">
@@ -186,6 +189,9 @@
     </div>
 </div>
 
+<script>
+    lucide.replace(); // Inicializa todos los íconos Lucide
+</script>
 
 
 <script>
@@ -246,7 +252,7 @@
         renderPagination();
     }
 
-    function renderExercises(list) {
+        function renderExercises(list) {
         const c = document.getElementById('exerciseList');
         c.innerHTML = list.length
             ? list.map(e => `
@@ -261,13 +267,16 @@
                         ${e.muscle || ''} ${e.muscle && e.type ? '|' : ''} ${e.type || ''}
                     </p>
                     <button onclick="addExerciseToSession('${e.id}')"
-                            class='mt-auto bg-[var(--color-success)] hover:bg-emerald-600 text-white font-semibold text-sm px-3 py-1 rounded-md transition'>
-                        ➕ Agregar
+                            class='mt-auto bg-[var(--color-success)] hover:bg-emerald-600 text-white font-semibold text-sm px-3 py-1 rounded-md transition flex items-center gap-1'>
+                        <i data-lucide="plus-circle" class="text-white"></i> Agregar
                     </button>
                 </div>`
             ).join('')
             : `<p class='col-span-full text-center text-[var(--color-text-secondary)] italic'>No hay ejercicios que coincidan.</p>`;
+
+        lucide.replace(); // Inicializa los íconos dinámicamente
     }
+
 
 
 

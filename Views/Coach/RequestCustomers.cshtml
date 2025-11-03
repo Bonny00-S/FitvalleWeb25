@@ -6,20 +6,37 @@
 }
 
 <div class="p-6 card-fitvalle animate__animated animate__fadeIn">
-    <h2 class="text-3xl font-bold mb-6 text-[var(--color-text-primary)] font-[Poppins]">
-        📨 Solicitudes de Clientes
+    <h2 class="text-3xl font-bold mb-6 text-[var(--color-text-primary)] font-[Poppins] flex items-center gap-2">
+        <i data-lucide="inbox" class="icon active"></i>
+        Solicitudes de Clientes
     </h2>
 
     @if (Model != null && Model.Any())
     {
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md text-left">
                 <thead class="bg-[var(--color-primary)] text-white">
                     <tr>
-                        <th class="px-4 py-3 text-left font-[Poppins]">Cliente</th>
-                        <th class="px-4 py-3 text-left font-[Poppins]">Correo</th>
-                        <th class="px-4 py-3 text-center font-[Poppins]">Solicitud</th>
-                        <th class="px-4 py-3 text-center font-[Poppins]">Estado</th>
+                        <th class="px-4 py-3 font-[Poppins]">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="user" class="icon"></i> Cliente
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-[Poppins]">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="mail" class="icon"></i> Correo
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 text-center font-[Poppins]">
+                            <div class="flex items-center justify-center gap-2">
+                                <i data-lucide="file-text" class="icon"></i> Solicitud
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 text-center font-[Poppins]">
+                            <div class="flex items-center justify-center gap-2">
+                                <i data-lucide="activity" class="icon"></i> Estado
+                            </div>
+                        </th>
                     </tr>
                 </thead>
 
@@ -34,23 +51,30 @@
                                 <a asp-action="RequestDetail"
                                    asp-controller="Coach"
                                    asp-route-id="@item.solicitud.Id"
-                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-[Poppins] shadow transition duration-300">
-                                    🔍 Ver Solicitud
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-[Poppins] shadow transition duration-300 inline-flex items-center gap-1">
+                                    <i data-lucide="search" class="icon"></i>
+                                    Ver Solicitud
                                 </a>
                             </td>
 
                             <td class="px-4 py-2 text-center">
                                 @if (item.solicitud.State == "Pendiente")
                                 {
-                                    <span class="text-[var(--color-warning)] font-semibold">@item.solicitud.State</span>
+                                    <span class="text-[var(--color-warning)] font-semibold inline-flex items-center gap-1">
+                                        <i data-lucide="clock" class="icon"></i> Pendiente
+                                    </span>
                                 }
                                 else if (item.solicitud.State == "Aceptada")
                                 {
-                                    <span class="text-[var(--color-success)] font-semibold">@item.solicitud.State</span>
+                                    <span class="text-[var(--color-success)] font-semibold inline-flex items-center gap-1">
+                                        <i data-lucide="check-circle" class="icon"></i> Aceptada
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="text-[var(--color-text-secondary)]">@item.solicitud.State</span>
+                                    <span class="text-[var(--color-text-secondary)] inline-flex items-center gap-1">
+                                        <i data-lucide="x-circle" class="icon"></i> @item.solicitud.State
+                                    </span>
                                 }
                             </td>
                         </tr>
@@ -61,6 +85,15 @@
     }
     else
     {
-        <p class="text-[var(--color-text-secondary)] italic">No hay solicitudes registradas.</p>
+        <div class="text-center text-[var(--color-text-secondary)] italic flex items-center justify-center gap-2">
+            <i data-lucide="mail-question" class="icon"></i>
+            No hay solicitudes registradas 📭
+        </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}
