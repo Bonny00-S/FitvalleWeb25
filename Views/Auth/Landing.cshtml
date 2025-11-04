@@ -95,58 +95,136 @@
         </div>
     </section>
 
-    <section class="bg-gray-900 py-20 px-10 md:px-20 text-center">
-        <h3 class="text-3xl font-bold mb-12">Facultades de Univalle en Cochabamba</h3>
+    <section class="bg-gray-900 py-16 px-6 md:px-16 text-center text-white">
+        <h3 class="text-3xl font-bold mb-10">Facultades de Univalle en Cochabamba</h3>
 
-        <div class="grid md:grid-cols-3 gap-10">
-            <!-- Campus Tiquipaya -->
-            <div class="bg-gray-800 rounded-xl shadow overflow-hidden">
-                <div id="mapTiquipaya" class="h-64 w-full"></div>
-                <div class="p-4">
-                    <h4 class="text-xl font-semibold text-[#a10d3a] mb-2">Campus Tiquipaya</h4>
-                    <p class="text-gray-400 text-sm mb-2">Sede principal, alberga Medicina, Bioquímica, Farmacia, Nutrición y áreas deportivas.</p>
+        <div class="flex flex-col space-y-12">
+
+            <!-- 🏫 CAMPUS TIQUIPAYA -->
+            <div class="bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                <div id="mapTiquipaya" class="h-96 w-full"></div>
+                <div class="p-6 text-left">
+                    <h4 class="text-2xl font-semibold text-[#a10d3a] mb-2">Campus Tiquipaya</h4>
+                    <p class="text-gray-400 text-sm mb-2">
+                        Sede principal, alberga Medicina, Bioquímica, Farmacia, Nutrición y áreas deportivas.
+                    </p>
                     <p class="text-gray-400 text-sm"><i class="fa fa-map-marker-alt mr-2"></i>Tiquipaya, al pie del Tunari</p>
                 </div>
             </div>
 
-            <!-- Edificio Av. Ayacucho -->
-            <div class="bg-gray-800 rounded-xl shadow overflow-hidden">
-                <div id="mapAyacucho" class="h-64 w-full"></div>
-                <div class="p-4">
-                    <h4 class="text-xl font-semibold text-[#a10d3a] mb-2">Edificio Av. Ayacucho</h4>
-                    <p class="text-gray-400 text-sm mb-2">Centro urbano: Odontología, Fisioterapia, Comunicación y Medios Digitales.</p>
+            <!-- 🏢 EDIFICIO AV. AYACUCHO -->
+            <div class="bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                <div id="mapAyacucho" class="h-96 w-full"></div>
+                <div class="p-6 text-left">
+                    <h4 class="text-2xl font-semibold text-[#a10d3a] mb-2">Edificio Av. Ayacucho</h4>
+                    <p class="text-gray-400 text-sm mb-2">
+                        Centro urbano: Odontología, Fisioterapia, Comunicación y Medios Digitales.
+                    </p>
                     <p class="text-gray-400 text-sm"><i class="fa fa-map-marker-alt mr-2"></i>Cercado, Cochabamba</p>
                 </div>
             </div>
 
-            <!-- Torre Académica América -->
-            <div class="bg-gray-800 rounded-xl shadow overflow-hidden">
-                <div id="mapTorre" class="h-64 w-full"></div>
-                <div class="p-4">
-                    <h4 class="text-xl font-semibold text-[#a10d3a] mb-2">Torre Académica América</h4>
-                    <p class="text-gray-400 text-sm mb-2">Carreras de Derecho, Ingeniería y áreas administrativas con laboratorios y aulas modernas.</p>
+            <!-- 🏙️ TORRE ACADÉMICA AMÉRICA -->
+            <div class="bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                <div id="mapTorre" class="h-96 w-full"></div>
+                <div class="p-6 text-left">
+                    <h4 class="text-2xl font-semibold text-[#a10d3a] mb-2">Torre Académica América</h4>
+                    <p class="text-gray-400 text-sm mb-2">
+                        Carreras de Derecho, Ingeniería y áreas administrativas con laboratorios y aulas modernas.
+                    </p>
                     <p class="text-gray-400 text-sm"><i class="fa fa-map-marker-alt mr-2"></i>Cala Cala, norte de Cochabamba</p>
                 </div>
             </div>
         </div>
 
         <script>
-            // Inicializar mapas-17.330644, -66.225361
-            const locations = [
-                { id: 'mapTiquipaya', coords: [-17.331217, -66.225532], zoom: 15 },
-                { id: 'mapAyacucho', coords: [-17.394264, -66.158700], zoom: 17 },
-                { id: 'mapTorre', coords: [-17.372319, -66.160945], zoom: 16 }
+            // ====== ÍCONOS PERSONALIZADOS ======
+            const icons = {
+              restaurant: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/256/2771/2771406.png',
+                iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+              }),
+              cafe: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/6744/6744480.png',
+                iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+              }),
+              cancha: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/1563/1563544.png',
+                iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+              }),
+              coliseo: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/256/11438/11438126.png',
+                iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+              }),
+              gym: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/5193/5193879.png',
+                iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+              }),
+              building: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+              }),
+              university: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/3176/3176366.png',
+                iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30]
+              })
+            };
+
+            // ====== CAMPUS TIQUIPAYA ======
+            const mapTiquipaya = L.map('mapTiquipaya').setView([-17.331217, -66.225532], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapTiquipaya);
+
+            const lugaresTiquipaya = [
+              { name: 'Comedor Univalle', type: 'restaurant', desc: 'Menús saludables y atención excelente.', img: 'https://www.unl.edu.ar/noticias/img/thumbs/news/27584/P1020310_vga.JPG', coords: [-17.330125, -66.225401] },
+              { name: 'Cafetería Central', type: 'cafe', desc: 'Café, jugos y repostería artesanal.', img: 'https://www.nestleprofessional-latam.com/sites/default/files/styles/np_article_big/public/2024-04/todo-necesario-abrir-cafeteria-mesera.jpg?itok=D6E7MFoW', coords: [-17.330968, -66.226616] },
+              { name: 'Comedor Buffet', type: 'restaurant', desc: 'Buffet con comidas rápidas y sándwiches.', img: 'https://images.unsplash.com/photo-1606755962773-0c9f4dfcf2a4?auto=format&fit=crop&w=400&q=80', coords: [-17.332148, -66.226656] },
+              { name: 'La Terraza', type: 'cafe', desc: 'Vista panorámica y menú variado.', img: 'https://www.nestleprofessional-latam.com/sites/default/files/styles/np_article_big/public/2024-04/todo-necesario-abrir-cafeteria-mesera.jpg?itok=D6E7MFoW', coords: [-17.330965, -66.225449] },
+              { name: 'Cancha de Césped', type: 'cancha', desc: 'Fútbol y entrenamiento al aire libre.', img: 'https://images.unsplash.com/photo-1601050690597-1e4d5b8a4f50?auto=format&fit=crop&w=400&q=80', coords: [-17.329214, -66.226377] },
+              { name: 'Cancha Auxiliar', type: 'cancha', desc: 'Entrenamientos y torneos estudiantiles.', img: 'https://images.unsplash.com/photo-1611796322495-8f1ddfbbd1f8?auto=format&fit=crop&w=400&q=80', coords: [-17.331544, -66.225033] },
+              { name: 'Coliseo Univalle', type: 'coliseo', desc: 'Coliseo techado con cancha y gimnasio.', img: 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Univalle_coliseo.jpg', coords: [-17.331257, -66.225409] },
+              { name: 'Gimnasio Univalle', type: 'gym', desc: 'Área moderna con pesas y asesoramiento deportivo.', img: 'https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=400&q=80', coords: [-17.331158, -66.225509] }
             ];
 
-            locations.forEach(loc => {
-                const map = L.map(loc.id).setView(loc.coords, loc.zoom);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                }).addTo(map);
-                L.marker(loc.coords).addTo(map);
+            lugaresTiquipaya.forEach(l => {
+              const popupHTML = `
+                <div style="width: 240px; text-align:center;">
+                  <img src="${l.img}" alt="${l.name}" style="width:100%; height:120px; object-fit:cover; border-radius:10px; margin-bottom:8px;">
+                  <h3 style="color:#a10d3a; font-weight:bold; margin-bottom:4px;">${l.name}</h3>
+                  <p style="color:#ccc; font-size:13px; line-height:1.3;">${l.desc}</p>
+                </div>`;
+              L.marker(l.coords, { icon: icons[l.type] }).addTo(mapTiquipaya).bindPopup(popupHTML);
             });
+
+            // ====== EDIFICIO AV. AYACUCHO ======
+            const mapAyacucho = L.map('mapAyacucho').setView([-17.394264, -66.158700], 17);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapAyacucho);
+
+            const popupAyacucho = `
+              <div style="width: 240px; text-align:center;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Univalle_Ayacucho.jpg" alt="Edificio Ayacucho"
+                     style="width:100%; height:120px; object-fit:cover; border-radius:10px; margin-bottom:8px;">
+                <h3 style="color:#a10d3a; font-weight:bold; margin-bottom:4px;">Edificio Av. Ayacucho</h3>
+                <p style="color:#ccc; font-size:13px; line-height:1.3;">Centro urbano que alberga carreras de Odontología, Fisioterapia, Comunicación y Medios Digitales.</p>
+              </div>`;
+            L.marker([-17.394264, -66.158700], { icon: icons.building }).addTo(mapAyacucho).bindPopup(popupAyacucho);
+
+            // ====== TORRE ACADÉMICA AMÉRICA ======
+            const mapTorre = L.map('mapTorre').setView([-17.372319, -66.160945], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapTorre);
+
+            const popupTorre = `
+              <div style="width: 240px; text-align:center;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Torre_Academica_Univalle.jpg" alt="Torre América"
+                     style="width:100%; height:120px; object-fit:cover; border-radius:10px; margin-bottom:8px;">
+                <h3 style="color:#a10d3a; font-weight:bold; margin-bottom:4px;">Torre Académica América</h3>
+                <p style="color:#ccc; font-size:13px; line-height:1.3;">Carreras de Derecho, Ingeniería y áreas administrativas. Cuenta con aulas modernas y laboratorios.</p>
+              </div>`;
+            L.marker([-17.372319, -66.160945], { icon: icons.university }).addTo(mapTorre).bindPopup(popupTorre);
+
         </script>
     </section>
+
+
 
 
     <section class="bg-gray-800 py-20 px-10 md:px-20 text-center">
