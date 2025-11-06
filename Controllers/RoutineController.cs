@@ -149,7 +149,7 @@ namespace Fitvalle_25.Controllers
             var existing = await _dbService.GetDataAsync<SessionExercise>($"sessionExercises/{sessionId}/{exerciseId}", token);
             if (existing == null)
             {
-                Console.WriteLine($"⚠️ Ejercicio {exerciseId} no encontrado");
+                Console.WriteLine($" Ejercicio {exerciseId} no encontrado");
                 return NotFound();
             }
 
@@ -160,7 +160,7 @@ namespace Fitvalle_25.Controllers
             if (!string.IsNullOrWhiteSpace(duration) && double.TryParse(duration, out var d)) existing.Duration = d;
 
             await _dbService.PatchDataAsync($"sessionExercises/{sessionId}/{exerciseId}", existing, token);
-            Console.WriteLine($"✅ Actualizado {exerciseId} correctamente");
+            Console.WriteLine($" Actualizado {exerciseId} correctamente");
             return Ok();
         }
 
@@ -248,7 +248,7 @@ namespace Fitvalle_25.Controllers
             var sessionsDict = await _dbService.GetAllAsync<Session>($"routine/{routineId}/sessions", token);
             if (sessionsDict == null || sessionsDict.Count < 2)
             {
-                TempData["Error"] = "⚠️ La rutina debe tener al menos 2 sesiones antes de asignarla.";
+                TempData["Error"] = " La rutina debe tener al menos 2 sesiones antes de asignarla.";
                 return RedirectToAction("Edit", new { id = routineId });
             }
 
@@ -260,7 +260,7 @@ namespace Fitvalle_25.Controllers
 
                 if (count < 4)
                 {
-                    TempData["Error"] = $"⚠️ La sesión creada el {session.RegisterDate:dd/MM/yyyy} debe tener al menos 4 ejercicios.";
+                    TempData["Error"] = $" La sesión creada el {session.RegisterDate:dd/MM/yyyy} debe tener al menos 4 ejercicios.";
                     return RedirectToAction("Edit", new { id = routineId });
                 }
             }
@@ -292,7 +292,7 @@ namespace Fitvalle_25.Controllers
             await _dbService.PatchDataAsync($"assignedRoutines/{routine.CustomerId}/{routine.Id}", routinePayload, token);
             await _dbService.PatchDataAsync($"routine/{routine.Id}", new { state = "assigned" }, token);
 
-            TempData["Message"] = "✅ Rutina asignada correctamente.";
+            TempData["Message"] = " Rutina asignada correctamente.";
             return RedirectToAction("MyStudents", "Coach");
         }
 
@@ -309,7 +309,7 @@ namespace Fitvalle_25.Controllers
             var sessionsDict = await _dbService.GetAllAsync<Session>($"assignedRoutines/{customerId}/{routineId}/sessions", token);
             if (sessionsDict == null || sessionsDict.Count < 2)
             {
-                TempData["Error"] = "⚠️ La rutina debe tener al menos 2 sesiones antes de guardar.";
+                TempData["Error"] = " La rutina debe tener al menos 2 sesiones antes de guardar.";
                 return RedirectToAction("EditAssignedRoutine", new { customerId });
             }
 
@@ -321,7 +321,7 @@ namespace Fitvalle_25.Controllers
 
                 if (count < 4)
                 {
-                    TempData["Error"] = $"⚠️ La sesión ({session.Id}) tiene solo {count} ejercicios. Debe tener al menos 4.";
+                    TempData["Error"] = $" La sesión ({session.Id}) tiene solo {count} ejercicios. Debe tener al menos 4.";
                     return RedirectToAction("EditAssignedRoutine", new { customerId });
                 }
             }
@@ -337,7 +337,7 @@ namespace Fitvalle_25.Controllers
                     exDict, token);
             }
 
-            TempData["Message"] = "✅ Cambios guardados correctamente.";
+            TempData["Message"] = " Cambios guardados correctamente.";
             return RedirectToAction("MyStudents", "Coach");
         }
 

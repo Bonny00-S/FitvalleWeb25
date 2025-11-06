@@ -5,8 +5,8 @@
     ViewData["Title"] = "Solicitudes de Clientes";
 }
 
-<div class="p-6 card-fitvalle animate__animated animate__fadeIn">
-    <h2 class="text-3xl font-bold mb-6 text-[var(--color-text-primary)] font-[Poppins] flex items-center gap-2">
+<div class="p-6 card-fitvalle animate__animated animate__fadeIn font-[Inter]">
+    <h2 class="text-3xl font-[Poppins] font-bold mb-6 text-[var(--color-text-primary)] flex items-center gap-2">
         <i data-lucide="inbox" class="icon active"></i>
         Solicitudes de Clientes
     </h2>
@@ -15,24 +15,24 @@
     {
         <div class="overflow-x-auto">
             <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md text-left">
-                <thead class="bg-[var(--color-primary)] text-white">
+                <thead class="bg-[var(--color-primary)] text-white font-[Poppins]">
                     <tr>
-                        <th class="px-4 py-3 font-[Poppins]">
+                        <th class="px-4 py-3">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="user" class="icon"></i> Cliente
                             </div>
                         </th>
-                        <th class="px-4 py-3 font-[Poppins]">
+                        <th class="px-4 py-3">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="mail" class="icon"></i> Correo
                             </div>
                         </th>
-                        <th class="px-4 py-3 text-center font-[Poppins]">
+                        <th class="px-4 py-3 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <i data-lucide="file-text" class="icon"></i> Solicitud
                             </div>
                         </th>
-                        <th class="px-4 py-3 text-center font-[Poppins]">
+                        <th class="px-4 py-3 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <i data-lucide="activity" class="icon"></i> Estado
                             </div>
@@ -51,7 +51,7 @@
                                 <a asp-action="RequestDetail"
                                    asp-controller="Coach"
                                    asp-route-id="@item.solicitud.Id"
-                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-[Poppins] shadow transition duration-300 inline-flex items-center gap-1">
+                                   class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-3 py-1 rounded-md text-sm font-[Poppins] shadow transition duration-300 inline-flex items-center gap-1">
                                     <i data-lucide="search" class="icon"></i>
                                     Ver Solicitud
                                 </a>
@@ -87,7 +87,7 @@
     {
         <div class="text-center text-[var(--color-text-secondary)] italic flex items-center justify-center gap-2">
             <i data-lucide="mail-question" class="icon"></i>
-            No hay solicitudes registradas 📭
+            No hay solicitudes registradas
         </div>
     }
 </div>

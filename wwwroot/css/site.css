@@ -105,9 +105,9 @@ select {
     transition: stroke 0.2s ease;
 }
 
-    .icon:hover {
+   /* .icon:hover {
         stroke: var(--color-primary-hover);
-    }
+    }*/
 
 
     .icon.active {

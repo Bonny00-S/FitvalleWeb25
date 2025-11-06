@@ -28,11 +28,21 @@
            @*  <i class="fa-solid fa-bell text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i> *@
 
             <div class="relative group">
-                <i class="fa-solid fa-gear text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i>
-                <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-[var(--color-surface)] text-white rounded-lg shadow-lg z-50 border border-[var(--color-primary)]/40">
+                <i id="settingsToggle"
+                   class="fa-solid fa-gear text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i>
+
+                <div id="settingsMenu"
+                     class="hidden absolute right-0 mt-2 w-48 bg-[var(--color-surface)] text-white rounded-lg shadow-lg z-50 border border-[var(--color-primary)]/40">
                     <ul class="py-2 text-sm">
-                        <li><a href="#" class="block px-4 py-2 hover:bg-[var(--color-primary)] transition">Ver perfil</a></li>
-                        <li><a asp-action="ChangePassword" asp-controller="Auth" class="block px-4 py-2 hover:bg-[var(--color-primary)] transition">Cambiar contraseña</a></li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-[var(--color-primary)] transition">Ver perfil</a>
+                        </li>
+                        <li>
+                            <a asp-action="ChangePassword" asp-controller="Auth"
+                               class="block px-4 py-2 hover:bg-[var(--color-primary)] transition">
+                                Cambiar contraseña
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -79,6 +89,21 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         lucide.createIcons();
+    });
+        document.addEventListener("DOMContentLoaded", () => {
+        const toggle = document.getElementById("settingsToggle");
+        const menu = document.getElementById("settingsMenu");
+
+        toggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            menu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                menu.classList.add("hidden");
+            }
+        });
     });
 </script>
 

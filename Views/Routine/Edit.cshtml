@@ -37,93 +37,103 @@
 
 
     <!-- Mostrar sesiones -->
-    <div class="grid md:grid-cols-2 gap-6">
+   @*  <div class="grid md:grid-cols-2 gap-6"> *@
+        <!-- Mostrar sesiones -->
         @if (sessions != null && sessions.Any())
         {
-            foreach (var s in sessions)
-            {
-                var list = sessionExercises.ContainsKey(s.Id!)
-                ? sessionExercises[s.Id!]
-                : new List<Fitvalle_25.Models.Exercise.Viewmodels.SessionExerciseViewModel>();
+            <div class="grid md:grid-cols-2 gap-6">
+                @foreach (var s in sessions)
+                {
+                    var list = sessionExercises.ContainsKey(s.Id!)
+                    ? sessionExercises[s.Id!]
+                    : new List<Fitvalle_25.Models.Exercise.Viewmodels.SessionExerciseViewModel>();
 
-                <div class="p-5 bg-[var(--color-surface)] border border-[var(--color-primary)]/40 rounded-xl shadow-md">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-lg text-[var(--color-text-primary)] flex items-center gap-2">
-                            <i data-lucide="users" class="text-[var(--color-primary)]"></i> Sesión
-                        </h3>
-                        <form asp-action="DeleteSession" method="post">
-                            <input type="hidden" name="routineId" value="@s.RoutineId" />
-                            <input type="hidden" name="sessionId" value="@s.Id" />
-                            <button type="submit"
-                                    class="text-red-400 hover:text-red-300 font-semibold transition flex items-center gap-1">
-                                <i data-lucide="trash-2"></i> Eliminar
-                            </button>
-                        </form>
-                    </div>
-
-                    <div class="flex justify-between items-center mb-3">
-                        <p class="text-[var(--color-text-secondary)] text-sm">Ejercicios: (@list.Count / 10)</p>
-                        <button type="button"
-                                onclick="openExerciseModal('@s.Id')"
-                                class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-4 py-1.5 rounded-md text-sm shadow flex items-center gap-1">
-                            <i data-lucide="plus-circle" class="text-white"></i> Agregar ejercicio
-                        </button>
-                    </div>
-
-                    <!-- Lista de ejercicios -->
-                    @if (list.Any())
-                    {
-                        <form onsubmit="updateExercises(event, '@s.Id')">
-                            <table class="w-full text-sm border border-[var(--color-primary)]/40 rounded-lg overflow-hidden">
-                                <thead class="bg-[var(--color-primary)] text-white">
-                                    <tr>
-                                        <th class="px-2 py-1">Ejercicio</th>
-                                        <th>Series</th>
-                                        <th>Reps</th>
-                                        <th>Peso</th>
-                                        <th>Velocidad</th>
-                                        <th>Duración</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-[var(--color-primary)]/25">
-                                    @foreach (var e in list)
-                                    {
-                                        <tr class="hover:bg-[var(--color-primary-hover)]/30 transition" data-exercise-id="@e.Exercise.Id">
-                                            <td class="px-2 py-1">@e.Exercise.Name</td>
-                                            <td><input type="number" name="sets" value="@e.Data.Sets" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
-                                            <td><input type="number" name="reps" value="@e.Data.Reps" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
-                                            <td><input type="number" step="0.1" name="weight" value="@e.Data.Weight" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
-                                            <td><input type="number" step="0.1" name="speed" value="@e.Data.Speed" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
-                                            <td><input type="number" step="0.1" name="duration" value="@e.Data.Duration" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
-                                            <td>
-                                                <button type="button" onclick="removeExercise('@s.Id', '@e.Exercise.Id')" class="text-red-400 hover:text-red-300 flex items-center">
-                                                    <i data-lucide="x"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                            <div class="text-right mt-3">
-                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md shadow flex items-center gap-1">
-                                    <i data-lucide="save"></i> Guardar cambios
+                    <div class="p-5 bg-[var(--color-surface)] border border-[var(--color-primary)]/40 rounded-xl shadow-md">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-semibold text-lg text-[var(--color-text-primary)] flex items-center gap-2">
+                                <i data-lucide="users" class="text-[var(--color-primary)]"></i> Sesión
+                            </h3>
+                            <form asp-action="DeleteSession" method="post">
+                                <input type="hidden" name="routineId" value="@s.RoutineId" />
+                                <input type="hidden" name="sessionId" value="@s.Id" />
+                                <button type="submit"
+                                        class="text-red-400 hover:text-red-300 font-semibold transition flex items-center gap-1">
+                                    <i data-lucide="trash-2"></i> Eliminar
                                 </button>
-                            </div>
-                        </form>
-                    }
-                    else
-                    {
-                        <p class="text-[var(--color-text-secondary)] text-sm">Aún no hay ejercicios.</p>
-                    }
-                </div>
-            }
+                            </form>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-3">
+                            <p class="text-[var(--color-text-secondary)] text-sm">Ejercicios: (@list.Count / 10)</p>
+                            <button type="button"
+                                    onclick="openExerciseModal('@s.Id')"
+                                    class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-4 py-1.5 rounded-md text-sm shadow flex items-center gap-1">
+                                <i data-lucide="plus-circle" class="text-white"></i> Agregar ejercicio
+                            </button>
+                        </div>
+
+                        <!-- Lista de ejercicios -->
+                        @if (list.Any())
+                        {
+                            <form onsubmit="updateExercises(event, '@s.Id')">
+                                <table class="w-full text-sm border border-[var(--color-primary)]/40 rounded-lg overflow-hidden">
+                                    <thead class="bg-[var(--color-primary)] text-white">
+                                        <tr>
+                                            <th class="px-2 py-1">Ejercicio</th>
+                                            <th>Series</th>
+                                            <th>Reps</th>
+                                            <th>Peso</th>
+                                            <th>Velocidad</th>
+                                            <th>Duración</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-[var(--color-primary)]/25">
+                                        @foreach (var e in list)
+                                        {
+                                            <tr class="hover:bg-[var(--color-primary-hover)]/30 transition" data-exercise-id="@e.Exercise.Id">
+                                                <td class="px-2 py-1">@e.Exercise.Name</td>
+                                                <td><input type="number" name="sets" value="@e.Data.Sets" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
+                                                <td><input type="number" name="reps" value="@e.Data.Reps" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
+                                                <td><input type="number" step="0.1" name="weight" value="@e.Data.Weight" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
+                                                <td><input type="number" step="0.1" name="speed" value="@e.Data.Speed" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
+                                                <td><input type="number" step="0.1" name="duration" value="@e.Data.Duration" class="w-16 bg-[var(--color-surface)] text-center rounded border border-gray-600 text-white" /></td>
+                                                <td>
+                                                    <button type="button" onclick="removeExercise('@s.Id', '@e.Exercise.Id')" class="text-red-400 hover:text-red-300 flex items-center">
+                                                        <i data-lucide="x"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <div class="text-right mt-3">
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md shadow flex items-center gap-1">
+                                        <i data-lucide="save"></i> Guardar cambios
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="text-[var(--color-text-secondary)] text-sm">Aún no hay ejercicios.</p>
+                        }
+                    </div>
+                }
+            </div>
         }
         else
         {
-            <p class="text-[var(--color-text-secondary)]">Aún no has agregado sesiones.</p>
+            <!-- 🔸 Estado vacío centrado -->
+            <div class="flex items-center justify-center w-full py-32">
+                <p class="text-[var(--color-text-secondary)] text-lg text-center">
+                    Aún no has agregado sesiones.
+                </p>
+            </div>
         }
-    </div>
+@* </div> *@
+
+    
 
     <!-- ✅ BOTÓN FINAL -->
     <div class="mt-10 flex justify-center">

@@ -5,15 +5,15 @@
     ViewData["Title"] = "Mis Alumnos";
 }
 
-<div class="p-6 card-fitvalle animate__animated animate__fadeIn">
-    <h2 class="text-3xl font-bold mb-6 text-[var(--color-text-primary)] font-[Poppins] flex items-center gap-2">
+<div class="p-6 card-fitvalle animate__animated animate__fadeIn font-[Inter]">
+    <h2 class="text-3xl font-[Poppins] font-bold mb-6 text-[var(--color-text-primary)] flex items-center gap-2">
         <i data-lucide="users" class="icon active"></i>
         Mis Alumnos
     </h2>
 
     @if (TempData["Message"] != null)
     {
-        <div class="mb-4 bg-[var(--color-success)]/20 text-[var(--color-success)] px-4 py-2 rounded-lg border border-[var(--color-success)]/50 flex items-center gap-2">
+        <div class="mb-4 bg-[var(--color-success)]/20 text-[var(--color-success)] px-4 py-2 rounded-lg border border-[var(--color-success)]/50 flex items-center gap-2 font-[Poppins]">
             <i data-lucide="check-circle" class="icon active"></i>
             @TempData["Message"]
         </div>
@@ -21,14 +21,14 @@
 
     <div class="overflow-x-auto">
         <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
-            <thead class="bg-[var(--color-primary)] text-white">
+            <thead class="bg-[var(--color-primary)] text-white font-[Poppins]">
                 <tr>
-                    <th class="px-4 py-3 text-left font-[Poppins]">Nombre</th>
-                    <th class="px-4 py-3 text-left font-[Poppins]">Correo</th>
-                    <th class="px-4 py-3 text-left font-[Poppins]">Altura (cm)</th>
-                    <th class="px-4 py-3 text-left font-[Poppins]">Peso (kg)</th>
-                    <th class="px-4 py-3 text-left font-[Poppins]">Meta (kg)</th>
-                    <th class="px-4 py-3 text-center font-[Poppins]">Acciones</th>
+                    <th class="px-4 py-3 text-left">Nombre</th>
+                    <th class="px-4 py-3 text-left">Correo</th>
+                    <th class="px-4 py-3 text-left">Altura (cm)</th>
+                    <th class="px-4 py-3 text-left">Peso (kg)</th>
+                    <th class="px-4 py-3 text-left">Meta (kg)</th>
+                    <th class="px-4 py-3 text-center">Acciones</th>
                 </tr>
             </thead>
 
@@ -83,7 +83,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="6" class="px-4 py-6 text-center text-[var(--color-text-secondary)] flex items-center justify-center gap-2">
+                        <td colspan="6" class="px-4 py-6 text-center text-[var(--color-text-secondary)] flex items-center justify-center gap-2 italic">
                             <i data-lucide="info" class="icon"></i>
                             Aún no tienes alumnos asignados.
                         </td>

@@ -5,27 +5,37 @@
     var anio = DateTime.Now.Year;
 }
 
-<div class="card-fitvalle text-center animate__animated animate__fadeIn">
-    <h1 class="text-3xl font-bold mb-3 text-[var(--color-text-primary)] flex items-center justify-center gap-2">
-        <i data-lucide="user" class="icon active"></i>         @*  👋 *@
+<div class="card-fitvalle text-center animate__animated animate__fadeIn font-[Inter]">
+    <h1 class="text-3xl font-[Poppins] font-bold mb-3 text-[var(--color-text-primary)] flex items-center justify-center gap-2">
+        <i data-lucide="user" class="icon active"></i>
         Bienvenido <span class="text-[var(--color-primary)]">Coach</span>
     </h1>
 
 
-    <p class="text-xl font-semibold mb-4 text-[var(--color-text-secondary)] flex items-center justify-center gap-2">
-        <i data-lucide="activity" class="icon"></i>
-        Plataforma <span class="text-[var(--color-primary)] font-[Poppins]">Fitvalle</span>
+    <p class="text-xl font-[Poppins] font-semibold mb-4 text-[var(--color-text-secondary)] flex items-center justify-center gap-2">
+        <i data-lucide="activity" class="icon active"></i>
+        Plataforma <span class="text-[var(--color-primary)]">Fitvalle</span>
     </p>
 
-    <div class="bg-[var(--color-background)] border border-[var(--color-primary)]/20 rounded-lg p-4 inline-block">
+    <div class="bg-[var(--color-background)] border border-[var(--color-primary)]/20 rounded-lg p-4 inline-block shadow-sm">
         <p class="text-lg mb-1 flex items-center justify-center gap-2">
-            <i data-lucide="calendar" class="icon"></i>
-            Fecha actual: <span class="font-bold text-[var(--color-text-primary)]">@fecha</span>
+            <i data-lucide="calendar" class="icon active"></i>
+            <span>Fecha actual:</span>
+            <span class="font-[Poppins] font-semibold text-[var(--color-text-primary)]">@fecha</span>
         </p>
+
         <p class="text-sm text-[var(--color-text-secondary)] mt-1 flex items-center justify-center gap-2">
-            <i data-lucide="copyright" class="icon"></i>
-            © @anio - Fitvalle
+            <i data-lucide="copyright" class="icon active"></i>
+            <span class="font-[Inter]">© @anio - Fitvalle</span>
         </p>
     </div>
 </div>
 
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    lucide.replace(); // Inicializa íconos Lucide
+</script>
+
+
+
+@*  👋 *@
