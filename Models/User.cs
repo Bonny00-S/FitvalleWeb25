@@ -24,5 +24,7 @@ namespace Fitvalle_25.Models
 
 		[JsonPropertyName("state")]
 		public int State { get; set; }
+
+
 	}
 }
