@@ -25,6 +25,11 @@ namespace Fitvalle_25.Models
 		[JsonPropertyName("state")]
 		public int State { get; set; }
 
+        [JsonPropertyName("photoUrl")]
+        public string? PhotoUrl { get; set; }
 
-	}
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+
+    }
 }

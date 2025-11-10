@@ -1,22 +1,114 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutCoach.cshtml";
     ViewData["Title"] = "Inicio";
+
     var fecha = DateTime.Now.ToString("dd/MM/yyyy");
     var anio = DateTime.Now.Year;
+    var user = ViewBag.User as Fitvalle_25.Models.User;
 }
 
 <div class="card-fitvalle text-center animate__animated animate__fadeIn font-[Inter]">
+
+    <!-- 🔹 Foto y datos del Coach -->
+    <div class="flex flex-col items-center mb-6">
+        <img src="@(!string.IsNullOrEmpty(user?.PhotoUrl) ? user.PhotoUrl : "/images/iconUser.png")"
+             class="w-32 h-32 rounded-full border-4 border-[var(--color-primary)] shadow-md object-cover mb-3" />
+
+        <h2 class="text-2xl font-[Poppins] font-bold text-[var(--color-primary)]">
+            @(string.IsNullOrWhiteSpace(user?.Name) ? "Coach" : user.Name)
+        </h2>
+
+        <p class="text-[var(--color-text-secondary)] italic max-w-md">
+            @(!string.IsNullOrEmpty(user?.Description) ? user.Description : "Sin descripción disponible.")
+        </p>
+    </div>
+
+    <!-- 🔹 Título principal -->
     <h1 class="text-3xl font-[Poppins] font-bold mb-3 text-[var(--color-text-primary)] flex items-center justify-center gap-2">
         <i data-lucide="user" class="icon active"></i>
         Bienvenido <span class="text-[var(--color-primary)]">Coach</span>
     </h1>
 
-
+    <!-- 🔹 Subtítulo -->
     <p class="text-xl font-[Poppins] font-semibold mb-4 text-[var(--color-text-secondary)] flex items-center justify-center gap-2">
         <i data-lucide="activity" class="icon active"></i>
         Plataforma <span class="text-[var(--color-primary)]">Fitvalle</span>
     </p>
 
+    <!-- 🔹 Tarjeta inferior -->
+    <div class="bg-[var(--color-background)] border border-[var(--color-primary)]/20 rounded-lg p-4 inline-block shadow-sm">
+        <p class="text-lg mb-1 flex items-center justify-center gap-2">
+            <i data-lucide="calendar" class="icon active"></i>
+            <span>Fecha actual:</span>
+            <span class="font-[Poppins] font-semibold text-[var(--color-text-primary)]">@fecha</span>
+        </p>
+
+        <p class="text-sm text-[var(--color-text-secondary)] mt-1 flex items-center justify-center gap-2">
+            <i data-lucide="copyright" class="icon active"></i>
+            <span class="font-[Inter]">© @anio - Fitvalle</span>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}
+
+@* @model Fitvalle_25.Models.User
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Inicio";
+    var fecha = DateTime.Now.ToString("dd/MM/yyyy");
+    var anio = DateTime.Now.Year;
+}
+
+<div class="card-fitvalle text-center animate__animated animate__fadeIn font-[Inter]">
+
+    <!-- 👋 Bienvenida -->
+    <h1 class="text-3xl font-[Poppins] font-bold mb-3 text-[var(--color-text-primary)] flex items-center justify-center gap-2">
+        <i data-lucide="user" class="icon active"></i>
+        Bienvenido <span class="text-[var(--color-primary)]">Coach</span>
+    </h1>
+
+    <p class="text-xl font-[Poppins] font-semibold mb-6 text-[var(--color-text-secondary)] flex items-center justify-center gap-2">
+        <i data-lucide="activity" class="icon active"></i>
+        Plataforma <span class="text-[var(--color-primary)]">Fitvalle</span>
+    </p>
+
+    <!-- 🧑‍🏫 Información del Coach -->
+    <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-6">
+        <!-- 📸 Foto del coach -->
+        <div class="flex-shrink-0">
+            <img src="@(!string.IsNullOrEmpty(Model.PhotoUrl) ? Model.PhotoUrl : "/images/default-user.png")"
+                 alt="Foto del Coach"
+                 class="w-32 h-32 rounded-full object-cover border-4 border-[var(--color-primary)] shadow-lg">
+        </div>
+
+        <!-- 🧾 Nombre y descripción -->
+        <div class="max-w-lg text-center md:text-left">
+            <h2 class="text-2xl font-[Poppins] font-semibold text-[var(--color-text-primary)] flex items-center justify-center md:justify-start gap-2 mb-2">
+                <i data-lucide="award" class="icon active"></i>
+                @Model.Name
+            </h2>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p class="text-[var(--color-text-secondary)] text-justify leading-relaxed">
+                    @Model.Description
+                </p>
+            }
+            else
+            {
+                <p class="italic text-[var(--color-text-secondary)] opacity-80">
+                    Sin descripción disponible.
+                </p>
+            }
+        </div>
+    </div>
+
+    <!-- 🔹 Fecha actual -->
     <div class="bg-[var(--color-background)] border border-[var(--color-primary)]/20 rounded-lg p-4 inline-block shadow-sm">
         <p class="text-lg mb-1 flex items-center justify-center gap-2">
             <i data-lucide="calendar" class="icon active"></i>
@@ -35,7 +127,7 @@
 <script>
     lucide.replace(); // Inicializa íconos Lucide
 </script>
-
+ *@
 
 
 @*  👋 *@

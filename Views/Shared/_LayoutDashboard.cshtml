@@ -48,7 +48,7 @@
                      class="hidden absolute right-0 mt-2 w-48 bg-[var(--color-surface)] text-white rounded-lg shadow-lg z-50 border border-[var(--color-primary)]/40">
                     <ul class="py-2 text-sm">
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-[var(--color-primary)] transition">Ver perfil</a>
+                            <a h<a asp-action="ProfileAdmin" asp-controller="Admin" class="block px-4 py-2 hover:bg-[var(--color-primary)] transition">Ver perfil</a>
                         </li>
                         <li>
                             <a asp-action="ChangePassword" asp-controller="Auth"
@@ -62,9 +62,10 @@
 
             <div class="flex items-center gap-3 bg-[var(--color-surface)] px-4 py-2 rounded-xl border border-[var(--color-primary)]/40 shadow-md">
                 <span class="font-semibold">@User.Identity?.Name</span>
-                <div class="w-10 h-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center overflow-hidden">
+                <a asp-action="ProfileAdmin" asp-controller="Admin"
+                   class="w-10 h-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-200 shadow-md">
                     <img src="/images/iconUser.png" alt="Usuario" class="w-8 h-8 object-cover">
-                </div>
+                </a>
                 <form asp-action="Logout" asp-controller="Auth" method="post">
                     <button type="submit" class="btn-primary">Cerrar sesión</button>
                 </form>

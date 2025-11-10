@@ -1,0 +1,82 @@
+﻿@model Fitvalle_25.Models.User
+
+@{
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";  // usa el layout del admin
+    ViewData["Title"] = "Perfil del Administrador";
+}
+
+@if (TempData["Message1"] != null)
+{
+    <div class="mb-4 bg-[var(--color-success)]/20 text-[var(--color-success)] px-4 py-2 rounded-lg border border-[var(--color-success)]/50 flex items-center gap-2 font-[Poppins]">
+        <i data-lucide="check-circle" class="icon active"></i>
+        @TempData["Message1"]
+    </div>
+}
+
+<div class="max-w-3xl mx-auto p-8 card-fitvalle animate__animated animate__fadeIn font-[Inter]">
+
+    <!-- 🔹 Encabezado -->
+    <div class="flex flex-col md:flex-row items-center gap-6">
+        @* <div class="flex-shrink-0">
+            <img src="/images/iconUser.png"
+                 alt="Icono Administrador"
+                 class="w-32 h-32 rounded-full object-cover border-4 border-[var(--color-primary)] shadow-md">
+        </div> *@
+
+        <div class="flex-1 space-y-3 text-center md:text-left">
+            <h2 class="text-3xl font-[Poppins] font-bold text-[var(--color-text-primary)] flex items-center justify-center md:justify-start gap-2">
+                <i data-lucide="shield" class="icon active"></i>
+                @Model.Name
+            </h2>
+
+            <div class="text-[var(--color-text-secondary)] flex flex-col gap-1 text-sm md:text-base">
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                    <i data-lucide="mail" class="icon"></i>
+                    <span>@Model.Email</span>
+                </div>
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                    <i data-lucide="briefcase" class="icon"></i>
+                    <span class="capitalize">@Model.Role</span>
+                </div>
+            </div>
+
+          @*   <a asp-action="EditProfile"
+               class="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-5 py-2 rounded-lg shadow transition mt-4 font-semibold">
+                <i data-lucide="edit-2" class="icon active"></i>
+                Editar perfil
+            </a> *@
+        </div>
+    </div>
+
+    <!-- 🔹 Línea divisoria -->
+    <div class="border-t border-[var(--color-primary)]/30 my-6"></div>
+
+    <!-- 🔹 Información adicional -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center md:text-left">
+        <div class="bg-[var(--color-surface)] rounded-2xl shadow p-5 border border-[var(--color-primary)]/10">
+            <div class="flex flex-col items-center md:items-start gap-2">
+                <i data-lucide="calendar" class="icon text-[var(--color-primary)]"></i>
+                <span class="text-sm text-[var(--color-text-secondary)]">Miembro desde</span>
+                <span class="text-lg font-[Poppins] font-semibold text-[var(--color-text-primary)]">
+                    @(string.IsNullOrEmpty(Model.RegisterDate) ? "—" : Model.RegisterDate)
+                </span>
+            </div>
+        </div>
+
+        <div class="bg-[var(--color-surface)] rounded-2xl shadow p-5 border border-[var(--color-primary)]/10">
+            <div class="flex flex-col items-center md:items-start gap-2">
+                <i data-lucide="check-circle" class="icon text-[var(--color-primary)]"></i>
+                <span class="text-sm text-[var(--color-text-secondary)]">Estado</span>
+                <span class="text-lg font-[Poppins] font-semibold text-[var(--color-text-primary)]">
+                    @(Model.State == 1 ? "Activo" : "Inactivo")
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

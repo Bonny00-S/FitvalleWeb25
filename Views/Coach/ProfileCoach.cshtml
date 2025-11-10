@@ -1,0 +1,98 @@
+﻿@model Fitvalle_25.Models.User
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Perfil del Coach";
+}
+@if (TempData["Message1"] != null)
+{
+    <div class="mb-4 bg-[var(--color-success)]/20 text-[var(--color-success)] px-4 py-2 rounded-lg border border-[var(--color-success)]/50 flex items-center gap-2 font-[Poppins]">
+        <i data-lucide="check-circle" class="icon active"></i>
+        @TempData["Message1"]
+    </div>
+}
+<div class="max-w-4xl mx-auto p-8 card-fitvalle animate__animated animate__fadeIn font-[Inter]">
+    <div class="flex flex-col md:flex-row items-center gap-8">
+        <!-- 🖼️ Foto del coach -->
+        <div class="flex-shrink-0">
+            <img src="@(!string.IsNullOrEmpty(Model.PhotoUrl) ? Model.PhotoUrl : "/images/iconUser.png")"
+                 alt="Foto del Coach"
+                 class="w-40 h-40 rounded-full object-cover border-4 border-[var(--color-primary)] shadow-lg">
+        </div>
+
+        <!-- 🧾 Información principal -->
+        <div class="flex-1 space-y-3 text-center md:text-left">
+            <h2 class="text-3xl font-[Poppins] font-bold text-[var(--color-text-primary)] flex items-center justify-center md:justify-start gap-2">
+                <i data-lucide="user" class="icon active"></i>
+                @Model.Name
+            </h2>
+
+            <div class="text-[var(--color-text-secondary)] flex flex-col gap-1 text-sm md:text-base">
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                    <i data-lucide="mail" class="icon"></i>
+                    <span>@Model.Email</span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="flex items-start justify-center md:justify-start gap-2 mt-2 max-w-xl">
+                        <i data-lucide="message-square-text" class="icon mt-1"></i>
+                        <p class="text-[var(--color-text-secondary)] text-justify leading-relaxed">@Model.Description</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="flex items-center justify-center md:justify-start gap-2 italic opacity-80">
+                        <i data-lucide="message-circle-off" class="icon"></i>
+                        <span>Sin descripción disponible</span>
+                    </div>
+                }
+            </div>
+            <a asp-action="EditProfile"
+               class="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-5 py-2 rounded-lg shadow transition mt-4 font-semibold">
+                <i data-lucide="edit-2" class="icon active"></i>
+                Editar perfil
+            </a>
+
+        </div>
+    </div>
+
+    <!-- 🔹 Línea divisoria -->
+    <div class="border-t border-[var(--color-primary)]/30 my-6"></div>
+
+    <!-- 🧠 Información adicional (estilo Fitvalle, placeholder por ahora) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
+        <div class="bg-[var(--color-surface)] rounded-2xl shadow p-5 border border-[var(--color-primary)]/10">
+            <div class="flex flex-col items-center md:items-start gap-2">
+                <i data-lucide="star" class="icon text-[var(--color-primary)]"></i>
+                <span class="text-sm text-[var(--color-text-secondary)]">Especialidad</span>
+                <span class="text-lg font-[Poppins] font-semibold text-[var(--color-text-primary)]">No especificada</span>
+            </div>
+        </div>
+
+        <div class="bg-[var(--color-surface)] rounded-2xl shadow p-5 border border-[var(--color-primary)]/10">
+            <div class="flex flex-col items-center md:items-start gap-2">
+                <i data-lucide="users" class="icon text-[var(--color-primary)]"></i>
+                <span class="text-sm text-[var(--color-text-secondary)]">Alumnos activos</span>
+                <span class="text-lg font-[Poppins] font-semibold text-[var(--color-text-primary)]">
+                    @ViewBag.ActiveStudents
+                </span>
+            </div>
+        </div>
+
+        <div class="bg-[var(--color-surface)] rounded-2xl shadow p-5 border border-[var(--color-primary)]/10">
+            <div class="flex flex-col items-center md:items-start gap-2">
+                <i data-lucide="calendar" class="icon text-[var(--color-primary)]"></i>
+                <span class="text-sm text-[var(--color-text-secondary)]">Miembro desde</span>
+                <span class="text-lg font-[Poppins] font-semibold text-[var(--color-text-primary)]">
+                    @(string.IsNullOrEmpty(Model.RegisterDate) ? "—" : Model.RegisterDate)
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

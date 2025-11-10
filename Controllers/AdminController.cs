@@ -242,6 +242,24 @@ namespace Fitvalle_25.Controllers
 
             return RedirectToAction("ManageUsers");
         }
+        [HttpGet]
+        public async Task<IActionResult> ProfileAdmin()
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Auth");
+
+            var user = await _dbService.GetUserAsync($"user/{userId}", token);
+            if (user == null)
+                return NotFound();
+
+            if (user.Role != "admin")
+                return RedirectToAction("Dashboard", "Admin");
+
+            return View(user);
+        }
 
 
 

@@ -17,10 +17,20 @@ namespace Fitvalle_25.Controllers
             _authService = authService;
         }
 
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Auth");
+
+            var user = await _dbService.GetUserAsync($"user/{userId}", token);
+            ViewBag.User = user;
+
             return View();
         }
+
 
         public async Task<IActionResult> RequestCustomers()
         {
@@ -121,7 +131,7 @@ namespace Fitvalle_25.Controllers
                     // 🔹 kvp.Key = customerId
                     var customerId = kvp.Key;
 
-                    Console.WriteLine($"🧩 Revisando alumno (clave nodo): {customerId}");
+                    Console.WriteLine($" Revisando alumno (clave nodo): {customerId}");
 
                     var user = await _dbService.GetUserAsync($"user/{customerId}", token);
                     var customer = await _dbService.GetCustomerAsync($"customer/{customerId}", token);
@@ -131,15 +141,15 @@ namespace Fitvalle_25.Controllers
 
                     if (assignedDict == null)
                     {
-                        Console.WriteLine($"❌ No existe nodo assignedRoutines/{customerId}");
+                        Console.WriteLine($" No existe nodo assignedRoutines/{customerId}");
                     }
                     else if (assignedDict.Count == 0)
                     {
-                        Console.WriteLine($"⚠️ Nodo vacío assignedRoutines/{customerId}");
+                        Console.WriteLine($" Nodo vacío assignedRoutines/{customerId}");
                     }
                     else
                     {
-                        Console.WriteLine($"✅ Rutina encontrada para {customerId} → {assignedDict.Count} elementos");
+                        Console.WriteLine($" Rutina encontrada para {customerId} → {assignedDict.Count} elementos");
                     }
 
                     bool hasRoutine = assignedDict != null && assignedDict.Count > 0;
@@ -151,7 +161,7 @@ namespace Fitvalle_25.Controllers
             }
             else
             {
-                Console.WriteLine("⚠️ No se encontró ninguna relación coachCustomers para este coach.");
+                Console.WriteLine("⚠ No se encontró ninguna relación coachCustomers para este coach.");
             }
 
             Console.WriteLine("========== ✅ FIN DEBUG ==========");
@@ -258,6 +268,117 @@ namespace Fitvalle_25.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ProfileCoach()
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Auth");
+
+            // ✅ Obtener datos del coach
+            var user = await _dbService.GetUserAsync($"user/{userId}", token);
+            if (user == null)
+                return NotFound();
+
+            if (user.Role != "coach")
+                return RedirectToAction("Dashboard", "Coach");
+
+            // ✅ Obtener los alumnos asignados a este coach
+            var coachStudents = await _dbService.GetAllAsync<object>($"coachCustomers/{userId}", token);
+            int activeStudents = coachStudents?.Count ?? 0;
+
+            // ✅ Pasar el número de alumnos activos a la vista
+            ViewBag.ActiveStudents = activeStudents;
+            //var students = new List<User>();
+
+            //if (coachStudents != null)
+            //{
+            //    foreach (var relation in coachStudents)
+            //    {
+            //        var customerId = relation.Key;
+            //        var student = await _dbService.GetUserAsync($"user/{customerId}", token);
+            //        if (student != null)
+            //            students.Add(student);
+            //    }
+            //}
+
+            //ViewBag.StudentList = students;
+
+            return View(user);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Auth");
+
+            var user = await _dbService.GetUserAsync($"user/{userId}", token);
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(User model, IFormFile? photo)
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Auth");
+
+            // 🔹 Obtener datos actuales del usuario
+            var currentUser = await _dbService.GetUserAsync($"user/{userId}", token);
+            if (currentUser == null)
+                return NotFound();
+
+            string? photoPath = currentUser.PhotoUrl; // mantener la actual si no se sube nada
+
+            // 📸 Si el usuario sube una nueva imagen, guardarla físicamente
+            if (photo != null && photo.Length > 0)
+            {
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                if (!Directory.Exists(uploadsPath))
+                    Directory.CreateDirectory(uploadsPath);
+
+                // nombre único (userId + GUID)
+                var fileName = $"{userId}_{Guid.NewGuid()}{Path.GetExtension(photo.FileName)}";
+                var filePath = Path.Combine(uploadsPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await photo.CopyToAsync(stream);
+                }
+
+                // ruta accesible públicamente
+                photoPath = $"/uploads/{fileName}";
+            }
+
+            // 🔹 Actualizar datos en Firebase
+            var updateData = new
+            {
+                name = string.IsNullOrWhiteSpace(model.Name) ? currentUser.Name : model.Name,
+                description = model.Description ?? currentUser.Description ?? "",
+                photoUrl = photoPath ?? currentUser.PhotoUrl ?? ""
+            };
+
+            await _dbService.PatchDataAsync($"user/{userId}", updateData, token);
+
+            TempData["Message1"] = " Perfil actualizado correctamente.";
+            return RedirectToAction("ProfileCoach");
+        }
+
+
+
+
+
+
 
     }
 }
