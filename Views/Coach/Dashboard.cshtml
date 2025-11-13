@@ -21,6 +21,11 @@
         <p class="text-[var(--color-text-secondary)] italic max-w-md">
             @(!string.IsNullOrEmpty(user?.Description) ? user.Description : "Sin descripción disponible.")
         </p>
+        <p class="text-xl font-[Poppins] font-semibold mb-2 text-[var(--color-text-secondary)] flex items-center justify-center gap-2">
+            <i data-lucide="flame" class="icon active"></i>
+         
+                @(!string.IsNullOrEmpty(user?.Specialty) ? user.Specialty : "Especialidad no especificada.") 
+        </p>
     </div>
 
     <!-- 🔹 Título principal -->

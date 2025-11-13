@@ -23,5 +23,6 @@ namespace Fitvalle_25.Controllers
             bool success = await _dbService.InitializeDataAsync(token);
             return Content(success ? "✅ Datos iniciales insertados correctamente en Firebase." : "⚠️ Error al insertar datos.");
         }
+
     }
 }

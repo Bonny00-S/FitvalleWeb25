@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    // Se asume que pasas el usuario desde tu controlador
+    var user = ViewBag.User as Fitvalle_25.Models.User;
+}
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -13,8 +17,8 @@
 
     <!-- Tipografía y tema -->
     <link href="~/css/site.css" rel="stylesheet" />
-
 </head>
+
 <body class="bg-[var(--color-background)] text-[var(--color-text-primary)] min-h-screen flex flex-col">
 
     <!-- HEADER -->
@@ -25,8 +29,8 @@
         </div>
 
         <div class="flex items-center gap-6">
-           @*  <i class="fa-solid fa-bell text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i> *@
 
+            <!-- ⚙️ Menú de configuración -->
             <div class="relative group">
                 <i id="settingsToggle"
                    class="fa-solid fa-gear text-[var(--color-text-secondary)] hover:text-[var(--color-warning)] cursor-pointer transition"></i>
@@ -47,22 +51,33 @@
                 </div>
             </div>
 
+            <!-- 🧑 Usuario y logout -->
             <div class="flex items-center gap-3 bg-[var(--color-surface)] px-4 py-2 rounded-xl border border-[var(--color-primary)]/40 shadow-md">
                 <span class="font-semibold">@User.Identity?.Name</span>
+
+                <!-- Imagen del coach -->
                 <a asp-action="ProfileCoach" asp-controller="Coach"
                    class="w-10 h-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-200 shadow-md">
-                    <img src="/images/iconUser.png" alt="Usuario" class="w-8 h-8 object-cover">
+                    <img src="@(!string.IsNullOrEmpty(user?.PhotoUrl) ? user.PhotoUrl : "/images/iconUser.png")"
+                         alt="Usuario" class="w-8 h-8 object-cover" />
                 </a>
-                <form asp-action="Logout" asp-controller="Auth" method="post">
-                    <button type="submit" class="btn-primary">Cerrar sesión</button>
+
+                <!-- Icono de logout -->
+                <!-- Icono de logout -->
+                <form asp-action="Logout" asp-controller="Auth" method="post" class="flex items-center">
+                    <button type="submit"
+                            class="w-10 h-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-white shadow-md transition-transform duration-200 hover:scale-105"
+                            title="Cerrar sesión">
+                        <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                    </button>
                 </form>
+
             </div>
         </div>
     </header>
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="flex flex-1">
-
         <!-- SIDEBAR -->
         <aside class="sidebar-fitvalle w-64 p-4 shadow-xl border-r border-[var(--color-primary)]/20">
             <nav class="space-y-2">
@@ -85,28 +100,26 @@
     </div>
 
     @RenderSection("Scripts", required: false)
-</body>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        lucide.createIcons();
-    });
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
         document.addEventListener("DOMContentLoaded", () => {
-        const toggle = document.getElementById("settingsToggle");
-        const menu = document.getElementById("settingsMenu");
+            lucide.createIcons();
 
-        toggle.addEventListener("click", (e) => {
-            e.stopPropagation();
-            menu.classList.toggle("hidden");
+            const toggle = document.getElementById("settingsToggle");
+            const menu = document.getElementById("settingsMenu");
+
+            toggle.addEventListener("click", (e) => {
+                e.stopPropagation();
+                menu.classList.toggle("hidden");
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                    menu.classList.add("hidden");
+                }
+            });
         });
-
-        document.addEventListener("click", (e) => {
-            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-                menu.classList.add("hidden");
-            }
-        });
-    });
-</script>
-
-
+    </script>
+</body>
 </html>

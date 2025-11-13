@@ -31,5 +31,23 @@ namespace Fitvalle_25.Models
         [JsonPropertyName("description")]
         public string? Description { get; set; }
 
+        [JsonPropertyName("speciality")]
+        public string? Specialty { get; set; }
+
+        [JsonPropertyName("avatar")]
+        public string? Avatar { get; set; }
+
+        [JsonPropertyName("fcmToken")]
+        public string? FcmToken { get; set; }
+
+        public string GetAvatarUrl()
+        {
+            if (!string.IsNullOrEmpty(Avatar))
+                return $"/images/avatars/{Avatar}.png";
+
+            return "/images/iconUser.png";
+        }
+
+
     }
 }

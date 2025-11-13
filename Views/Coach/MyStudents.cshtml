@@ -1,4 +1,5 @@
-﻿@model List<(Fitvalle_25.Models.User user, Fitvalle_25.Models.Customer customer, bool hasRoutine)>
+﻿@model List<(Fitvalle_25.Models.User user, Fitvalle_25.Models.Customer customer, bool hasRoutine, string avatar)>
+
 
 @{
     Layout = "~/Views/Shared/_LayoutCoach.cshtml";
@@ -61,13 +62,24 @@
                 {
                     foreach (var s in Model)
                     {
+                        // Si el usuario tiene avatar, lo usamos. Sino, usamos un icono por defecto.
+                    
+
                         <tr class="hover:bg-[var(--color-primary-hover)]/30 transition duration-200">
-                            <td class="px-4 py-2 font-semibold text-[var(--color-text-primary)]">@s.user.Name</td>
+                            <td class="px-4 py-2 font-semibold text-[var(--color-text-primary)] flex items-center gap-3">
+                                <img src="@s.avatar"
+                                     alt="Foto del alumno"
+                                     class="w-16 h-16 rounded-full border-2 border-[var(--color-primary)] object-cover shadow-md" />
+
+
+
+                                <span>@s.user.Name</span>
+                            </td>
                             <td class="px-4 py-2 text-[var(--color-text-secondary)]">@s.user.Email</td>
                             <td class="px-4 py-2">@s.customer.Height</td>
                             <td class="px-4 py-2">@s.customer.Weight</td>
                             <td class="px-4 py-2">@s.customer.GoalWeight</td>
-
+                            
                             <td class="px-4 py-2 text-center space-x-2 whitespace-nowrap">
                                 @if (!s.hasRoutine)
                                 {
@@ -114,6 +126,7 @@
                     </tr>
                 }
             </tbody>
+
         </table>
     </div>
 </div>

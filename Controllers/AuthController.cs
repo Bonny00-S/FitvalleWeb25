@@ -13,9 +13,11 @@ namespace Fitvalle_25.Controllers
     public class AuthController : Controller
     {
         private readonly FirebaseAuthService _authService;
+        private readonly FirebaseDbService _dbService;
 
-        public AuthController(FirebaseAuthService authService)
+        public AuthController(FirebaseDbService dbService, FirebaseAuthService authService)
         {
+            _dbService = dbService;
             _authService = authService;
         }
 
@@ -228,8 +230,9 @@ namespace Fitvalle_25.Controllers
 
 
         [HttpGet]
-        public IActionResult ChangePassword()
+        public async Task<IActionResult> ChangePassword()
         {
+            
             ViewBag.RolDashboard = HttpContext.Session.GetString("UserRole");
             if (HttpContext.Session.GetString("UserRole") == "admin")
             {
@@ -238,8 +241,10 @@ namespace Fitvalle_25.Controllers
             else
             {
                 ViewBag.Rol = "~/Views/Shared/_LayoutCoach.cshtml";
+                
             }
-            
+            await SetUserInViewBag();
+
             return View();
         }
 
@@ -298,6 +303,29 @@ namespace Fitvalle_25.Controllers
             }
         }
 
+        private async Task SetUserInViewBag()
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(userId))
+            {
+                var user = await _dbService.GetUserAsync($"user/{userId}", token);
+                ViewBag.User = user ?? new User
+                {
+                    Name = "Administrador",
+                    PhotoUrl = "/images/iconUser.png"
+                };
+            }
+            else
+            {
+                ViewBag.User = new User
+                {
+                    Name = "Invitado",
+                    PhotoUrl = "/images/iconUser.png"
+                };
+            }
+        }
 
 
 

@@ -10,15 +10,26 @@ namespace Fitvalle_25.Controllers
     public class RoutineController : Controller
     {
         private readonly FirebaseDbService _dbService;
+        private readonly FirebaseAuthService _authService;
 
-        public RoutineController(FirebaseDbService dbService)
+        public RoutineController(FirebaseDbService dbService, FirebaseAuthService authService)
         {
             _dbService = dbService;
+            _authService = authService;
         }
 
         // ✅ Crear rutina
         public async Task<IActionResult> Create(string customerId)
         {
+           await SetUserInViewBag();
+            var token1 = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (!string.IsNullOrEmpty(token1) && !string.IsNullOrEmpty(userId))
+            {
+                var user = await _dbService.GetUserAsync($"user/{userId}", token1);
+                ViewBag.User = user;
+            }
             var token = HttpContext.Session.GetString("FirebaseToken");
             var coachId = HttpContext.Session.GetString("FirebaseUid");
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(coachId))
@@ -39,6 +50,15 @@ namespace Fitvalle_25.Controllers
         // ✅ Editar rutina
         public async Task<IActionResult> Edit(string id)
         {
+            await SetUserInViewBag();
+            var token1 = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (!string.IsNullOrEmpty(token1) && !string.IsNullOrEmpty(userId))
+            {
+                var user = await _dbService.GetUserAsync($"user/{userId}", token1);
+                ViewBag.User = user;
+            }
             var token = HttpContext.Session.GetString("FirebaseToken");
             if (string.IsNullOrEmpty(token))
                 return RedirectToAction("Login", "Auth");
@@ -179,6 +199,7 @@ namespace Fitvalle_25.Controllers
         // ✅ Editar rutina asignada
         public async Task<IActionResult> EditAssignedRoutine(string customerId)
         {
+            SetUserInViewBag();
             var token = HttpContext.Session.GetString("FirebaseToken");
             if (string.IsNullOrEmpty(token))
                 return RedirectToAction("Login", "Auth");
@@ -368,5 +389,18 @@ namespace Fitvalle_25.Controllers
 
             return Json(result);
         }
+
+        private async Task SetUserInViewBag()
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var userId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(userId))
+            {
+                var user = await _dbService.GetUserAsync($"user/{userId}", token);
+                ViewBag.User = user;
+            }
+        }
     }
+
 }

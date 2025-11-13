@@ -67,7 +67,11 @@
                     <img src="/images/iconUser.png" alt="Usuario" class="w-8 h-8 object-cover">
                 </a>
                 <form asp-action="Logout" asp-controller="Auth" method="post">
-                    <button type="submit" class="btn-primary">Cerrar sesión</button>
+                    <button type="submit"
+                            class="w-10 h-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-white shadow-md transition-transform duration-200 hover:scale-105"
+                            title="Cerrar sesión">
+                        <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                    </button>
                 </form>
             </div>
         </div>

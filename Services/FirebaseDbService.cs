@@ -304,6 +304,22 @@ namespace Fitvalle_25.Services
                 PropertyNameCaseInsensitive = true
             });
         }
+        public async Task<User?> GetMergedUserAsync(string uid, string token)
+        {
+            var mainUser = await GetUserAsync($"user/{uid}", token);
+            var extraUser = await GetUserAsync($"users/{uid}", token);
+
+            if (mainUser == null) return null;
+
+            // Fusiona los datos
+            if (extraUser != null)
+            {
+                mainUser.Avatar = extraUser.Avatar ?? mainUser.Avatar;
+                mainUser.FcmToken = extraUser.FcmToken ?? mainUser.FcmToken;
+            }
+
+            return mainUser;
+        }
 
 
 
