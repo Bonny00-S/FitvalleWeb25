@@ -2,6 +2,7 @@
 using Fitvalle_25.Models.Exercise;
 using Fitvalle_25.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Text.Json;
 
 
@@ -120,6 +121,7 @@ namespace Fitvalle_25.Controllers
         public async Task<IActionResult> MyStudents()
         {
             await SetUserInViewBag();
+
             var token = HttpContext.Session.GetString("FirebaseToken");
             var coachId = HttpContext.Session.GetString("FirebaseUid");
 
@@ -129,55 +131,63 @@ namespace Fitvalle_25.Controllers
             var relations = await _dbService.GetAllAsync<object>($"coachCustomers/{coachId}", token);
             var students = new List<(User user, Customer customer, bool hasRoutine, string avatar)>();
 
-
             Console.WriteLine("========== 🔍 DEBUG MyStudents() ==========");
 
             if (relations != null)
             {
                 foreach (var kvp in relations)
                 {
-                    // 🔹 kvp.Key = customerId
                     var customerId = kvp.Key;
+                    Console.WriteLine($" Revisando alumno: {customerId}");
 
-                    Console.WriteLine($" Revisando alumno (clave nodo): {customerId}");
+                    // 1️⃣ Obtener user básico
+                    var (userBasic, _, _) = await GetFullUserDataAsync(customerId, token);
+                    if (userBasic == null) continue;
 
-                    var (user, avatar, fcmToken) = await GetFullUserDataAsync(customerId, token);
+                    // 2️⃣ Obtener user completo EN LA TABLA CORRECTA (users/{id})
+                    var userExtended = await _dbService.GetDataAsync<UserExtended>($"users/{customerId}", token);
+
+                    // 3️⃣ Obtener el customer
                     var customer = await _dbService.GetCustomerAsync($"customer/{customerId}", token);
+                    if (customer == null) continue;
 
+                    // 4️⃣ Resolver el avatar REAL
+                    string avatarFinal = "/images/iconUser.png";
 
-                    // 🔍 Verificar existencia de rutina asignada
+                    if (userExtended != null && !string.IsNullOrEmpty(userExtended.Avatar))
+                    {
+                        var base64 = await _dbService.GetAvatarBase64Async(userExtended.Avatar, token);
+
+                        if (!string.IsNullOrEmpty(base64))
+                        {
+                            avatarFinal = base64;
+                            Console.WriteLine($"Avatar de {userBasic.Name}: OK ({base64.Substring(0, 30)}...)");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Avatar de {userBasic.Name} es null.");
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(userBasic.PhotoUrl))
+                    {
+                        avatarFinal = userBasic.PhotoUrl; // Fallback Google/Facebook
+                    }
+
+                    // 5️⃣ Ver rutina
                     var assignedDict = await _dbService.GetAllAsync<object>($"assignedRoutines/{customerId}", token);
-
-                    if (assignedDict == null)
-                    {
-                        Console.WriteLine($" No existe nodo assignedRoutines/{customerId}");
-                    }
-                    else if (assignedDict.Count == 0)
-                    {
-                        Console.WriteLine($" Nodo vacío assignedRoutines/{customerId}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($" Rutina encontrada para {customerId} → {assignedDict.Count} elementos");
-                    }
-
                     bool hasRoutine = assignedDict != null && assignedDict.Count > 0;
 
-                    if (user != null && customer != null)
-                        students.Add((user, customer, hasRoutine, avatar ?? user.PhotoUrl ?? "/images/iconUser.png"));
-
+                    students.Add((userBasic, customer, hasRoutine, avatarFinal));
                 }
-
-            }
-            else
-            {
-                Console.WriteLine("⚠ No se encontró ninguna relación coachCustomers para este coach.");
             }
 
             Console.WriteLine("========== ✅ FIN DEBUG ==========");
 
             return View(students);
         }
+
+
+
 
 
         [HttpPost]
@@ -242,39 +252,83 @@ namespace Fitvalle_25.Controllers
                 sessionExercises[s.Id] = list;
             }
 
+            /////NUEVO
             // 🔹 Datos para el gráfico (peso actual vs meta)
             double currentWeight = 0;
             double goalWeight = 0;
-            double progressPercent;
-
-            if (double.TryParse(customer.Weight, out var parsedWeight))
+            double progressPercent = 0;
+            
+            // Convertir peso actual
+            // Convertir peso actual
+            if (double.TryParse(customer.Weight, NumberStyles.Any, CultureInfo.InvariantCulture, out var parsedWeight))
                 currentWeight = parsedWeight;
 
-            if (double.TryParse(customer.GoalWeight, out var parsedGoal))
+            // Convertir peso meta
+            if (double.TryParse(customer.GoalWeight, NumberStyles.Any, CultureInfo.InvariantCulture, out var parsedGoal))
                 goalWeight = parsedGoal;
-            if (goalWeight > currentWeight)
-            {
-                 progressPercent = (goalWeight > 0 && currentWeight > 0)
-                ? Math.Round((currentWeight / goalWeight) * 100, 2)
-                : 0;
-            }
-            else
-            {
-                    progressPercent = (goalWeight > 0 && currentWeight > 0)
-                    ? Math.Round((goalWeight / currentWeight) * 100, 2)
-                    : 0;
-            }
-               
 
-            
+
+            // Porcentaje simple hacia meta
+            if (goalWeight > 0 && currentWeight > 0)
+            {
+                if (goalWeight > currentWeight)
+                    progressPercent = Math.Round((currentWeight / goalWeight) * 100, 2);
+                else
+                    progressPercent = Math.Round((goalWeight / currentWeight) * 100, 2);
+            }
+
+
+
+            // 🔥 Obtener completedSessions desde Firebase
+            var completedSessionsDict = await _dbService.GetAllAsync<CompletedSession>("completedSessions", token);
+
+            var completed = completedSessionsDict?
+                .Values
+                .Where(x => x.CustomerId == customer.Id)
+                .OrderBy(x => x.DateFinished)
+                .ToList()
+                ?? new List<CompletedSession>();
+
+
+            // 🔥 Peso inicial para simular evolución
+            double simWeight = currentWeight;
+            List<double> simulatedWeights = new();
+            List<string> dates = new();
+
+            foreach (var session in completed)
+            {
+                simWeight += 0.3; // tu fórmula temporal
+                simulatedWeights.Add(Math.Round(simWeight, 1));
+
+                dates.Add(session.DateFinished.ToString("dd/MM"));
+            }
+
+
+            // ViewBags para la gráfica
+            ViewBag.WeightValues = simulatedWeights;
+            ViewBag.WeightDates = dates;
+            ViewBag.CurrentWeight = simulatedWeights.LastOrDefault();
+            ViewBag.GoalWeight = goalWeight; // ya es double
+
+
+
+            // 🔥 Cálculo REAL del progreso
+            double progress = 0;
+
+            if (goalWeight > 0)
+            {
+                progress = ((ViewBag.CurrentWeight - currentWeight) / (goalWeight - currentWeight)) * 100;
+            }
+
+            //ViewBag.ProgressPercent = Math.Round(progress, 2);
+
 
             ViewBag.User1 = user;
             ViewBag.Customer = customer;
             ViewBag.Routine = routine;
             ViewBag.Sessions = sessionsDict.Values.ToList();
             ViewBag.SessionExercises = sessionExercises;
-            ViewBag.CurrentWeight = currentWeight;
-            ViewBag.GoalWeight = goalWeight;
+       
             ViewBag.ProgressPercent = progressPercent;
 
             return View();
@@ -476,7 +530,7 @@ namespace Fitvalle_25.Controllers
             return (user, avatar, fcmToken);
         }
 
-
+       
 
 
 

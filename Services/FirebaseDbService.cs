@@ -321,6 +321,48 @@ namespace Fitvalle_25.Services
             return mainUser;
         }
 
+        public async Task<string?> GetAvatarBase64Async(string avatarKey, string idToken)
+        {
+            if (string.IsNullOrEmpty(avatarKey))
+                return null;
+
+            string? base64 = null;
+
+            if (avatarKey.StartsWith("shared_", StringComparison.OrdinalIgnoreCase))
+            {
+                string id = avatarKey.Substring("shared_".Length);
+                var avatarNode = await GetDataAsync<SharedAvatar>($"sharedAvatars/{id}", idToken);
+                if (!string.IsNullOrEmpty(avatarNode?.ImageBase64))
+                    base64 = avatarNode.ImageBase64;
+            }
+            else
+            {
+                var userNode = await GetDataAsync<User>($"user/{avatarKey}", idToken);
+                if (!string.IsNullOrEmpty(userNode?.Avatar))
+                    base64 = userNode.Avatar;
+            }
+
+            if (string.IsNullOrEmpty(base64))
+                return null;
+
+            // Detectar tipo de imagen
+            string prefix = "data:image/jpeg;base64,"; // por defecto JPEG
+            if (base64.StartsWith("iVBOR")) prefix = "data:image/png;base64,";
+
+            return $"{prefix}{base64}";
+        }
+
+
+
+
+        public class SharedAvatar
+        {
+            public string Id { get; set; }
+            public string ImageBase64 { get; set; }
+            public string Name { get; set; }
+            public long UploadedAt { get; set; }
+            public string UploadedBy { get; set; }
+        }
 
 
 

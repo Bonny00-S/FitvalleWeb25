@@ -168,40 +168,35 @@
 
 <!-- 📊 Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+@using System.Text.Json
 <script>
-    const ctx = document.getElementById('weightChart');
+    const weightData = @Html.Raw(JsonSerializer.Serialize(new double[] { ViewBag.CurrentWeight, ViewBag.GoalWeight }));
+    const weightLabels = @Html.Raw(JsonSerializer.Serialize(new string[] { "Peso Actual", "Peso Meta" }));
+
+    const ctx = document.getElementById('weightChart').getContext('2d');
     const weightChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Peso Actual', 'Meta'],
+            labels: weightLabels,
             datasets: [{
                 label: 'Peso (kg)',
-                data: [@ViewBag.CurrentWeight, @ViewBag.GoalWeight],
+                data: weightData,
                 backgroundColor: ['#a10d3a', '#16a34a']
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: { display: false },
-                title: {
-                    display: false
-                }
-            },
             scales: {
                 y: {
-                    beginAtZero: true,
-                    ticks: { color: '#999' },
-                    grid: { color: 'rgba(0,0,0,0.05)' }
-                },
-                x: {
-                    ticks: { color: '#999' },
-                    grid: { display: false }
+                    beginAtZero: true
                 }
             }
         }
     });
 </script>
+
+
 
 @section Scripts {
     <script>
