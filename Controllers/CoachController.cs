@@ -307,7 +307,7 @@ namespace Fitvalle_25.Controllers
             // ViewBags para la gráfica
             ViewBag.WeightValues = simulatedWeights;
             ViewBag.WeightDates = dates;
-            ViewBag.CurrentWeight = simulatedWeights.LastOrDefault();
+            ViewBag.CurrentWeight = currentWeight;
             ViewBag.GoalWeight = goalWeight; // ya es double
 
 
