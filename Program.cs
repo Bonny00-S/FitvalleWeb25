@@ -10,6 +10,8 @@ namespace Fitvalle_25
 
             builder.Services.AddHttpClient<FirebaseAuthService>();
             builder.Services.AddHttpClient<FirebaseDbService>();
+            builder.Services.AddHttpClient<FirebasePushService>();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient();

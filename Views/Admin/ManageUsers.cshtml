@@ -5,7 +5,13 @@
 }
 
 <div class="card-fitvalle p-8 rounded-2xl shadow-lg border border-[var(--color-primary)]/30 bg-[var(--color-surface)] text-[var(--color-text-primary)] animate__animated animate__fadeIn">
-
+    @if (TempData["MessageAdmin"] != null)
+    {
+        <div class="mb-4 bg-[var(--color-success)]/20 text-[var(--color-success)] px-4 py-2 rounded-lg border border-[var(--color-success)]/50 flex items-center gap-2 font-[Poppins]">
+            <i data-lucide="check-circle" class="icon active"></i>
+            @TempData["MessageAdmin"]
+        </div>
+    }
     <!-- Encabezado -->
     <div class="flex justify-between items-center mb-8">
         <h2 class="text-3xl font-bold text-[var(--color-primary)] font-[Poppins] flex items-center gap-2">

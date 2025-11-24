@@ -1,4 +1,87 @@
-﻿@model (Fitvalle_25.Models.Request solicitud, Fitvalle_25.Models.User cliente, Fitvalle_25.Models.Customer customer, int edad)
+﻿@model Fitvalle_25.Models.Viewmodels.UnifiedRequestVM
+
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Detalle de Solicitud";
+}
+
+<div class="card-fitvalle max-w-3xl mx-auto p-8 animate__animated animate__fadeIn">
+    <h2 class="text-3xl font-bold mb-6 text-center text-[var(--color-primary)] font-[Poppins] flex items-center justify-center gap-2">
+        <i data-lucide="file-text" class="icon active"></i>
+        Solicitud de @Model.StudentName
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-[var(--color-text-secondary)]">
+        <div class="space-y-2">
+            <p class="flex items-center gap-2">
+                <i data-lucide="mail" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Email:</span> @Model.Email
+            </p>
+            <p class="flex items-center gap-2">
+                <i data-lucide="message-square" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Mensaje:</span> @Model.Message
+            </p>
+            <p class="flex items-center gap-2">
+                <i data-lucide="info" class="icon"></i>
+                <span class="font-semibold text-[var(--color-text-primary)]">Estado:</span>
+                @if (Model.State.ToLower() == "accepted")
+                {
+                    <span class="text-[var(--color-success)] font-semibold">Aceptada</span>
+                }
+                else if (Model.State.ToLower() == "pending")
+                {
+                    <span class="text-[var(--color-warning)] font-semibold">Pendiente</span>
+                }
+                else if (Model.State.ToLower() == "rejected")
+                {
+                    <span class="text-[var(--color-error)] font-semibold">Rechazada</span>
+                }
+                else
+                {
+                    <span class="text-[var(--color-text-secondary)]">@Model.State</span>
+                }
+            </p>
+        </div>
+    </div>
+
+    <hr class="my-6 border-[var(--color-primary)]/40">
+
+    <div class="mt-8 flex justify-center space-x-4">
+        <a asp-action="RequestCustomers" asp-controller="Coach"
+           class="bg-[var(--color-primary-hover)] hover:bg-[var(--color-primary)] text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow inline-flex items-center gap-2">
+            <i data-lucide="arrow-left" class="icon"></i>
+            Volver
+        </a>
+
+        @if (Model.State.ToLower() != "accepted")
+        {
+            <form asp-action="AcceptRequest" method="post" class="inline">
+                <input type="hidden" name="requestId" value="@Model.Id" />
+                <input type="hidden" name="studentId" value="@Model.StudentId" />
+                <button type="submit"
+                        class="bg-[var(--color-success)] hover:bg-emerald-600 text-white px-5 py-2 rounded-md font-[Poppins] transition duration-300 shadow inline-flex items-center gap-2">
+                    <i data-lucide="check" class="icon"></i>
+                    Aceptar Alumno
+                </button>
+            </form>
+        }
+        else
+        {
+            <span class="text-[var(--color-success)] font-semibold flex items-center gap-2">
+                <i data-lucide="check-circle" class="icon"></i>
+                Alumno asignado
+            </span>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}
+
+@* @model (Fitvalle_25.Models.Request solicitud, Fitvalle_25.Models.User cliente, Fitvalle_25.Models.Customer customer, int edad)
 
 @{
     Layout = "~/Views/Shared/_LayoutCoach.cshtml";
@@ -112,3 +195,4 @@
         lucide.createIcons();
     </script>
 }
+ *@

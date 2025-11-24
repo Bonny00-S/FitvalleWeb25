@@ -143,7 +143,7 @@ namespace Fitvalle_25.Controllers
                 ViewBag.PreservedName = "";
                 ViewBag.PreservedRole = "";
 
-                TempData["Message"] = emailSent
+                TempData["MessageAdmin"] = emailSent
                     ? "Usuario registrado. Se envió un correo de verificación."
                     : "Usuario registrado, pero no se pudo enviar el correo.";
 

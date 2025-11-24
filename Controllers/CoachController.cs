@@ -1,5 +1,6 @@
 ﻿using Fitvalle_25.Models;
 using Fitvalle_25.Models.Exercise;
+using Fitvalle_25.Models.Viewmodels;
 using Fitvalle_25.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
@@ -13,13 +14,15 @@ namespace Fitvalle_25.Controllers
         private readonly FirebaseDbService _dbService;
         private readonly FirebaseAuthService _authService;
         private readonly ImgBBService _imgbb;
+        private readonly FirebasePushService _firebasePushService;
 
-        public CoachController(FirebaseDbService dbService, FirebaseAuthService authService, IConfiguration config)
+        public CoachController(FirebaseDbService dbService, FirebaseAuthService authService, IConfiguration config, FirebasePushService firebasePushService)
         {
             _dbService = dbService;
             _authService = authService;
             var apiKey = config["ImgBB:ApiKey"];
             _imgbb = new ImgBBService(apiKey);
+            _firebasePushService = firebasePushService;
         }
 
         public async Task<IActionResult> Dashboard()
@@ -37,86 +40,211 @@ namespace Fitvalle_25.Controllers
         }
 
 
+        //public async Task<IActionResult> RequestCustomers()
+        //{
+        //    await SetUserInViewBag();
+        //    var token = HttpContext.Session.GetString("FirebaseToken");
+        //    if (string.IsNullOrEmpty(token))
+        //        return RedirectToAction("Dashboard", "Coach");
+
+        //    var requests = await _dbService.GetAllRequestsAsync(token);
+        //    var solicitudesConCliente = new List<(Request solicitud, User cliente)>();
+
+        //    if (requests != null)
+        //    {
+        //        foreach (var req in requests.Values)
+        //        {
+        //            if (string.Equals(req.State, "pending", StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                var cliente = await _dbService.GetUserAsync($"user/{req.CustomerId}", token);
+        //                if (cliente != null)
+        //                    solicitudesConCliente.Add((req, cliente));
+        //            }
+        //        }
+        //    }
+
+        //    return View(solicitudesConCliente);
+        //}
         public async Task<IActionResult> RequestCustomers()
         {
             await SetUserInViewBag();
+
             var token = HttpContext.Session.GetString("FirebaseToken");
-            if (string.IsNullOrEmpty(token))
+            var coachId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(coachId))
                 return RedirectToAction("Dashboard", "Coach");
 
-            var requests = await _dbService.GetAllRequestsAsync(token);
-            var solicitudesConCliente = new List<(Request solicitud, User cliente)>();
+            var unifiedList = new List<UnifiedRequestVM>();
 
-            if (requests != null)
+            // -----------------------------------------------------------
+            //      1️⃣ Solicitudes generales (Request)
+            // -----------------------------------------------------------
+            var generalRequests = await _dbService.GetAllRequestsAsync(token);
+
+            if (generalRequests != null)
             {
-                foreach (var req in requests.Values)
+                foreach (var req in generalRequests.Values)
                 {
-                    if (string.Equals(req.State, "pending", StringComparison.OrdinalIgnoreCase))
+                    if (req.State?.ToLower() == "pending")
                     {
-                        var cliente = await _dbService.GetUserAsync($"user/{req.CustomerId}", token);
-                        if (cliente != null)
-                            solicitudesConCliente.Add((req, cliente));
+                        var student = await _dbService.GetUserAsync($"user/{req.CustomerId}", token);
+                        if (student == null) continue;
+
+                        unifiedList.Add(new UnifiedRequestVM
+                        {
+                            Id = req.Id,
+                            Type = "general",
+                            StudentId = req.CustomerId,
+                            StudentName = student.Name,
+                            Email = student.Email,                     // 👈 email agregado
+                            Message = req.Description,
+                            State = "Pendiente"                        // 👈 normalizado
+                        });
                     }
                 }
             }
 
-            return View(solicitudesConCliente);
+            // -----------------------------------------------------------
+            //      2️⃣ Solicitudes de tutoría (TutoringRequest)
+            // -----------------------------------------------------------
+            var tutoringRequests = await _dbService.GetAllAsync<TutoringRequest>("tutoringRequests", token);
+
+            if (tutoringRequests != null)
+            {
+                foreach (var req in tutoringRequests.Values)
+                {
+                    if (req.CoachId == coachId && req.Status == "pending")
+                    {
+                        unifiedList.Add(new UnifiedRequestVM
+                        {
+                            Id = req.Id,
+                            Type = "tutoring",
+                            StudentId = req.StudentId,
+                            StudentName = req.StudentName,
+                            Email = req.StudentEmail,                  // 👈 email directo
+                            Message = req.Message,
+                            State = "Pendiente"                        // 👈 normalizado
+                        });
+                    }
+                }
+            }
+
+            return View(unifiedList);
         }
 
+
+
+        //public async Task<IActionResult> RequestDetail(string id)
+        //{
+        //    await SetUserInViewBag();
+        //    var token = HttpContext.Session.GetString("FirebaseToken");
+        //    if (string.IsNullOrEmpty(token))
+        //        return RedirectToAction("Dashboard", "Coach");
+
+        //    var requests = await _dbService.GetAllRequestsAsync(token);
+
+        //    if (requests != null && requests.ContainsKey(id))
+        //    {
+        //        var solicitud = requests[id];
+        //        var cliente = await _dbService.GetUserAsync($"user/{solicitud.CustomerId}", token);
+        //        var customerData = await _dbService.GetCustomerAsync($"customer/{solicitud.CustomerId}", token);
+
+        //        if (cliente != null && customerData != null)
+        //        {
+        //            int edad = 0;
+        //            if (DateTime.TryParseExact(customerData.Birthdate, "dd/MM/yyyy", null,
+        //                System.Globalization.DateTimeStyles.None, out DateTime nacimiento))
+        //            {
+        //                edad = DateTime.Now.Year - nacimiento.Year;
+        //                if (DateTime.Now < nacimiento.AddYears(edad)) edad--;
+        //            }
+
+        //            return View((solicitud, cliente, customerData, edad));
+        //        }
+        //    }
+
+        //    return NotFound();
+        //}
         public async Task<IActionResult> RequestDetail(string id)
         {
             await SetUserInViewBag();
             var token = HttpContext.Session.GetString("FirebaseToken");
+
             if (string.IsNullOrEmpty(token))
                 return RedirectToAction("Dashboard", "Coach");
 
-            var requests = await _dbService.GetAllRequestsAsync(token);
-
-            if (requests != null && requests.ContainsKey(id))
+            // Buscar solicitud en tutoringRequests primero
+            var tutoringRequests = await _dbService.GetAllAsync<TutoringRequest>("tutoringRequests", token);
+            if (tutoringRequests != null && tutoringRequests.ContainsKey(id))
             {
-                var solicitud = requests[id];
-                var cliente = await _dbService.GetUserAsync($"user/{solicitud.CustomerId}", token);
-                var customerData = await _dbService.GetCustomerAsync($"customer/{solicitud.CustomerId}", token);
+                var req = tutoringRequests[id];
 
-                if (cliente != null && customerData != null)
+                var vm = new UnifiedRequestVM
                 {
-                    int edad = 0;
-                    if (DateTime.TryParseExact(customerData.Birthdate, "dd/MM/yyyy", null,
-                        System.Globalization.DateTimeStyles.None, out DateTime nacimiento))
-                    {
-                        edad = DateTime.Now.Year - nacimiento.Year;
-                        if (DateTime.Now < nacimiento.AddYears(edad)) edad--;
-                    }
+                    Id = req.Id,
+                    Type = "tutoring",
+                    StudentId = req.StudentId,
+                    StudentName = req.StudentName,
+                    Email = req.StudentEmail,
+                    Message = req.Message,
+                    State = req.Status
+                };
 
-                    return View((solicitud, cliente, customerData, edad));
+                return View(vm);
+            }
+
+            // Si no está en tutoringRequests, buscar en Requests generales
+            var generalRequests = await _dbService.GetAllRequestsAsync(token);
+            if (generalRequests != null && generalRequests.ContainsKey(id))
+            {
+                var req = generalRequests[id];
+                var student = await _dbService.GetUserAsync($"user/{req.CustomerId}", token);
+
+                if (student != null)
+                {
+                    var vm = new UnifiedRequestVM
+                    {
+                        Id = req.Id,
+                        Type = "general",
+                        StudentId = req.CustomerId,
+                        StudentName = student.Name,
+                        Email = student.Email,
+                        Message = req.Description,
+                        State = req.State
+                    };
+
+                    return View(vm);
                 }
             }
 
             return NotFound();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AcceptRequest(string requestId, string customerId)
-        {
-            var token = HttpContext.Session.GetString("FirebaseToken");
-            var coachId = HttpContext.Session.GetString("FirebaseUid");
 
-            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(coachId))
-                return RedirectToAction("Login", "Auth");
 
-            var relation = new
-            {
-                coachId,
-                customerId,
-                assignedDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
-            };
+        //[HttpPost]
+        //public async Task<IActionResult> AcceptRequest(string requestId, string customerId)
+        //{
+        //    var token = HttpContext.Session.GetString("FirebaseToken");
+        //    var coachId = HttpContext.Session.GetString("FirebaseUid");
 
-            await _dbService.PatchDataAsync($"coachCustomers/{coachId}/{customerId}", relation, token);
-            await _dbService.PatchDataAsync($"request/{requestId}", new { state = "accepted" }, token);
+        //    if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(coachId))
+        //        return RedirectToAction("Login", "Auth");
 
-            TempData["Message"] = "Cliente asignado correctamente.";
-            return RedirectToAction("RequestCustomers");
-        }
+        //    var relation = new
+        //    {
+        //        coachId,
+        //        customerId,
+        //        assignedDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+        //    };
+
+        //    await _dbService.PatchDataAsync($"coachCustomers/{coachId}/{customerId}", relation, token);
+        //    await _dbService.PatchDataAsync($"request/{requestId}", new { state = "accepted" }, token);
+
+        //    TempData["Message"] = "Cliente asignado correctamente.";
+        //    return RedirectToAction("RequestCustomers");
+        //}
 
         public async Task<IActionResult> MyStudents()
         {
@@ -190,8 +318,23 @@ namespace Fitvalle_25.Controllers
 
 
 
+        //[HttpPost]
+        //public async Task<IActionResult> RemoveStudent(string customerId)
+        //{
+        //    var token = HttpContext.Session.GetString("FirebaseToken");
+        //    var coachId = HttpContext.Session.GetString("FirebaseUid");
+
+        //    if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(coachId))
+        //        return RedirectToAction("Login", "Auth");
+
+        //    await _dbService.DeleteDataAsync($"coachCustomers/{coachId}/{customerId}", token);
+        //    await _dbService.DeleteDataAsync($"assignedRoutines/{customerId}", token);
+
+        //    TempData["Message"] = "Has dejado de asesorar al alumno.";
+        //    return RedirectToAction("MyStudents");
+        //}
         [HttpPost]
-        public async Task<IActionResult> RemoveStudent(string customerId)
+        public async Task<IActionResult> RemoveStudent(string customerId, string reason)
         {
             var token = HttpContext.Session.GetString("FirebaseToken");
             var coachId = HttpContext.Session.GetString("FirebaseUid");
@@ -199,12 +342,48 @@ namespace Fitvalle_25.Controllers
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(coachId))
                 return RedirectToAction("Login", "Auth");
 
+            // 1️⃣ Guardar el motivo en Firebase
+            var stopData = new
+            {
+                coachId,
+                customerId,
+                reason = reason,
+                date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                seen = false   // 👈 nuevo atributo
+            };
+
+
+            await _dbService.PatchDataAsync(
+                $"coachStops/{coachId}/{customerId}",
+                stopData,
+                token
+            );
+
+            // 2️⃣ Eliminar relación
             await _dbService.DeleteDataAsync($"coachCustomers/{coachId}/{customerId}", token);
+
+            // 3️⃣ Eliminar rutina
             await _dbService.DeleteDataAsync($"assignedRoutines/{customerId}", token);
 
-            TempData["Message"] = "Has dejado de asesorar al alumno.";
+            // 4️⃣ Notificar al alumno (si tienes FCM token)
+            var extras = await _dbService.GetAllAsync<object>($"user/{customerId}", token);
+            if (extras != null && extras.TryGetValue("fcmToken", out var fcmObj))
+            {
+                var fcmToken = fcmObj?.ToString();
+                if (!string.IsNullOrEmpty(fcmToken))
+                {
+                    await _firebasePushService.SendNotificationAsync(
+                        fcmToken,
+                        "Tu coach dejó de asesorarte",
+                        reason
+                    );
+                }
+            }
+
+            TempData["MessageTutor"] = "Has dejado de asesorar al alumno.";
             return RedirectToAction("MyStudents");
         }
+
         [HttpGet]
         public async Task<IActionResult> StudentProgress(string customerId)
         {
@@ -530,7 +709,102 @@ namespace Fitvalle_25.Controllers
             return (user, avatar, fcmToken);
         }
 
-       
+        [HttpPost]
+        public async Task<IActionResult> AcceptRequest(string requestId, string studentId)
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var coachId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(coachId))
+                return RedirectToAction("Login", "Auth");
+
+            // 1️⃣ Cambiar estado de la solicitud
+            await _dbService.PatchDataAsync(
+                $"tutoringRequests/{requestId}",
+                new
+                {
+                    status = "accepted",
+                    responseDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+                },
+                token
+            );
+
+            // 2️⃣ Crear relación coach → alumno
+            var relation = new
+            {
+                coachId,
+                studentId,
+                assignedDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+
+            await _dbService.PatchDataAsync(
+                $"coachCustomers/{coachId}/{studentId}",
+                relation,
+                token
+            );
+
+            // 3️⃣ Notificación Push
+            var extras = await _dbService.GetAllAsync<object>($"user/{studentId}", token);
+
+            if (extras != null && extras.TryGetValue("fcmToken", out var fcmObj))
+            {
+                string fcmToken = fcmObj?.ToString();
+
+                if (!string.IsNullOrEmpty(fcmToken))
+                {
+                    await _firebasePushService.SendNotificationAsync(
+                        fcmToken,
+                        "Solicitud aceptada",
+                        "Tu coach ha aceptado entrenarte 🎉"
+                    );
+                }
+            }
+
+            TempData["MessageReq"] = "Solicitud aceptada correctamente.";
+
+            return RedirectToAction("RequestCustomers");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectRequest(string requestId, string studentId)
+        {
+            var token = HttpContext.Session.GetString("FirebaseToken");
+            var coachId = HttpContext.Session.GetString("FirebaseUid");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(coachId))
+                return RedirectToAction("Login", "Auth");
+
+            // 1️⃣ Cambiar estado
+            await _dbService.PatchDataAsync(
+                $"tutoringRequests/{requestId}",
+                new
+                {
+                    status = "rejected",
+                    responseDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+                },
+                token
+            );
+
+            // 2️⃣ Notificación Push
+            var extras = await _dbService.GetAllAsync<object>($"user/{studentId}", token);
+
+            if (extras != null && extras.TryGetValue("fcmToken", out var fcmObj))
+            {
+                string fcmToken = fcmObj?.ToString();
+
+                if (!string.IsNullOrEmpty(fcmToken))
+                {
+                    await _firebasePushService.SendNotificationAsync(
+                        fcmToken,
+                        "Solicitud rechazada",
+                        "El coach no puede asesorarte por el momento."
+                    );
+                }
+            }
+
+            TempData["MessageReq"] = "Solicitud rechazada.";
+            return RedirectToAction("RequestCustomers");
+        }
 
 
 

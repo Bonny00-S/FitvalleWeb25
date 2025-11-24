@@ -1,4 +1,131 @@
-﻿@model List<(Fitvalle_25.Models.Request solicitud, Fitvalle_25.Models.User cliente)>
+﻿@model List<Fitvalle_25.Models.Viewmodels.UnifiedRequestVM>
+
+@{
+    Layout = "~/Views/Shared/_LayoutCoach.cshtml";
+    ViewData["Title"] = "Solicitudes de Clientes";
+}
+
+<div class="p-6 card-fitvalle animate__animated animate__fadeIn font-[Inter]">
+    <h2 class="text-3xl font-[Poppins] font-bold mb-6 text-[var(--color-text-primary)] flex items-center gap-2">
+        <i data-lucide="inbox" class="icon active"></i>
+        Solicitudes de Clientes
+    </h2>
+    @if (TempData["MessageReq"] != null)
+    {
+        <div class="mb-4 bg-[var(--color-success)]/20 text-[var(--color-success)] px-4 py-2 rounded-lg border border-[var(--color-success)]/50 flex items-center gap-2 font-[Poppins]">
+            <i data-lucide="check-circle" class="icon active"></i>
+            @TempData["MessageReq"]
+        </div>
+    }
+    @if (Model != null && Model.Any())
+    {
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md text-left">
+                <thead class="bg-[var(--color-primary)] text-white font-[Poppins]">
+                    <tr>
+                        <th class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="user" class="icon"></i> Cliente
+                            </div>
+                        </th>
+                        <th class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="mail" class="icon"></i> Correo
+                            </div>
+                        </th>
+                        <th class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="file-text" class="icon"></i> Tipo
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <i data-lucide="file-text" class="icon"></i> Solicitud
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <i data-lucide="activity" class="icon"></i> Estado
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody class="bg-[var(--color-surface)] divide-y divide-[var(--color-primary)]/25">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover:bg-[var(--color-primary-hover)]/30 transition duration-200">
+
+                            <!-- Nombre -->
+                            <td class="px-4 py-2 font-semibold text-[var(--color-text-primary)]">
+                                @item.StudentName
+                            </td>
+
+                            <!-- Email -->
+                            <td class="px-4 py-2 text-[var(--color-text-secondary)]">
+                                @item.Email
+                            </td>
+
+                            <!-- Tipo de solicitud -->
+                            <td class="px-4 py-2 text-[var(--color-text-secondary)]">
+                                @(item.Type == "tutoring" ? "Tutoría" : "General")
+                            </td>
+
+                            <!-- Botón Ver Solicitud -->
+                            <td class="px-4 py-2 text-center">
+                                <a asp-action="RequestDetail"
+                                   asp-controller="Coach"
+                                   asp-route-id="@item.Id"
+                                   class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-3 py-1 rounded-md text-sm font-[Poppins] shadow transition duration-300 inline-flex items-center gap-1">
+                                    <i data-lucide="search" class="icon"></i>
+                                    Ver Solicitud
+                                </a>
+                            </td>
+
+                            <!-- Estado -->
+                            <td class="px-4 py-2 text-center">
+                                @if (item.State == "Pendiente")
+                                {
+                                    <span class="text-[var(--color-warning)] font-semibold inline-flex items-center gap-1">
+                                        <i data-lucide="clock" class="icon"></i> Pendiente
+                                    </span>
+                                }
+                                else if (item.State == "Aceptada")
+                                {
+                                    <span class="text-[var(--color-success)] font-semibold inline-flex items-center gap-1">
+                                        <i data-lucide="check-circle" class="icon"></i> Aceptada
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-[var(--color-error)] font-semibold inline-flex items-center gap-1">
+                                        <i data-lucide="x-circle" class="icon"></i> Rechazada
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center text-[var(--color-text-secondary)] italic flex items-center justify-center gap-2">
+            <i data-lucide="mail-question" class="icon"></i>
+            No hay solicitudes registradas
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}
+
+
+@* @model List<(Fitvalle_25.Models.Request solicitud, Fitvalle_25.Models.User cliente)>
 
 @{
     Layout = "~/Views/Shared/_LayoutCoach.cshtml";
@@ -97,3 +224,4 @@
         lucide.createIcons();
     </script>
 }
+ *@
