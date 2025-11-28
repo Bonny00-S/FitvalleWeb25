@@ -55,9 +55,12 @@
                     @foreach (var item in Model)
                     {
                         <tr class="hover:bg-[var(--color-primary-hover)]/30 transition duration-200">
-
+                           
                             <!-- Nombre -->
-                            <td class="px-4 py-2 font-semibold text-[var(--color-text-primary)]">
+                            <td class="px-4 py-2 font-semibold text-[var(--color-text-primary)] flex items-center gap-3">
+                                <img src="@item.Avatar"
+                                     alt="Foto del alumno"
+                                     class="w-16 h-16 rounded-full border-2 border-[var(--color-primary)] object-cover shadow-md" />
                                 @item.StudentName
                             </td>
 

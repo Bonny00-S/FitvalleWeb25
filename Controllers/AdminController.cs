@@ -125,6 +125,7 @@ namespace Fitvalle_25.Controllers
                 // 4. Guardar datos en tu Realtime Database
                 var newUser = new User
                 {
+                    Id = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                     Email = signupResponse.Email,
                     Name = name,
                     Role = role,

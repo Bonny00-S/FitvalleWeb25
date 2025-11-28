@@ -77,9 +77,9 @@ namespace Fitvalle_25.Controllers
 
             var unifiedList = new List<UnifiedRequestVM>();
 
-            // -----------------------------------------------------------
-            //      1️⃣ Solicitudes generales (Request)
-            // -----------------------------------------------------------
+            // =============================
+            //  1️⃣ Requests Generales
+            // =============================
             var generalRequests = await _dbService.GetAllRequestsAsync(token);
 
             if (generalRequests != null)
@@ -88,26 +88,31 @@ namespace Fitvalle_25.Controllers
                 {
                     if (req.State?.ToLower() == "pending")
                     {
-                        var student = await _dbService.GetUserAsync($"user/{req.CustomerId}", token);
-                        if (student == null) continue;
+                        var (userBasic, avatar, customer) = await GetFullUserDataAsync(req.CustomerId, token);
+
+                        if (userBasic == null) continue;
+
+                        if (string.IsNullOrEmpty(avatar))
+                            avatar = userBasic.PhotoUrl ?? "/images/iconUser.png";
 
                         unifiedList.Add(new UnifiedRequestVM
                         {
                             Id = req.Id,
                             Type = "general",
                             StudentId = req.CustomerId,
-                            StudentName = student.Name,
-                            Email = student.Email,                     // 👈 email agregado
+                            StudentName = userBasic.Name,
+                            Email = userBasic.Email,
                             Message = req.Description,
-                            State = "Pendiente"                        // 👈 normalizado
+                            State = "Pendiente",
+                            Avatar = avatar
                         });
                     }
                 }
             }
 
-            // -----------------------------------------------------------
-            //      2️⃣ Solicitudes de tutoría (TutoringRequest)
-            // -----------------------------------------------------------
+            // =============================
+            //  2️⃣ Tutoring Requests
+            // =============================
             var tutoringRequests = await _dbService.GetAllAsync<TutoringRequest>("tutoringRequests", token);
 
             if (tutoringRequests != null)
@@ -116,15 +121,21 @@ namespace Fitvalle_25.Controllers
                 {
                     if (req.CoachId == coachId && req.Status == "pending")
                     {
+                        var (userBasic, avatar, customer) = await GetFullUserDataAsync(req.StudentId, token);
+
+                        if (string.IsNullOrEmpty(avatar))
+                            avatar = userBasic?.PhotoUrl ?? "/images/iconUser.png";
+
                         unifiedList.Add(new UnifiedRequestVM
                         {
                             Id = req.Id,
                             Type = "tutoring",
                             StudentId = req.StudentId,
                             StudentName = req.StudentName,
-                            Email = req.StudentEmail,                  // 👈 email directo
+                            Email = req.StudentEmail,
                             Message = req.Message,
-                            State = "Pendiente"                        // 👈 normalizado
+                            State = "Pendiente",
+                            Avatar = avatar
                         });
                     }
                 }
@@ -132,6 +143,7 @@ namespace Fitvalle_25.Controllers
 
             return View(unifiedList);
         }
+
 
 
 
@@ -174,11 +186,39 @@ namespace Fitvalle_25.Controllers
             if (string.IsNullOrEmpty(token))
                 return RedirectToAction("Dashboard", "Coach");
 
-            // Buscar solicitud en tutoringRequests primero
+            // ===============================
+            // 1️⃣ BUSCAR EN TUTORÍAS
+            // ===============================
             var tutoringRequests = await _dbService.GetAllAsync<TutoringRequest>("tutoringRequests", token);
+
             if (tutoringRequests != null && tutoringRequests.ContainsKey(id))
             {
                 var req = tutoringRequests[id];
+
+                var student = await _dbService.GetUserAsync($"user/{req.StudentId}", token);
+                var customerData = await _dbService.GetCustomerAsync($"customer/{req.StudentId}", token);
+
+                // 🔎 BUSCAR TAMBIÉN SU REQUEST GENERAL (para sus preferencias)
+                var generalRequests1 = await _dbService.GetAllRequestsAsync(token);
+                string preferencias = "";
+
+                if (generalRequests1 != null)
+                {
+                    var generalReq = generalRequests1.Values
+                        .FirstOrDefault(r => r.CustomerId == req.StudentId);
+
+                    if (generalReq != null)
+                        preferencias = generalReq.Description;
+                }
+
+                int age = 0;
+                if (customerData != null &&
+                    DateTime.TryParseExact(customerData.Birthdate, "dd/MM/yyyy", null,
+                    System.Globalization.DateTimeStyles.None, out DateTime birth))
+                {
+                    age = DateTime.Now.Year - birth.Year;
+                    if (DateTime.Now < birth.AddYears(age)) age--;
+                }
 
                 var vm = new UnifiedRequestVM
                 {
@@ -187,22 +227,47 @@ namespace Fitvalle_25.Controllers
                     StudentId = req.StudentId,
                     StudentName = req.StudentName,
                     Email = req.StudentEmail,
+
+                    // ✅ MENSAJE DE TUTORÍA
                     Message = req.Message,
-                    State = req.Status
+
+                    // ✅ PREFERENCIAS DEL REQUEST GENERAL
+                    Description = preferencias,
+
+                    State = req.Status,
+                    Age = age,
+                    Height = customerData?.Height,
+                    Weight = customerData?.Weight,
+                    GoalWeight = customerData?.GoalWeight,
+                    RegisterDate = customerData?.RegisterDate
                 };
 
                 return View(vm);
             }
 
-            // Si no está en tutoringRequests, buscar en Requests generales
+
+            // ===============================
+            // 2️⃣ BUSCAR EN SOLICITUDES GENERALES ✅
+            // ===============================
             var generalRequests = await _dbService.GetAllRequestsAsync(token);
+
             if (generalRequests != null && generalRequests.ContainsKey(id))
             {
                 var req = generalRequests[id];
-                var student = await _dbService.GetUserAsync($"user/{req.CustomerId}", token);
 
-                if (student != null)
+                var student = await _dbService.GetUserAsync($"user/{req.CustomerId}", token);
+                var customerData = await _dbService.GetCustomerAsync($"customer/{req.CustomerId}", token);
+
+                if (student != null && customerData != null)
                 {
+                    int age = 0;
+                    if (DateTime.TryParseExact(customerData.Birthdate, "dd/MM/yyyy", null,
+                        System.Globalization.DateTimeStyles.None, out DateTime birth))
+                    {
+                        age = DateTime.Now.Year - birth.Year;
+                        if (DateTime.Now < birth.AddYears(age)) age--;
+                    }
+
                     var vm = new UnifiedRequestVM
                     {
                         Id = req.Id,
@@ -211,15 +276,29 @@ namespace Fitvalle_25.Controllers
                         StudentName = student.Name,
                         Email = student.Email,
                         Message = req.Description,
-                        State = req.State
+                        Description = req.Description,
+                        State = req.State,
+                        Age = age,
+                        Height = customerData.Height,
+                        Weight = customerData.Weight,
+                        GoalWeight = customerData.GoalWeight,
+                        RegisterDate = customerData.RegisterDate
                     };
 
                     return View(vm);
                 }
             }
 
+            // ===============================
+            // 3️⃣ SI NO EXISTE EN NINGUNO
+            // ===============================
             return NotFound();
         }
+
+
+
+
+
 
 
 
@@ -400,7 +479,7 @@ namespace Fitvalle_25.Controllers
             var assignedDict = await _dbService.GetAllAsync<Routine>($"assignedRoutines/{customerId}", token);
             if (assignedDict == null || assignedDict.Count == 0)
             {
-                TempData["Error"] = "El alumno aún no tiene rutina asignada.";
+                TempData["MessageTutor"] = "El alumno aún no tiene rutina asignada.";
                 return RedirectToAction("MyStudents");
             }
 
@@ -681,33 +760,34 @@ namespace Fitvalle_25.Controllers
                 ViewBag.UserAvatar = "/images/iconUser.png";
             }
         }
-        private async Task<(User user, string avatar, string fcmToken)> GetFullUserDataAsync(string userId, string token)
+        private async Task<(User userBasic, string avatar, Customer customer)> GetFullUserDataAsync(string customerId, string token)
         {
-            var user = await _dbService.GetUserAsync($"user/{userId}", token);
-            var userExtra = await _dbService.GetAllAsync<object>($"user/{userId}", token);
+            // 1️⃣ User básico (user/)
+            var userBasic = await _dbService.GetUserAsync($"user/{customerId}", token);
 
-            string avatar = null;
-            string fcmToken = null;
+            // 2️⃣ Customer (customer/)
+            var customer = await _dbService.GetCustomerAsync($"customer/{customerId}", token);
 
-            if (userExtra != null)
+            // 3️⃣ User extendido (users/)
+            var userExtended = await _dbService.GetDataAsync<UserExtended>($"users/{customerId}", token);
+
+            string avatar = "/images/iconUser.png";
+
+            // 4️⃣ Prioridad: userExtended.avatar → Google photo → default
+            if (userExtended != null && !string.IsNullOrEmpty(userExtended.Avatar))
             {
-                // Si existe avatar explícito
-                if (userExtra.TryGetValue("avatar", out var avatarValue))
-                    avatar = avatarValue?.ToString();
-
-                // Si el fcmToken parece ser una URL (ej. empieza con https)
-                if (userExtra.TryGetValue("fcmToken", out var tokenValue))
-                {
-                    fcmToken = tokenValue?.ToString();
-
-                    // ⚠ Si el fcmToken es una URL, lo usamos como avatar real
-                    if (!string.IsNullOrEmpty(fcmToken) && fcmToken.StartsWith("https"))
-                        avatar = fcmToken;
-                }
+                var base64 = await _dbService.GetAvatarBase64Async(userExtended.Avatar, token);
+                if (!string.IsNullOrEmpty(base64))
+                    avatar = base64;
+            }
+            else if (!string.IsNullOrEmpty(userBasic?.PhotoUrl))
+            {
+                avatar = userBasic.PhotoUrl;
             }
 
-            return (user, avatar, fcmToken);
+            return (userBasic, avatar, customer);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AcceptRequest(string requestId, string studentId)

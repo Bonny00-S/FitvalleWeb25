@@ -13,5 +13,6 @@
         public string RequestDate { get; set; }
         public string ResponseDate { get; set; }
         public string Status { get; set; }
+        public string Description { get; set; }
     }
 }

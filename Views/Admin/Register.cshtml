@@ -22,14 +22,27 @@
         </div>
 
         <!-- Contraseña -->
+        <!-- Contraseña -->
         <div>
             <label class="block text-[var(--color-text-secondary)] font-semibold mb-1">Contraseña</label>
             <div class="relative">
+                <!-- Ícono candado -->
                 <i data-lucide="lock" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
-                <input type="password" name="password" required value="@ViewBag.PreservedPassword"
-                       class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30 rounded-lg px-4 py-2 pl-10 text-[var(--color-text-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
+
+                <!-- Input -->
+                <input id="passwordInput" type="password" name="password" required value="@ViewBag.PreservedPassword"
+                       class="w-full bg-[var(--color-background)] border border-[var(--color-primary)]/30
+                      rounded-lg px-10 py-2 pl-10 text-[var(--color-text-primary)]
+                      focus:ring-2 focus:ring-[var(--color-primary)] focus:outline-none transition" />
+
+                <!-- Botón ojo -->
+                <button type="button" onclick="togglePassword()"
+                        class="absolute right-3 top-2.5 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition">
+                    <i id="eyeIcon" data-lucide="eye" class="w-5 h-5"></i>
+                </button>
             </div>
         </div>
+
 
         <!-- Nombre -->
         <div>
@@ -96,5 +109,20 @@
 </div>
 
 <script>
-    lucide.replace(); // Inicializa íconos Lucide
+    function togglePassword() {
+          const input = document.getElementById("passwordInput");
+          const icon = document.getElementById("eyeIcon");
+
+          if (input.type === "password") {
+              input.type = "text";
+              icon.setAttribute("data-lucide", "eye-off");
+          } else {
+              input.type = "password";
+              icon.setAttribute("data-lucide", "eye");
+          }
+
+          lucide.replace();
+      }
+
+      lucide.replace(); // Inicializa íconos Lucide
 </script>

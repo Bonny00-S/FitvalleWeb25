@@ -17,12 +17,46 @@
                 <i data-lucide="mail" class="icon"></i>
                 <span class="font-semibold text-[var(--color-text-primary)]">Email:</span> @Model.Email
             </p>
+            @if (Model.Age.HasValue)
+            {
+                <p class="flex items-center gap-2">
+                    <i data-lucide="cake" class="icon"></i>
+                    <span class="font-semibold text-[var(--color-text-primary)]">Edad:</span> @Model.Age años
+                </p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Height))
+            {
+                <p class="flex items-center gap-2">
+                    <i data-lucide="ruler" class="icon"></i>
+                    <span class="font-semibold text-[var(--color-text-primary)]">Altura:</span> @Model.Height cm
+                </p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Weight))
+            {
+                <p class="flex items-center gap-2">
+                    <i data-lucide="weight" class="icon"></i>
+                    <span class="font-semibold text-[var(--color-text-primary)]">Peso actual:</span> @Model.Weight kg
+                </p>
+            }
+        </div>
+
+        <div class="space-y-2">
+            @if (!string.IsNullOrEmpty(Model.GoalWeight))
+            {
+                <p class="flex items-center gap-2">
+                    <i data-lucide="trophy" class="icon"></i>
+                    <span class="font-semibold text-[var(--color-text-primary)]">Meta de peso:</span> @Model.GoalWeight kg
+                </p>
+            }
+            @if (!string.IsNullOrEmpty(Model.RegisterDate))
+            {
+                <p class="flex items-center gap-2">
+                    <i data-lucide="calendar" class="icon"></i>
+                    <span class="font-semibold text-[var(--color-text-primary)]">Registro:</span> @Model.RegisterDate
+                </p>
+            }
             <p class="flex items-center gap-2">
-                <i data-lucide="message-square" class="icon"></i>
-                <span class="font-semibold text-[var(--color-text-primary)]">Mensaje:</span> @Model.Message
-            </p>
-            <p class="flex items-center gap-2">
-                <i data-lucide="info" class="icon"></i>
+                <i data-lucide="activity" class="icon"></i>
                 <span class="font-semibold text-[var(--color-text-primary)]">Estado:</span>
                 @if (Model.State.ToLower() == "accepted")
                 {
@@ -44,6 +78,60 @@
         </div>
     </div>
 
+    @if (Model.Type == "tutoring" && !string.IsNullOrEmpty(Model.Message) )
+    {
+        <hr class="my-6 border-[var(--color-primary)]/40">
+
+        <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-2 font-[Poppins] flex items-center gap-2">
+            <i data-lucide="message-circle" class="icon"></i>
+            Mensaje de Tutoría
+        </h3>
+
+        <div class="bg-[var(--color-surface)] border border-[var(--color-primary)]/30 rounded-lg p-4 text-[var(--color-text-secondary)] whitespace-pre-line shadow-sm">
+            @Model.Message
+        </div>
+      
+    }
+
+    @if (Model.Type == "tutoring" && !string.IsNullOrEmpty(Model.Message) && !string.IsNullOrEmpty(Model.Description))
+    {
+        <hr class="my-6 border-[var(--color-primary)]/40">
+
+        <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-2 font-[Poppins] flex items-center gap-2">
+            <i data-lucide="message-circle" class="icon"></i>
+            Mensaje de Tutoría
+        </h3>
+
+        <div class="bg-[var(--color-surface)] border border-[var(--color-primary)]/30 rounded-lg p-4 text-[var(--color-text-secondary)] whitespace-pre-line shadow-sm">
+            @Model.Message
+        </div>
+        <hr class="my-6 border-[var(--color-primary)]/40">
+
+        <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-2 font-[Poppins] flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="icon"></i>
+            Preferencias de entrenamiento
+        </h3>
+
+        <div class="bg-[var(--color-surface)] border border-[var(--color-primary)]/30 rounded-lg p-4 text-[var(--color-text-secondary)] whitespace-pre-line shadow-sm">
+            @Model.Description
+        </div>
+    }
+
+    @if (Model.Type == "general" && !string.IsNullOrEmpty(Model.Description))
+    {
+        <hr class="my-6 border-[var(--color-primary)]/40">
+
+        <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-2 font-[Poppins] flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="icon"></i>
+            Preferencias de entrenamiento
+        </h3>
+
+        <div class="bg-[var(--color-surface)] border border-[var(--color-primary)]/30 rounded-lg p-4 text-[var(--color-text-secondary)] whitespace-pre-line shadow-sm">
+            @Model.Description
+        </div>
+    }
+
+
     <hr class="my-6 border-[var(--color-primary)]/40">
 
     <div class="mt-8 flex justify-center space-x-4">
@@ -64,6 +152,19 @@
                     Aceptar Alumno
                 </button>
             </form>
+
+            <form asp-action="RejectRequest" method="post" class="inline">
+                <input type="hidden" name="requestId" value="@Model.Id" />
+                <button type="submit"
+                        class="bg-red-600 hover:bg-red-700
+               text-white px-5 py-2 rounded-md
+               font-[Poppins] transition duration-300
+               shadow inline-flex items-center gap-2">
+                    <i data-lucide="x-circle" class="icon"></i>
+                    Rechazar
+                </button>
+
+            </form>
         }
         else
         {
@@ -80,6 +181,7 @@
         lucide.createIcons();
     </script>
 }
+
 
 @* @model (Fitvalle_25.Models.Request solicitud, Fitvalle_25.Models.User cliente, Fitvalle_25.Models.Customer customer, int edad)
 
