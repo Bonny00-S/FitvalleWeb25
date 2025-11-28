@@ -1,0 +1,10 @@
+bin/
+obj/
+*.db
+*.mdf
+*.ldf
+.env
+.vscode/
+*.user
+*.suo
+*.log

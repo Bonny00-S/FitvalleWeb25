@@ -1,0 +1,132 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+/* === FITVALLE DARK THEME === */
+
+/* Importar tipografías oficiales */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@500;700&display=swap');
+
+:root {
+    --color-background: #0A101C;
+    --color-surface: #182132;
+    --color-primary: #A61035;
+    --color-primary-hover: #7E092B;
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: #A6AEC1;
+    --color-success: #00C48C;
+    --color-warning: #FF7A00;
+}
+
+/* Tipografía global */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+p, span, li, a, label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+}
+
+/* Botones institucionales */
+.btn-primary {
+    background-color: var(--color-primary);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    transition: background 0.3s, transform 0.2s;
+}
+
+    .btn-primary:hover {
+        background-color: var(--color-primary-hover);
+        transform: scale(1.05);
+    }
+
+/* Tarjetas / paneles */
+.card-fitvalle {
+    background-color: var(--color-surface);
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    padding: 1.5rem;
+    color: var(--color-text-primary);
+}
+
+/* Sidebar y header */
+.sidebar-fitvalle {
+    background-color: var(--color-surface);
+}
+
+.header-fitvalle {
+    background-color: var(--color-surface);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+body {
+  margin-bottom: 60px;
+}
+select {
+    color: #111827 !important; /* gris oscuro */
+    background-color: #ffffff !important;
+}
+
+    select option {
+        color: #111827 !important;
+    }
+.icon {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+    stroke: var(--color-text-secondary);
+    transition: stroke 0.2s ease;
+}
+
+   /* .icon:hover {
+        stroke: var(--color-primary-hover);
+    }*/
+
+
+    .icon.active {
+        stroke: var(--color-primary);
+    }
+ /*th i {
+        position: relative;
+        top: 1.5px;*/ /* corrige el alineado vertical */
+        /*width: 16px;
+        height: 16px;
+    }*/
+
+    /* ?? Fila interactiva */
+    /*.table-row {
+        transition: all 0.25s ease;
+        cursor: default;
+    }
+
+    .table-row:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        transform: scale(1.01);
+    }*/
