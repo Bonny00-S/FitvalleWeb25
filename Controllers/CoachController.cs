@@ -479,7 +479,7 @@ namespace Fitvalle_25.Controllers
             var assignedDict = await _dbService.GetAllAsync<Routine>($"assignedRoutines/{customerId}", token);
             if (assignedDict == null || assignedDict.Count == 0)
             {
-                TempData["MessageTutor"] = "El alumno aún no tiene rutina asignada.";
+                TempData["Error1"] = "El alumno aún no tiene rutina asignada.";
                 return RedirectToAction("MyStudents");
             }
 

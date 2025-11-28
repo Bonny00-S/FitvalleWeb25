@@ -8,6 +8,13 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\avatares\" />
+    <Folder Include="wwwroot\apk\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\apk\fitvalle.apk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

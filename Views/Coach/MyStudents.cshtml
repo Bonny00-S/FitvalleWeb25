@@ -19,6 +19,12 @@
             @TempData["MessageTutor"]
         </div>
     }
+     @if (TempData["Error1"] != null)
+    {
+        <div class="bg-red-900/40 border border-red-700 text-red-300 px-4 py-3 rounded mb-4 text-center">
+            @TempData["Error1"]
+        </div>
+    }
 
     <div class="overflow-x-auto">
         <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">

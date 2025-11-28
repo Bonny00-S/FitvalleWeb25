@@ -12,9 +12,12 @@
 
     <!-- Encabezado -->
     <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold text-[var(--color-primary)] font-[Poppins] flex items-center gap-2">
-            <i data-lucide="dumbbell" class="text-[var(--color-primary)]"></i> Ejercicios registrados
+        <h2 class="text-3xl font-[Poppins] font-bold mb-6 text-[var(--color-text-primary)] flex items-center gap-2">
+            <i data-lucide="dumbbell" class="icon active"></i> Ejercicios registrados
         </h2>
+        @* <h2 class="text-3xl font-[Poppins] font-bold mb-6 text-[var(--color-text-primary)] flex items-center gap-2">
+            <i data-lucide="users" class="icon active"></i> Usuarios del sistema
+        </h2> *@
         <a asp-action="Create"
            class="bg-[var(--color-success)] hover:bg-emerald-600 text-white font-semibold px-5 py-2 rounded-lg shadow transition duration-300 flex items-center gap-2">
             <i data-lucide="plus-circle"></i> Nuevo

@@ -32,11 +32,18 @@ namespace Fitvalle_25
             app.UseSession();
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+
+            // ? CONFIGURACIÓN CORRECTA PARA APK
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ServeUnknownFileTypes = true,
+                DefaultContentType = "application/vnd.android.package-archive"
+            });
 
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.MapControllerRoute(
                 name: "default",

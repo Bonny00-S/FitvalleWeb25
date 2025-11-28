@@ -16,6 +16,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        /* Quita el botón nativo de ver contraseña del navegador */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+    </style>
+
 </head>
 
 <body class="bg-gray-900 flex items-center justify-center min-h-screen">
@@ -43,10 +51,20 @@
                 <div class="mb-5 relative">
                     <input type="password" name="password" id="password"
                            placeholder="Contraseña"
-                           class="w-full bg-transparent border-b-2 border-white text-white placeholder-gray-200 focus:outline-none focus:border-yellow-400 py-2 pr-10"
+                           class="w-full bg-transparent border-b-2 border-white text-white placeholder-gray-200 focus:outline-none focus:border-yellow-400 py-2 pr-14"
                            required minlength="6">
+
+                    <!-- Botón VER (primero) -->
+                    <button type="button" id="togglePassword"
+                            class="absolute right-10 top-2 text-white focus:outline-none">
+                        <i class="fa fa-eye" id="eyeIcon"></i>
+                    </button>
+
+                    <!-- Candado (a la derecha del ojo) -->
                     <i class="fa fa-lock absolute right-2 top-3 text-white"></i>
                 </div>
+
+
 
                 <button type="submit" id="btnLogin"
                         class="w-full bg-gray-500 text-black font-bold py-2 rounded-full cursor-not-allowed opacity-60 transition duration-300 mb-3"
@@ -86,6 +104,20 @@
         const passwordInput = document.getElementById("password");
         const loginButton = document.getElementById("btnLogin");
 
+        const togglePassword = document.getElementById("togglePassword");
+    const eyeIcon = document.getElementById("eyeIcon");
+
+    togglePassword.addEventListener("click", function () {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    });
         function validarCampos() {
             const emailVal = emailInput.value.trim();
             const passVal = passwordInput.value.trim();

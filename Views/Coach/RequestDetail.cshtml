@@ -78,7 +78,7 @@
         </div>
     </div>
 
-    @if (Model.Type == "tutoring" && !string.IsNullOrEmpty(Model.Message) )
+    @if (Model.Type == "tutoring" && !string.IsNullOrEmpty(Model.Message) && string.IsNullOrEmpty(Model.Message))
     {
         <hr class="my-6 border-[var(--color-primary)]/40">
 
